@@ -10,7 +10,7 @@
         /* Настройка шрифта Inter (резервный) */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-        /* 1. TT Neoris: ВСТАВЛЕН REGULAR WOFF и WOFF2 */
+        /* TT Neoris: ВСТАВЛЕН REGULAR WOFF и WOFF2 */
         @font-face {
             font-family: 'TT Neoris';
             src: url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859192/TT_Neoris_Regular_bb9kfp.woff2') format('woff2'),
@@ -18,16 +18,8 @@
             font-weight: 400; /* Regular */
             font-style: normal;
         }
-        @font-face {
-            font-family: 'TT Neoris';
-            /* ВСТАВЬТЕ ССЫЛКИ НА MEDIUM НАЧЕРТАНИЕ, ЕСЛИ ОНО НУЖНО */
-            src: url('URL_К_ВАШЕМУ_ШРИФТУ_MEDIUM.woff2') format('woff2'),
-                 url('URL_К_ВАШЕМУ_ШРИФТУ_MEDIUM.woff') format('woff');
-            font-weight: 500; /* Medium/SemiBold */
-            font-style: normal;
-        }
 
-        /* 2. CUSTOM TRACKING (-0.04em = -4%) */
+        /* CUSTOM TRACKING (-0.04em = -4%) */
         .tracking-custom-tight {
             letter-spacing: -0.04em;
         }
@@ -35,7 +27,7 @@
         body {
             /* ПЛАВНЫЙ СКРОЛЛ АКТИВЕН */
             font-family: 'TT Neoris', 'Inter', sans-serif;
-            scroll-behavior: smooth; 
+            scroll-behavior: smooth;
         }
         
         /* Глобальное отключение прокрутки на десктопе, чтобы прокручивался только правый блок */
@@ -45,37 +37,164 @@
             }
         }
         
-        /* Пользовательские классы для градиентов проектов */
-        .project-1 { --bg-color: #d81b60; --end-color: #c2185b; } 
-        .project-2 { --bg-color: #6d1a1a; --end-color: #4a0f0f; } 
-        .project-3 { --bg-color: #fdd835; --end-color: #fbc02d; } 
-        .project-4 { --bg-color: #c62828; --end-color: #b71c1c; } 
-        .project-5 { --bg-color: #ff6f3c; --end-color: #ff5722; } 
-        .project-6 { --bg-color: #1e88e5; --end-color: #1565c0; } 
-
-        .project-image {
-            background-image: linear-gradient(135deg, var(--bg-color) 0%, var(--end-color) 100%);
-            position: relative; 
-            overflow: hidden;
+        /* === СКРЫТИЕ СТАНДАРТНОЙ ПОЛОСЫ ПРОКРУТКИ (для внутреннего контейнера) === */
+        #right-scroll-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        #right-scroll-container {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+            /* На десктопе прокручивается только этот блок */
         }
 
+        /* === НОВАЯ АНИМАЦИЯ ПРЕЛОАДЕРА (PULSE LOADER) === */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            opacity: 1;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .pulse-loader span {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: pulse 1.2s infinite ease-in-out;
+        }
+
+        .pulse-loader span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .pulse-loader span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulse {
+            0%, 80%, 100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+            40% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+        /* === КОНЕЦ НОВОЙ АНИМАЦИИ === */
+        
         /* Стиль для левой панели (Фото) */
         .left-side {
             background-image: 
                 linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
                 url('https://res.cloudinary.com/dt79npeea/image/upload/v1764843336/photo_2025-12-04_13-05-55_pwtepu.jpg');
             background-size: cover;
-            /* ИСПРАВЛЕНИЕ: Сдвигаем фокус изображения на 20% вниз */
+            /* Сдвигаем фокус изображения на 20% вниз */
             background-position: center 20%;
+        }
+
+        /* Стиль для печатного эффекта */
+        .typing-text {
+            /* Курсор теперь белый, так как фон карточки приветствия черный */
+            border-right: 2px solid rgba(255, 255, 255, 0.7); 
+            white-space: nowrap;
+            overflow: hidden;
+            height: 1.5em; /* Ограничиваем высоту, чтобы текст не прыгал */
+        }
+        
+        /* Класс для анимации сужения/исчезновения карточек */
+        .project-card-wrapper {
+            /* Увеличил время transition, чтобы блюр успевал срабатывать */
+            transition: transform 0.15s linear, filter 0.15s linear, opacity 0.15s linear;
+            transform-origin: center center;
+        }
+
+        /* ДОПОЛНИТЕЛЬНЫЙ ЭФФЕКТ НАВЕДЕНИЯ НА ПРОЕКТЫ */
+        .portfolio-item {  
+            transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+        }
+        /* УДАЛЯЕМ БЛЮР ПРИ НАВЕДЕНИИ */
+        .portfolio-item:hover {  
+            filter: none;
+        }
+        
+        /* === ГРАДИЕНТНЫЕ МАСКИ (НАСТОЯЩИЙ BLUR ЭФФЕКТ) === */
+        .scroll-mask-container {
+            position: relative;
+        }
+
+        /* Маска сверху (сочетание blur и градиента) */
+        .scroll-mask-top {  
+            content: '';  
+            position: absolute;  
+            top: 48px;  
+            left: 50%;  
+            transform: translateX(-50%);  
+            width: calc(100% - 96px);  
+            max-width: 365px;  
+            height: 72px; 
+            backdrop-filter: blur(14px);  
+            -webkit-backdrop-filter: blur(14px); 
+            /* Градиент от ЧИСТОГО ЧЕРНОГО (#000) к прозрачному, без тени */
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);  
+            z-index: 10;  
+            pointer-events: none;
+        }
+
+        /* Маска снизу (сочетание blur и градиента) */
+        .scroll-mask-bottom {  
+            content: '';  
+            position: absolute;  
+            /* bottom: 48px - это отступ p-12 родительского div. Кнопка находится внутри скролла. */
+            bottom: 48px;  
+            left: 50%;  
+            transform: translateX(-50%);  
+            width: calc(100% - 96px);  
+            max-width: 365px;  
+            height: 72px; 
+            backdrop-filter: blur(14px);  
+            -webkit-backdrop-filter: blur(14px); 
+            /* Градиент от прозрачного к ЧИСТОМУ ЧЕРНОМУ (#000), без тени */
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);  
+            z-index: 10;  
+            pointer-events: none;
+        }
+
+        /* Корректировка видимости масок для мобильных устройств */
+        @media (max-width: 1023px) {
+            .scroll-mask-top, .scroll-mask-bottom {
+                display: none;
+            }
         }
         
     </style>
 </head>
 <body class="bg-black text-white antialiased">
 
+    <!-- ПРЕЛОАДЕР -->
+    <div id="preloader" class="opacity-100">
+        <div class="pulse-loader">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
     <div class="flex flex-col lg:flex-row min-h-screen lg:h-screen">
 
-        <!-- Левая часть (Фото/Навигация) - 50% ШИРИНЫ НА LG: -->
+        <!-- Левая часть (Фото/Навигация) -->
         <div class="left-side lg:w-1/2 min-h-[500px] lg:h-full relative flex flex-col justify-between p-5 sm:p-8">
             <div class="absolute inset-0 bg-gradient-to-b from-black/10 to-black/40 pointer-events-none"></div>
 
@@ -83,135 +202,156 @@
             <nav class="flex justify-between text-xs text-white/60 tracking-wider relative z-10">
                 <a href="#portfolio-section" class="nav-link hover:text-white transition duration-300">Портфолио</a>
                 <a href="#pricing-section" class="nav-link hover:text-white transition duration-300">Стоимость</a>
-                <!-- Ссылка на контакт -->
                 <a href="https://t.me/zorochik" target="_blank" class="hover:text-white transition duration-300">Связаться</a>
             </nav>
 
             <!-- Нижняя информация -->
             <div class="flex justify-between w-full text-[10px] text-white/50 tracking-wider relative z-10">
-                <!-- УДАЛЕНЫ СЛОВА "Telegram" -->
-                <span></span> 
+                <span></span>  
                 <span class="hidden sm:inline">Я живой, все в порядке</span>
                 <span></span>
             </div>
         </div>
 
-        <!-- Правая часть (Контент) - 50% ШИРИНЫ НА LG: -->
-        <!-- НОВЫЙ ВНЕШНИЙ КОНТЕЙНЕР ДЛЯ ЦЕНТРИРОВАНИЯ -->
-        <div class="lg:w-1/2 max-w-full lg:h-screen lg:overflow-y-auto p-4 sm:p-10 lg:p-12 flex justify-center"> 
+        <!-- Правая часть (Контент) - ВНЕШНИЙ КОНТЕЙНЕР ДЛЯ МАСКИ -->
+        <div class="lg:w-1/2 max-w-full lg:h-screen lg:p-12 p-4 sm:p-10 flex justify-center scroll-mask-container">
             
-            <!-- Внутренний контейнер с ограничением ширины и автоматическими отступами по горизонтали -->
-            <div class="w-full lg:max-w-[365px] space-y-5"> 
+            <!-- МАСКА СВЕРХУ (видна только на LG+) -->
+            <div class="scroll-mask-top hidden lg:block"></div>
+            <!-- МАСКА СНИЗУ (видна только на LG+) -->
+            <div class="scroll-mask-bottom hidden lg:block"></div>
 
+            <!-- Внутренний контейнер с ограничением ширины и АКТИВНЫМ СКРОЛЛОМ -->
+            <!-- pb-10 добавлен, чтобы дать пространство для скролла под нижнюю маску -->
+            <div id="right-scroll-container" class="w-full lg:max-w-[365px] lg:h-full lg:overflow-y-auto space-y-5 pb-10"> 
+
+                <!-- 0. НОВЫЙ ОТДЕЛЬНЫЙ БЛОК ПРИВЕТСТВИЯ (Стиль: крупный, черный, ДЛИННЕЕ) -->
+                <div id="welcome-message" class="bg-black shadow-lg p-8 py-20 reveal-on-scroll text-center border border-white/10">
+                    <h3 class="text-5xl font-medium text-white mb-4 tracking-custom-tight">Приветствую!</h3>
+                    <!-- Печатающийся текст -->
+                    <p id="typing-output" class="text-base text-white/70 leading-relaxed typing-text mx-auto max-w-xs"></p>
+                </div>
+                
                 <!-- 1. Информационная карточка (с анимацией) -->
-                <div class="bg-white shadow-2xl p-5 reveal-on-scroll"> <!-- 20px padding -->
-                    <!-- РАЗМЕР ШРИФТА H1: 36px -->
-                    <h1 class="text-[36px] font-medium text-gray-900 tracking-custom-tight mb-2 leading-none">Баскаков Никита</h1> 
+                <div class="bg-white shadow-2xl p-5 reveal-on-scroll">
+                    <h1 class="text-[36px] font-medium text-gray-900 tracking-custom-tight mb-2 leading-none">Баскаков Никита</h1>
                     <p class="text-base text-gray-600 mb-20 font-light">Портфолио веб-дизайнера</p>
                     <p class="text-sm text-gray-400 leading-relaxed">и просто хорошего человека</p>
                 </div>
 
                 <!-- 2. Карточка с опытом (с анимацией) -->
-                <div class="bg-white shadow-lg p-5 flex justify-between items-center reveal-on-scroll"> <!-- 20px padding -->
+                <div class="bg-white shadow-lg p-5 flex justify-between items-center reveal-on-scroll">
                     <span class="text-sm text-gray-600">Опыт:</span>
                     <span class="text-xl font-medium text-gray-900"> +4 года</span>
                 </div>
 
                 <!-- Заголовок портфолио -->
-                <div id="portfolio-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll"> <!-- 20px padding top/bottom -->
+                <div id="portfolio-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll">
                     <h2 class="text-3xl sm:text-4xl font-medium text-white tracking-custom-tight">Портфолио</h2>
                 </div>
 
-                <!-- 3. Проекты портфолио -->
-                <div class="grid gap-5"> <!-- 20px gap -->
-                    <!-- Проект 1: DYOR 5 (ОБНОВЛЕНА ССЫЛКА) -->
-                    <a href="dyor5.html" class="portfolio-item project-1 bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl reveal-on-scroll">
-                        <div class="project-image w-full h-80 flex items-center justify-center">
-                            <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png" 
-                                 alt="Скриншот проекта DYOR 5" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="bg-white p-5 flex justify-between items-center"> <!-- 20px padding -->
-                            <div class="text-lg font-medium text-gray-900 tracking-custom-tight">DYOR 5</div>
-                            <div class="text-right text-xs text-gray-500 tracking-wider uppercase">UI Design / Web Design / Brand Design</div>
-                        </div>
-                    </a>
+                <!-- 3. Проекты портфолио (ОБЕРНУТЫ В НОВЫЙ DIV ДЛЯ СКРОЛЛ-АНИМАЦИИ) -->
+                <div class="grid gap-5">
+                    <!-- Проект 1: DYOR 5 -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                        <a href="dyor5.html" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
+                            <div class="w-full h-80 flex items-center justify-center">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png" 
+                                    alt="Скриншот проекта DYOR 5" 
+                                    class="w-full h-full object-cover">
+                            </div>
+                            <div class="bg-white p-5 flex justify-between items-center">
+                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">DYOR 5</div>
+                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">UI Design / Web Design / Brand Design</div>
+                            </div>
+                        </a>
+                    </div>
 
-                    <!-- Проект 2: Nu i Che (ОБНОВЛЕНА ССЫЛКА) -->
-                    <a href="nuiche.html" class="portfolio-item project-2 bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl reveal-on-scroll">
-                        <div class="project-image w-full h-80 flex items-center justify-center">
-                            <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39518_rwxdzz.png" 
-                                 alt="Скриншот проекта Nu i Che" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="bg-white p-5 flex justify-between items-center"> <!-- 20px padding -->
-                            <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Nu i Che</div>
-                            <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Web Design</div>
-                        </div>
-                    </a>
+                    <!-- Проект 2: Nu i Che -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                        <a href="nuiche.html" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
+                            <div class="w-full h-80 flex items-center justify-center">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39518_rwxdzz.png" 
+                                    alt="Скриншот проекта Nu i Che" 
+                                    class="w-full h-full object-cover">
+                            </div>
+                            <div class="bg-white p-5 flex justify-between items-center">
+                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Nu i Che</div>
+                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Web Design</div>
+                            </div>
+                        </a>
+                    </div>
 
-                    <!-- Проект 3: Nobee (ОБНОВЛЕНА ССЫЛКА) -->
-                    <a href="nobee.html" class="portfolio-item project-3 bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl reveal-on-scroll">
-                        <div class="project-image w-full h-80 flex items-center justify-center">
-                            <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39521_ck13rv.png" 
-                                 alt="Скриншот проекта Nobee" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="bg-white p-5 flex justify-between items-center"> <!-- 20px padding -->
-                            <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Nobee</div>
-                            <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Web Design</div>
-                        </div>
-                    </a>
+                    <!-- Проект 3: Nobee -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                        <a href="nobee.html" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
+                            <div class="w-full h-80 flex items-center justify-center">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39521_ck13rv.png" 
+                                    alt="Скриншот проекта Nobee" 
+                                    class="w-full h-full object-cover">
+                            </div>
+                            <div class="bg-white p-5 flex justify-between items-center">
+                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Nobee</div>
+                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Web Design</div>
+                            </div>
+                        </a>
+                    </div>
 
-                    <!-- Проект 4: 9 circles of Hell (ОБНОВЛЕНА ССЫЛКА) -->
-                    <a href="circles.html" class="portfolio-item project-4 bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl reveal-on-scroll">
-                        <div class="project-image w-full h-80 flex items-center justify-center">
-                            <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764843389/%D1%8B%D0%B0%D0%B2%D0%B0%D0%B0_ik42xy.png" 
-                                 alt="Скриншот проекта 9 circles of Hell" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="bg-white p-5 flex justify-between items-center"> <!-- 20px padding -->
-                            <div class="text-lg font-medium text-gray-900 tracking-custom-tight">9 circles of Hell</div>
-                            <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Longread</div>
-                        </div>
-                    </a>
+                    <!-- Проект 4: 9 circles of Hell -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                        <a href="circles.html" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
+                            <div class="w-full h-80 flex items-center justify-center">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764843389/%D1%8B%D0%B0%D0%B2%D0%B0%D0%B0_ik42xy.png" 
+                                    alt="Скриншот проекта 9 circles of Hell" 
+                                    class="w-full h-full object-cover">
+                            </div>
+                            <div class="bg-white p-5 flex justify-between items-center">
+                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">9 circles of Hell</div>
+                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Longread</div>
+                            </div>
+                        </a>
+                    </div>
 
-                    <!-- Проект 5: Din Drone (ОБНОВЛЕНА ССЫЛКА) -->
-                    <a href="dindrone.html" class="portfolio-item project-5 bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl reveal-on-scroll">
-                        <div class="project-image w-full h-80 flex items-center justify-center">
-                            <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39517_rwlir2.png" 
-                                 alt="Скриншот проекта Din Drone" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="bg-white p-5 flex justify-between items-center"> <!-- 20px padding -->
-                            <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Din Drone</div>
-                            <div class="text-right text-xs text-gray-500 tracking-wider uppercase">UI Design / 3D</div>
-                        </div>
-                    </a>
+                    <!-- Проект 5: Din Drone -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                        <a href="dindrone.html" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
+                            <div class="w-full h-80 flex items-center justify-center">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39517_rwlir2.png" 
+                                    alt="Скриншот проекта Din Drone" 
+                                    class="w-full h-full object-cover">
+                            </div>
+                            <div class="bg-white p-5 flex justify-between items-center">
+                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Din Drone</div>
+                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">UI Design / 3D</div>
+                            </div>
+                        </a>
+                    </div>
                     
-                    <!-- Проект 6: Turbofish (ОБНОВЛЕНА ССЫЛКА) -->
-                    <a href="turbofish.html" class="portfolio-item project-6 bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl reveal-on-scroll">
-                        <div class="project-image w-full h-80 flex items-center justify-center">
-                            <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39520_j4cgl1.png" 
-                                 alt="Скриншот проекта Turbofish" 
-                                 class="w-full h-full object-cover">
-                        </div>
-                        <div class="bg-white p-5 flex justify-between items-center"> <!-- 20px padding -->
-                            <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Turbofish</div>
-                            <div class="text-right text-xs text-gray-500 tracking-wider uppercase">UX Design / UI Design / E-commerce</div>
-                        </div>
-                    </a>
+                    <!-- Проект 6: Turbofish -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                        <a href="turbofish.html" class="portfolio-item project-6 bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
+                            <div class="w-full h-80 flex items-center justify-center">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39520_j4cgl1.png" 
+                                    alt="Скриншот проекта Turbofish" 
+                                    class="w-full h-full object-cover">
+                            </div>
+                            <div class="bg-white p-5 flex justify-between items-center">
+                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Turbofish</div>
+                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">UX Design / UI Design / E-commerce</div>
+                            </div>
+                        </a>
+                    </div>
 
                 </div>
 
                 <!-- Заголовок стоимости -->
-                <div id="pricing-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll"> <!-- 20px padding top/bottom -->
+                <div id="pricing-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll">
                     <h2 class="text-3xl sm:text-4xl font-medium text-white tracking-custom-tight">Стоимость</h2>
                 </div>
 
-                <div class="space-y-5"> <!-- 20px space-y -->
+                <div class="space-y-5">
                     <!-- Дизайн сайта (Figma) (с анимацией) -->
-                    <div class="bg-white shadow-xl p-5 reveal-on-scroll"> <!-- 20px padding -->
+                    <div class="bg-white shadow-xl p-5 reveal-on-scroll">
                         <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Дизайн сайта (Figma)</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-8">Одностраничный сайт, промо-страница, посадочная страница для продукта или услуги. Только дизайн - без сборки.</p>
                         
@@ -228,7 +368,7 @@
                     </div>
 
                     <!-- Сайт под ключ (Figma + Tilda) (с анимацией) -->
-                    <div class="bg-white shadow-xl p-5 reveal-on-scroll"> <!-- 20px padding -->
+                    <div class="bg-white shadow-xl p-5 reveal-on-scroll">
                         <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Сайт под ключ (Figma + Tilda)</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-8">Одностраничный сайт, промо-страница, посадочная страница для продукта или услуги. Полный цикл: дизайн и сборка.</p>
                         
@@ -245,7 +385,7 @@
                     </div>
 
                     <!-- Другие продукты (с анимацией) -->
-                    <div class="bg-white shadow-xl p-5 reveal-on-scroll"> <!-- 20px padding -->
+                    <div class="bg-white shadow-xl p-5 reveal-on-scroll">
                         <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Другие продукты?</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-8">Графические задачи, не связанные напрямую с сайтами: баннеры, презентации, соцсети и другое. Обсудим задачу и предложу решение.</p>
                         
@@ -259,52 +399,168 @@
                 </div>
 
                 <!-- Кнопка заказа - Ссылка на Telegram (с анимацией) -->
-                <a href="https://t.me/zorochik" target="_blank" class="block pb-5 reveal-on-scroll"> <!-- 20px padding bottom -->
-                    <button class="w-full bg-white text-black text-lg font-medium py-6 shadow-xl mt-4 transition duration-300 hover:bg-gray-200 rounded-none">
-                        Заказать сайт
+                <!-- Кнопка находится внутри скроллируемого контейнера -->
+                <a href="https://t.me/zorochik" target="_blank" class="block pt-5 reveal-on-scroll">
+                    <!-- АНИМИРОВАННАЯ КНОПКА (Закругление = 0) -->
+                    <button class="group relative w-full cursor-pointer overflow-hidden border border-white text-lg font-medium py-6 text-white shadow-xl transition duration-300 rounded-none hover:text-black">
+                        <!-- Base Text (Исходный текст, скрывается) -->
+                        <span class="inline-block transition-all duration-300 group-hover:-translate-x-8 group-hover:opacity-0 z-20 relative">
+                            Заказать сайт
+                        </span>
+                        <!-- Hover Background Fill (Эффект заливки) -->
+                        <div class="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-none bg-white transition-all duration-300 group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-white z-0"></div>
+                        <!-- Hover Content (Новый текст + стрелка, появляется) -->
+                        <div class="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 text-black opacity-0 transition-all duration-300 group-hover:-translate-x-0 group-hover:opacity-100">
+                            <span>Заказать сайт</span>
+                            <!-- ArrowRight SVG (замена компонента Lucide) -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+                                <path d="M5 12l14 0" />
+                                <path d="M15 16l4-4" />
+                                <path d="M15 8l4 4" />
+                            </svg>
+                        </div>
                     </button>
+                    <!-- /АНИМИРОВАННАЯ КНОПКА -->
                 </a>
-            
+                
             </div>
 
         </div>
     </div>
 
     <script>
-        // Инициализация Intersection Observer для анимации появления элементов при скролле
-        const observer = new IntersectionObserver((entries) => {
+        // === ПЕЧАТАЮЩИЙСЯ ТЕКСТ ===
+        const textToType = "Спасибо за то, что посетили мой сайт.";
+        const typingOutput = document.getElementById('typing-output');
+        const typingSpeed = 50;
+        let charIndex = 0;
+
+        function typeText() {
+            if (charIndex < textToType.length) {
+                typingOutput.textContent += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeText, typingSpeed);
+            } else {
+                // После завершения печати, убираем курсор
+                typingOutput.style.borderRight = 'none';
+            }
+        }
+
+        // === ПРЕЛОАДЕР И ПЛАВНЫЕ ПЕРЕХОДЫ ===
+        const preloader = document.getElementById('preloader');
+
+        // 1. Скрывает прелоадер после загрузки страницы и запускает печатающий текст
+        function hidePreloader() {
+            if (preloader) {
+                preloader.style.opacity = '0';
+                setTimeout(() => {
+                    preloader.style.zIndex = '-1';
+                    preloader.style.pointerEvents = 'none';
+                    // Запуск печатающегося текста после скрытия прелоадера
+                    if (typingOutput) {
+                        typeText();
+                    }
+                }, 500);
+            }
+        }
+
+        // 2. Показывает прелоадер перед уходом со страницы
+        function showPreloader(e) {
+            const target = e.currentTarget;
+            const href = target.getAttribute('href');
+            
+            if (href && (href.startsWith('#') || target.getAttribute('target') === '_blank')) {
+                return;
+            }
+
+            preloader.style.opacity = '1';
+            preloader.style.zIndex = '9999';
+            preloader.style.pointerEvents = 'all';
+
+            e.preventDefault();
+
+            setTimeout(() => {
+                window.location.href = href;
+            }, 500);
+        }
+
+        // === АНИМАЦИЯ КАРТОЧЕК ПРИ СКРОЛЛЕ (СУЖЕНИЕ/БЛЮР) ===
+        const scrollContainer = document.getElementById('right-scroll-container');
+        const revealElements = document.querySelectorAll('.reveal-on-scroll');
+        const projectWrappers = document.querySelectorAll('.project-card-wrapper');
+
+        // Новые, более деликатные значения
+        const maxScaleReduction = 0.04;   // минимум 96%
+        const maxBlur = 2.5;              // максимум 2.5px
+        const maxOpacityReduction = 0.25; // минимум 75% непрозрачности
+
+        if (scrollContainer && projectWrappers.length > 0) {
+            scrollContainer.addEventListener('scroll', () => {
+                const scrollContainerHeight = scrollContainer.offsetHeight;
+                const containerRect = scrollContainer.getBoundingClientRect();
+                const viewportCenter = scrollContainerHeight / 2;
+                
+                projectWrappers.forEach(wrapper => {
+                    const rect = wrapper.getBoundingClientRect();
+                    
+                    // Центр элемента относительно центра контейнера прокрутки
+                    const elementCenter = rect.top + (rect.height / 2) - containerRect.top;
+                    const distanceFromCenter = Math.abs(elementCenter - viewportCenter);
+                    const maxDistance = scrollContainerHeight / 2;
+                    
+                    // Нормализованное расстояние: 0 (в центре) до 1 (на краю)
+                    const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
+                    
+                    // Применение деликатных эффектов
+                    const scale = 1 - (normalizedDistance * maxScaleReduction);
+                    const blur = normalizedDistance * maxBlur;
+                    const opacity = 1 - (normalizedDistance * maxOpacityReduction);
+                    
+                    wrapper.style.transform = `scale(${scale})`;
+                    wrapper.style.filter = `blur(${blur}px)`;
+                    wrapper.style.opacity = opacity.toString();
+                });
+            });
+        }
+        
+        // Логика плавного появления элементов при первой загрузке (reveal-on-scroll)
+        const initialObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const element = entry.target;
 
                 if (entry.isIntersecting) {
-                    // Если элемент в области видимости, удаляем классы скрытия и сдвига
                     element.classList.remove('opacity-0', 'translate-y-4');
                     element.classList.add('opacity-100', 'translate-y-0');
-                    // Перестаем наблюдать за элементом после появления
-                    observer.unobserve(element);
+                    initialObserver.unobserve(element);
                 }
             });
         }, {
-            // margin: '0px 0px -10% 0px' - опционально, чтобы анимация срабатывала чуть раньше
             threshold: 0.1 
         });
 
-        // Находим все элементы с классом reveal-on-scroll
+        // === ГЛОБАЛЬНЫЙ ЗАПУСК ===
         document.addEventListener('DOMContentLoaded', () => {
-            const revealElements = document.querySelectorAll('.reveal-on-scroll');
+            // 1. Настраиваем прелоадер для всех внутренних ссылок
+            document.querySelectorAll('a[href^="index.html"], a[href$=".html"]').forEach(link => {
+                // Исключаем ссылки на телеграм, которые открываются в новом окне
+                if (link.getAttribute('target') !== '_blank') {
+                    link.addEventListener('click', showPreloader);
+                }
+            });
             
+            // 2. Настраиваем анимацию появления для всех reveal-on-scroll элементов
             revealElements.forEach(el => {
-                // Устанавливаем начальное скрытое состояние
+                // Добавляем начальное скрытое состояние для анимации
                 el.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-700', 'ease-out');
-                // Начинаем наблюдение
-                observer.observe(el);
+                initialObserver.observe(el);
             });
         });
+
+        // 4. Скрываем прелоадер после полной загрузки страницы
+        window.addEventListener('load', hidePreloader);
         
-        /* ВАЖНО: Код прелоадера, который мы добавили на страницы кейсов (nobee.html, nuiche.html),
-        автоматически обеспечивает плавный переход со всех ссылок, которые ведут на .html файлы,
-        включая ссылки на этой главной странице. Дополнительный код здесь не требуется.
-        */
+        // Дополнительная гарантия скрытия (на случай, если load не сработает быстро)
+        setTimeout(hidePreloader, 3000); 
 
     </script>
 </body>
