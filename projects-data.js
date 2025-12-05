@@ -1,7 +1,7 @@
-// ЭТОТ ФАЙЛ УПРАВЛЯЕТ ВСЕМИ ПРОЕКТАМИ НА САЙТЕ
-// status: 'open' - проект открыт, можно переходить по ссылке
-// status: 'locked' - проект закрыт, появляется замок и popup
-// status: 'coming_soon' - секретный проект, размытый
+// === УПРАВЛЕНИЕ ПРОЕКТАМИ ===
+// status: 'open'        -> Проект открыт, ссылка работает.
+// status: 'locked'      -> Проект закрыт, висит замок, блюр, открывается попап.
+// status: 'coming_soon' -> Секретный проект, сильный блюр, надпись "Скоро".
 
 const projectsData = [
     {
@@ -10,7 +10,7 @@ const projectsData = [
         category: 'UI Design / Web Design / Brand Design',
         image: 'https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png',
         link: 'dyor5.html',
-        status: 'locked' // <--- МЕНЯЙТЕ СТАТУС ЗДЕСЬ
+        status: 'locked' // <--- ПОМЕНЯЙ НА 'open', ЧТОБЫ ОТКРЫТЬ
     },
     {
         id: 'nuiche',
@@ -18,7 +18,7 @@ const projectsData = [
         category: 'Web Design',
         image: 'https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39518_rwxdzz.png',
         link: 'nuiche.html',
-        status: 'locked' // <--- МЕНЯЙТЕ СТАТУС ЗДЕСЬ
+        status: 'locked'
     },
     {
         id: 'nobee',
@@ -26,7 +26,7 @@ const projectsData = [
         category: 'Web Design',
         image: 'https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39521_ck13rv.png',
         link: 'nobee.html',
-        status: 'open' // <--- МЕНЯТЬ НЕ НУЖНО
+        status: 'open'
     },
     {
         id: 'circles',
@@ -34,7 +34,7 @@ const projectsData = [
         category: 'Longread',
         image: 'https://res.cloudinary.com/dt79npeea/image/upload/v1764843389/%D1%8B%D0%B0%D0%B2%D0%B0%D0%B0_ik42xy.png',
         link: 'circles.html',
-        status: 'open' // <--- МЕНЯТЬ НЕ НУЖНО
+        status: 'open'
     },
     {
         id: 'dindrone',
@@ -42,7 +42,7 @@ const projectsData = [
         category: 'UI Design / 3D',
         image: 'https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39517_rwlir2.png',
         link: 'dindrone.html',
-        status: 'locked' // <--- МЕНЯЙТЕ СТАТУС ЗДЕСЬ
+        status: 'locked'
     },
     {
         id: 'turbofish',
@@ -50,11 +50,11 @@ const projectsData = [
         category: 'UX Design / UI Design / E-commerce',
         image: 'https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39520_j4cgl1.png',
         link: 'turbofish.html',
-        status: 'locked' // <--- МЕНЯЙТЕ СТАТУС ЗДЕСЬ
+        status: 'locked'
     }
 ];
 
-// Секретные проекты (Coming Soon)
+// Секретные проекты (можно добавить сколько угодно)
 const secretProjects = [
     {
         id: 'secret1',
