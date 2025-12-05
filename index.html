@@ -48,8 +48,6 @@
             }
         }
         
-        /* === УДАЛЕНЫ СТИЛИ #right-scroll-container, так как он больше не прокручивается === */
-
         /* === НОВАЯ АНИМАЦИЯ ПРЕЛОАДЕРА (PULSE LOADER) === */
         #preloader {
             position: fixed;
@@ -99,9 +97,9 @@
         /* === КОНЕЦ НОВОЙ АНИМАЦИИ === */
         
         /* Стиль для левой панели (Фото) */
-        .left-side {
+        .left-side-bg {
             background-image: 
-                linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+                linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.2)),
                 url('https://res.cloudinary.com/dt79npeea/image/upload/v1764843336/photo_2025-12-04_13-05-55_pwtepu.jpg');
             background-size: cover;
             /* Сдвигаем фокус изображения на 20% вниз */
@@ -170,11 +168,13 @@
         </div>
     </div>
 
+    <!-- КОНТЕЙНЕР -->
     <div class="flex flex-col lg:flex-row min-h-screen lg:h-screen">
 
-        <!-- Левая часть (Фото/Навигация) -->
-        <div class="left-side lg:w-1/2 min-h-[500px] lg:h-full relative flex flex-col justify-between p-5 sm:p-8">
-            <div class="absolute inset-0 bg-gradient-to-b from-black/10 to-black/40 pointer-events-none"></div>
+        <!-- ЛЕВАЯ ЧАСТЬ (ДЕСКТОП): Скрыта на мобильном (hidden), видна на десктопе (lg:flex) -->
+        <div class="left-side-bg hidden lg:flex lg:w-1/2 lg:h-full relative flex-col justify-between p-5 sm:p-8">
+            <!-- Светлый градиент (from-black/00 to-black/20) -->
+            <div class="absolute inset-0 bg-gradient-to-b from-black/00 to-black/20 pointer-events-none"></div>
 
             <!-- Верхняя навигация -->
             <nav class="flex justify-between text-xs text-white/60 tracking-wider relative z-10">
@@ -190,31 +190,49 @@
                 <span></span>
             </div>
         </div>
-
-        <!-- Правая часть (Контент) - ВНЕШНИЙ КОНТЕЙНЕР (СЕЙЧАС ОН ПРОКРУЧИВАЕТСЯ!) -->
-        <!-- ID 'scroll-panel' теперь является основным элементом прокрутки -->
-        <div id="scroll-panel" class="lg:w-1/2 max-w-full lg:h-screen lg:p-12 p-4 sm:p-10 flex justify-center lg:overflow-y-auto scroll-mask-container">
+        
+        <!-- ПРАВАЯ ЧАСТЬ (КОНТЕНТ): Видна всегда -->
+        <div id="scroll-panel" class="w-full lg:w-1/2 max-w-full lg:h-screen lg:p-12 p-4 sm:p-10 flex justify-center lg:overflow-y-auto scroll-mask-container">
             
-            <!-- Внутренний контейнер с ограничением ширины -->
+            <!-- Внутренний контейнер -->
             <div id="right-scroll-container" class="w-full lg:max-w-[365px] space-y-5"> 
 
-                <!-- 0. НОВЫЙ ОТДЕЛЬНЫЙ БЛОК ПРИВЕТСТВИЯ (Использует min-height для высоты) -->
+                <!-- 1. ПРИВЕТСТВИЕ (Первое место всегда) -->
                 <div id="welcome-message" class="bg-black shadow-lg p-8 reveal-on-scroll scroll-animated-element text-center">
                     <h3 class="text-5xl font-medium text-white mb-4 tracking-custom-tight">Приветствую!</h3>
-                    <!-- Печатающийся текст. Родительский div нужен для центрирования inline-block элемента. -->
+                    <!-- Печатающийся текст -->
                     <div class="flex justify-center">
                         <p id="typing-output" class="text-base text-white/70 leading-relaxed typing-text mx-auto max-w-xs"></p>
                     </div>
                 </div>
+
+                <!-- 2. МОБИЛЬНОЕ ФОТО (Второе место, только на мобильном) -->
+                <!-- Виден на мобильном (block), скрыт на десктопе (lg:hidden) -->
+                <div class="block lg:hidden w-full h-[500px] left-side-bg relative flex flex-col justify-between p-5 reveal-on-scroll scroll-animated-element shadow-2xl">
+                     <!-- Светлый градиент -->
+                    <div class="absolute inset-0 bg-gradient-to-b from-black/00 to-black/20 pointer-events-none"></div>
+                    
+                    <!-- Навигация внутри фото для мобильного -->
+                    <nav class="flex justify-between text-xs text-white/60 tracking-wider relative z-10">
+                        <a href="#portfolio-section" class="nav-link hover:text-white transition duration-300">Портфолио</a>
+                        <a href="#pricing-section" class="nav-link hover:text-white transition duration-300">Стоимость</a>
+                        <a href="https://t.me/zorochik" target="_blank" class="hover:text-white transition duration-300">Связаться</a>
+                    </nav>
+                     <div class="flex justify-between w-full text-[10px] text-white/50 tracking-wider relative z-10">
+                        <span></span>  
+                        <span class="inline">Я живой, все в порядке</span>
+                        <span></span>
+                    </div>
+                </div>
                 
-                <!-- 1. Информационная карточка -->
+                <!-- 3. ИНФОРМАЦИЯ (Третье место) -->
                 <div class="bg-white shadow-2xl p-5 reveal-on-scroll scroll-animated-element">
                     <h1 class="text-[36px] font-medium text-gray-900 tracking-custom-tight mb-2 leading-none">Баскаков Никита</h1>
                     <p class="text-base text-gray-600 mb-20 font-light">Портфолио веб-дизайнера</p>
                     <p class="text-sm text-gray-400 leading-relaxed">и просто хорошего человека</p>
                 </div>
 
-                <!-- 2. Карточка с опытом -->
+                <!-- 4. ОПЫТ -->
                 <div class="bg-white shadow-lg p-5 flex justify-between items-center reveal-on-scroll scroll-animated-element">
                     <span class="text-sm text-gray-600">Опыт:</span>
                     <span class="text-xl font-medium text-gray-900"> +4 года</span>
@@ -225,7 +243,7 @@
                     <h2 class="text-3xl sm:text-4xl font-medium text-white tracking-custom-tight">Портфолио</h2>
                 </div>
 
-                <!-- 3. Проекты портфолио -->
+                <!-- Проекты портфолио -->
                 <div class="grid gap-5">
                     <!-- Проект 1: DYOR 5 -->
                     <div class="project-card-wrapper reveal-on-scroll scroll-animated-element">
@@ -401,6 +419,7 @@
             </div>
 
         </div>
+        
     </div>
 
     <script>
@@ -467,36 +486,50 @@
         }
 
         // === АНИМАЦИЯ КАРТОЧЕК ПРИ СКРОЛЛЕ (СУЖЕНИЕ/БЛЮР) ===
-        // Теперь используем '#scroll-panel' как главный контейнер скролла
-        const scrollContainer = document.getElementById('scroll-panel'); 
-        // Элементы, которые должны анимироваться при скролле
+        // Определяем, какой элемент прокрутки использовать: window (для мобильных) или #scroll-panel (для десктопов)
+        const scrollContainer = window.innerWidth >= 1024 ? document.getElementById('scroll-panel') : window; 
+        
         const scrollAnimatedElements = document.querySelectorAll('.scroll-animated-element');
-        // Элементы для анимации появления (используются только при DOMContentLoaded)
-        const revealElements = document.querySelectorAll('.reveal-on-scroll');
-
-
+        
         // Новые, более деликатные значения
         const maxScaleReduction = 0.04;   // минимум 96%
         const maxBlur = 2.5;              // максимум 2.5px
         const maxOpacityReduction = 0.25; // минимум 75% непрозрачности
 
         if (scrollContainer && scrollAnimatedElements.length > 0) {
-            scrollContainer.addEventListener('scroll', () => {
-                const scrollContainerHeight = scrollContainer.offsetHeight;
-                const containerRect = scrollContainer.getBoundingClientRect();
-                const viewportCenter = scrollContainerHeight / 2;
+            
+            // Определяем функцию обработчика прокрутки, общую для window и #scroll-panel
+            const handleScroll = () => {
+                let viewportHeight, scrollPosition, containerTop = 0;
+
+                if (scrollContainer === window) {
+                    // Мобильная версия: прокрутка по window
+                    viewportHeight = window.innerHeight;
+                    scrollPosition = window.scrollY;
+                } else {
+                    // Десктопная версия: прокрутка по #scroll-panel
+                    viewportHeight = scrollContainer.offsetHeight;
+                    scrollPosition = scrollContainer.scrollTop;
+                    containerTop = scrollContainer.getBoundingClientRect().top;
+                }
                 
-                // Итерируем по всем элементам, которые должны анимироваться при скролле
+                const viewportCenter = viewportHeight / 2;
+                
                 scrollAnimatedElements.forEach(element => {
                     const rect = element.getBoundingClientRect();
                     
-                    // Центр элемента относительно центра контейнера прокрутки
-                    // Поскольку scrollContainer теперь #scroll-panel (внешний), то rect.top - containerRect.top
-                    const elementCenter = rect.top + (rect.height / 2) - containerRect.top;
+                    let elementCenter;
+                    if (scrollContainer === window) {
+                        // Позиция центра элемента относительно центра окна
+                        elementCenter = rect.top + (rect.height / 2);
+                    } else {
+                        // Позиция центра элемента относительно центра прокручиваемого контейнера
+                        elementCenter = rect.top + (rect.height / 2) - containerTop;
+                    }
+
                     const distanceFromCenter = Math.abs(elementCenter - viewportCenter);
-                    const maxDistance = scrollContainerHeight / 2;
+                    const maxDistance = viewportHeight / 2;
                     
-                    // Нормализованное расстояние: 0 (в центре) до 1 (на краю)
                     const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
                     
                     // Применение деликатных эффектов
@@ -508,10 +541,25 @@
                     element.style.filter = `blur(${blur}px)`;
                     element.style.opacity = opacity.toString();
                 });
+            };
+            
+            // Добавляем обработчик на нужный контейнер/window
+            scrollContainer.addEventListener('scroll', handleScroll);
+            // Вызываем при загрузке, чтобы установить начальные эффекты
+            window.addEventListener('load', handleScroll);
+            
+            // Необходимо для пересчета при изменении размера окна
+            window.addEventListener('resize', () => {
+                // Если мы на десктопе, вызываем вручную
+                if (window.innerWidth >= 1024) {
+                    handleScroll();
+                }
+                // На мобильном handleScroll сработает сам по себе
             });
         }
+
+        // === ПЛАВНОЕ ПОЯВЛЕНИЕ ЭЛЕМЕНТОВ (REVEAL-ON-SCROLL) ===
         
-        // Логика плавного появления элементов при первой загрузке (reveal-on-scroll)
         const initialObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const element = entry.target;
@@ -541,8 +589,7 @@
             });
             
             // 2. Настраиваем анимацию появления для всех reveal-on-scroll элементов
-            revealElements.forEach(el => {
-                // Добавляем начальное скрытое состояние для анимации
+            scrollAnimatedElements.forEach(el => { 
                 el.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-700', 'ease-out');
                 initialObserver.observe(el);
             });
