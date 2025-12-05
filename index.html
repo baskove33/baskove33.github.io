@@ -119,11 +119,23 @@
             max-width: 100%; /* Для центрирования */
         }
         
-        /* Класс для анимации сужения/блюра при скролле (теперь включает Приветствие) */
+        /* ОПТИМИЗАЦИЯ: Класс для анимации сужения/блюра при скролле */
         .scroll-animated-element {
-            /* Увеличил время transition, чтобы блюр успевал срабатывать */
-            transition: transform 0.15s linear, filter 0.15s linear, opacity 0.15s linear;
+            /* Увеличил время transition для сглаживания */
+            transition: transform 0.1s linear, filter 0.1s linear, opacity 0.1s linear;
             transform-origin: center center;
+            
+            /* === ОПТИМИЗАЦИЯ ПРОИЗВОДИТЕЛЬНОСТИ (Anti-Ripple) === */
+            /* Сообщаем браузеру, что эти свойства будут меняться, чтобы он подготовил GPU */
+            will-change: transform, filter, opacity;
+            /* Включаем аппаратное ускорение */
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            /* Скрываем обратную сторону (иногда помогает от мерцания) */
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            /* Сглаживание шрифтов при трансформациях */
+            -webkit-font-smoothing: antialiased;
         }
 
         /* Класс для анимации появления (только translate/opacity) */
@@ -496,65 +508,64 @@
         const maxBlur = 2.5;              // максимум 2.5px
         const maxOpacityReduction = 0.25; // минимум 75% непрозрачности
 
+        // === ОПТИМИЗАЦИЯ С ПОМОЩЬЮ REQUEST ANIMATION FRAME ===
         if (scrollContainer && scrollAnimatedElements.length > 0) {
-            
-            // Определяем функцию обработчика прокрутки, общую для window и #scroll-panel
-            const handleScroll = () => {
-                let viewportHeight, scrollPosition, containerTop = 0;
+            let ticking = false;
+
+            const updateAnimations = () => {
+                let viewportHeight, containerTop = 0;
 
                 if (scrollContainer === window) {
-                    // Мобильная версия: прокрутка по window
                     viewportHeight = window.innerHeight;
-                    scrollPosition = window.scrollY;
                 } else {
-                    // Десктопная версия: прокрутка по #scroll-panel
                     viewportHeight = scrollContainer.offsetHeight;
-                    scrollPosition = scrollContainer.scrollTop;
                     containerTop = scrollContainer.getBoundingClientRect().top;
                 }
                 
                 const viewportCenter = viewportHeight / 2;
-                
+                const maxDistance = viewportHeight / 2;
+
                 scrollAnimatedElements.forEach(element => {
                     const rect = element.getBoundingClientRect();
                     
                     let elementCenter;
                     if (scrollContainer === window) {
-                        // Позиция центра элемента относительно центра окна
                         elementCenter = rect.top + (rect.height / 2);
                     } else {
-                        // Позиция центра элемента относительно центра прокручиваемого контейнера
                         elementCenter = rect.top + (rect.height / 2) - containerTop;
                     }
 
                     const distanceFromCenter = Math.abs(elementCenter - viewportCenter);
-                    const maxDistance = viewportHeight / 2;
                     
                     const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
                     
-                    // Применение деликатных эффектов
                     const scale = 1 - (normalizedDistance * maxScaleReduction);
                     const blur = normalizedDistance * maxBlur;
                     const opacity = 1 - (normalizedDistance * maxOpacityReduction);
                     
-                    element.style.transform = `scale(${scale})`;
+                    // Обновляем стили только если значения изменились (опционально, но здесь обновляем всегда)
+                    element.style.transform = `scale(${scale}) translateZ(0)`; // translateZ(0) форсирует GPU
                     element.style.filter = `blur(${blur}px)`;
                     element.style.opacity = opacity.toString();
                 });
+                
+                ticking = false;
+            };
+
+            const onScroll = () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateAnimations);
+                    ticking = true;
+                }
             };
             
-            // Добавляем обработчик на нужный контейнер/window
-            scrollContainer.addEventListener('scroll', handleScroll);
-            // Вызываем при загрузке, чтобы установить начальные эффекты
-            window.addEventListener('load', handleScroll);
-            
-            // Необходимо для пересчета при изменении размера окна
+            scrollContainer.addEventListener('scroll', onScroll, { passive: true });
+            // Вызываем при загрузке
+            window.addEventListener('load', onScroll);
             window.addEventListener('resize', () => {
-                // Если мы на десктопе, вызываем вручную
                 if (window.innerWidth >= 1024) {
-                    handleScroll();
+                    onScroll();
                 }
-                // На мобильном handleScroll сработает сам по себе
             });
         }
 
@@ -569,7 +580,7 @@
                     element.classList.add('opacity-100', 'translate-y-0');
                     // Дополнительный сброс, чтобы гарантировать четкость сразу после появления
                     element.style.filter = 'none'; 
-                    element.style.transform = 'scale(1)';
+                    element.style.transform = 'scale(1) translateZ(0)';
 
                     initialObserver.unobserve(element);
                 }
