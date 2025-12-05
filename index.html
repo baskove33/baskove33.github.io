@@ -166,7 +166,62 @@
             flex-direction: column;
             justify-content: center;
         }
-        
+
+        /* === СТИЛИ ДЛЯ ЗАБЛОКИРОВАННЫХ КЕЙСОВ === */
+        .locked-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(2px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 20;
+        }
+
+        .portfolio-item:hover .locked-overlay {
+            opacity: 1;
+        }
+
+        /* На мобильных устройствах всегда показываем иконку замка, если она есть */
+        @media (max-width: 768px) {
+            .locked-overlay {
+                opacity: 1;
+                background: rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        .lock-icon {
+            animation: wobble 2s infinite ease-in-out;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        /* === СТИЛИ ДЛЯ POPUP === */
+        #lock-popup {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #lock-popup.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .popup-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        #lock-popup.active .popup-content {
+            transform: scale(1);
+        }
+
     </style>
 </head>
 <body class="bg-black text-white antialiased">
@@ -177,6 +232,29 @@
             <span></span>
             <span></span>
             <span></span>
+        </div>
+    </div>
+
+    <!-- POPUP (Модальное окно) -->
+    <div id="lock-popup" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="popup-content bg-white text-black p-8 max-w-sm w-full shadow-2xl relative text-center">
+            <button onclick="closePopup()" class="absolute top-4 right-4 text-gray-400 hover:text-black transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            
+            <div class="mb-6 flex justify-center text-black">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+
+            <h3 id="popup-title" class="text-xl font-bold mb-3 tracking-custom-tight">История кейса</h3>
+            <p id="popup-message" class="text-sm text-gray-600 mb-8 leading-relaxed">
+                Я еще не рассказал историю об этом кейсе.
+            </p>
+
+            <!-- ОБНОВЛЕННАЯ ССЫЛКА НА THREADS -->
+            <a href="https://www.threads.net/@baskove33" target="_blank" class="block w-full bg-black text-white font-medium py-4 hover:bg-gray-800 transition duration-300">
+                Перейти в Threads
+            </a>
         </div>
     </div>
 
@@ -257,9 +335,17 @@
 
                 <!-- Проекты портфолио -->
                 <div class="grid gap-5">
-                    <!-- Проект 1: DYOR 5 -->
-                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element">
-                        <a href="dyor5.html" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
+                    
+                    <!-- ЗАБЛОКИРОВАН: DYOR 5 -->
+                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element relative group">
+                        <!-- Изменил <a> на <div> и добавил onclick -->
+                        <div onclick="openLockedPopup('story')" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none relative">
+                            <!-- Overlay с замком -->
+                            <div class="locked-overlay">
+                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Узнать подробнее</span>
+                            </div>
+
                             <div class="w-full h-80 flex items-center justify-center">
                                 <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png" 
                                     alt="Скриншот проекта DYOR 5" 
@@ -269,12 +355,18 @@
                                 <div class="text-lg font-medium text-gray-900 tracking-custom-tight">DYOR 5</div>
                                 <div class="text-right text-xs text-gray-500 tracking-wider uppercase">UI Design / Web Design / Brand Design</div>
                             </div>
-                        </a>
+                        </div>
                     </div>
 
-                    <!-- Проект 2: Nu i Che -->
-                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element">
-                        <a href="nuiche.html" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
+                    <!-- ЗАБЛОКИРОВАН: Nu i Che -->
+                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element relative group">
+                        <div onclick="openLockedPopup('story')" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none relative">
+                             <!-- Overlay с замком -->
+                             <div class="locked-overlay">
+                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Узнать подробнее</span>
+                            </div>
+
                             <div class="w-full h-80 flex items-center justify-center">
                                 <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39518_rwxdzz.png" 
                                     alt="Скриншот проекта Nu i Che" 
@@ -284,10 +376,10 @@
                                 <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Nu i Che</div>
                                 <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Web Design</div>
                             </div>
-                        </a>
+                        </div>
                     </div>
 
-                    <!-- Проект 3: Nobee -->
+                    <!-- ОТКРЫТ: Nobee -->
                     <div class="project-card-wrapper reveal-on-scroll scroll-animated-element">
                         <a href="nobee.html" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
                             <div class="w-full h-80 flex items-center justify-center">
@@ -302,7 +394,7 @@
                         </a>
                     </div>
 
-                    <!-- Проект 4: 9 circles of Hell -->
+                    <!-- ОТКРЫТ: 9 circles of Hell -->
                     <div class="project-card-wrapper reveal-on-scroll scroll-animated-element">
                         <a href="circles.html" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
                             <div class="w-full h-80 flex items-center justify-center">
@@ -317,9 +409,15 @@
                         </a>
                     </div>
 
-                    <!-- Проект 5: Din Drone -->
-                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element">
-                        <a href="dindrone.html" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
+                    <!-- ЗАБЛОКИРОВАН: Din Drone -->
+                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element relative group">
+                        <div onclick="openLockedPopup('story')" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none relative">
+                             <!-- Overlay с замком -->
+                             <div class="locked-overlay">
+                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Узнать подробнее</span>
+                            </div>
+
                             <div class="w-full h-80 flex items-center justify-center">
                                 <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39517_rwlir2.png" 
                                     alt="Скриншот проекта Din Drone" 
@@ -329,12 +427,18 @@
                                 <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Din Drone</div>
                                 <div class="text-right text-xs text-gray-500 tracking-wider uppercase">UI Design / 3D</div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                     
-                    <!-- Проект 6: Turbofish -->
-                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element">
-                        <a href="turbofish.html" class="portfolio-item project-6 bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none">
+                    <!-- ЗАБЛОКИРОВАН: Turbofish -->
+                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element relative group">
+                        <div onclick="openLockedPopup('story')" class="portfolio-item project-6 bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none relative">
+                             <!-- Overlay с замком -->
+                             <div class="locked-overlay">
+                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Узнать подробнее</span>
+                            </div>
+
                             <div class="w-full h-80 flex items-center justify-center">
                                 <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39520_j4cgl1.png" 
                                     alt="Скриншот проекта Turbofish" 
@@ -344,8 +448,49 @@
                                 <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Turbofish</div>
                                 <div class="text-right text-xs text-gray-500 tracking-wider uppercase">UX Design / UI Design / E-commerce</div>
                             </div>
-                        </a>
+                        </div>
                     </div>
+
+                     <!-- НОВЫЙ КЕЙС 1 (СЕКРЕТНЫЙ) -->
+                     <div class="project-card-wrapper reveal-on-scroll scroll-animated-element relative group">
+                        <div onclick="openLockedPopup('coming_soon')" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none relative">
+                             <!-- Overlay с замком -->
+                             <div class="locked-overlay" style="opacity: 1; background: rgba(255, 255, 255, 0.1);">
+                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Скоро</span>
+                            </div>
+
+                            <div class="w-full h-80 flex items-center justify-center bg-gray-100 overflow-hidden">
+                                <!-- Размытое изображение (плейсхолдер) -->
+                                <div class="w-full h-full bg-gradient-to-br from-gray-300 to-gray-500 blur-xl scale-110"></div>
+                            </div>
+                            <div class="bg-white p-5 flex justify-between items-center filter blur-[2px]">
+                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Секретный проект</div>
+                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Coming Soon</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- НОВЫЙ КЕЙС 2 (СЕКРЕТНЫЙ) -->
+                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element relative group">
+                        <div onclick="openLockedPopup('coming_soon')" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none relative">
+                             <!-- Overlay с замком -->
+                             <div class="locked-overlay" style="opacity: 1; background: rgba(255, 255, 255, 0.1);">
+                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Скоро</span>
+                            </div>
+
+                            <div class="w-full h-80 flex items-center justify-center bg-gray-100 overflow-hidden">
+                                <!-- Размытое изображение (плейсхолдер) -->
+                                <div class="w-full h-full bg-gradient-to-bl from-gray-400 to-gray-600 blur-xl scale-110"></div>
+                            </div>
+                            <div class="bg-white p-5 flex justify-between items-center filter blur-[2px]">
+                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Секретный проект</div>
+                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Coming Soon</div>
+                            </div>
+                        </div>
+                    </div>
+
 
                 </div>
 
@@ -587,6 +732,33 @@
             });
         }, {
             threshold: 0.1 
+        });
+
+        // === ЛОГИКА POPUP ===
+        const popup = document.getElementById('lock-popup');
+        const popupTitle = document.getElementById('popup-title');
+        const popupMessage = document.getElementById('popup-message');
+
+        function openLockedPopup(type) {
+            if (type === 'story') {
+                popupTitle.textContent = 'История кейса';
+                popupMessage.textContent = 'Так как я не рассказал еще историю об этом кейсе, переходите в мой threads, там вы получите анонс и историю о том, как создавался этот кейс.';
+            } else if (type === 'coming_soon') {
+                popupTitle.textContent = 'Скоро будет';
+                popupMessage.textContent = 'Эти кейсы практически упакованы. Обязательно подписывайтесь в threads, чтобы не упустить анонсы этих кейсов.';
+            }
+            popup.classList.add('active');
+        }
+
+        function closePopup() {
+            popup.classList.remove('active');
+        }
+
+        // Закрытие по клику вне контента
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                closePopup();
+            }
         });
 
         // === ГЛОБАЛЬНЫЙ ЗАПУСК ===
