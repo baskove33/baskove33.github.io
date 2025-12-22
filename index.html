@@ -25,6 +25,7 @@
         }
 
         body {
+            /* scroll-behavior: smooth обеспечивает нативную плавность скролла */
             font-family: 'TT Neoris', 'Inter', sans-serif;
             scroll-behavior: smooth;
             transition: scroll-behavior 0.8s ease-in-out;
@@ -70,16 +71,58 @@
             height: 1.5em; display: inline-block; max-width: 100%;
         }
         
-        .scroll-animated-element {
-            transition: transform 0.1s linear, filter 0.1s linear, opacity 0.1s linear;
-            will-change: transform, filter, opacity;
-            transform: translateZ(0); -webkit-font-smoothing: antialiased;
+        /* === НОВЫЕ СТИЛИ КАРТОЧЕК (Из all_cases.html) === */
+        .portfolio-item { 
+            position: relative;
+            overflow: hidden;
+            /* ФОН КАРТОЧКИ СТАЛ ЧЕРНЫМ */
+            background-color: #111; 
+            /* Обводка из all_cases */
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            /* Новые переходы: только трансформация и тень */
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .portfolio-item:hover { 
+            /* Анимация при наведении */
+            transform: scale(1.02); 
+            /* Новая тень из all_cases */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2); 
+            z-index: 10;
         }
 
-        .reveal-on-scroll { transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+        /* Стиль изображения */
+        .portfolio-item img {
+            transition: transform 0.5s ease-out, filter 0.5s ease-out;
+            filter: grayscale(80%) brightness(0.9); /* Черно-белый по умолчанию */
+        }
+        .portfolio-item:hover img {
+            filter: grayscale(0%) brightness(1); /* Цветной при наведении */
+            transform: scale(1.05);
+        }
+        
+        /* СТИЛЬ ДЛЯ БЛОКА С ТЕКСТОМ ВНУТРИ КАРТОЧКИ (Чтобы текст был белым) */
+        .portfolio-item-text {
+            background-color: transparent; /* Убираем фон, он будет от .portfolio-item */
+            color: #fff; /* Делаем текст белым */
+        }
+        .portfolio-item-text .title {
+            color: #fff; /* Заголовок белый */
+        }
+        .portfolio-item-text .tags {
+            color: rgba(255, 255, 255, 0.5); /* Теги серые */
+        }
 
-        .portfolio-item { transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease; }
-        .portfolio-item:hover { filter: none; }
+
+        /* === АНИМАЦИЯ ПОЯВЛЕНИЯ (reveal-on-scroll) === */
+        .reveal-on-scroll { 
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .reveal-on-scroll.opacity-100 {
+            opacity: 1;
+            transform: translateY(0);
+        }
         
         #welcome-message { min-height: calc(100vh - 4rem); display: flex; flex-direction: column; justify-content: center; }
 
@@ -110,7 +153,6 @@
         /* ========================================= */
         .magic-lock-wrapper {
             position: relative; display: block;
-            /* УДАЛЕНО overflow: hidden; чтобы частицы вылетали */
             contain: layout paint style; 
         }
 
@@ -203,7 +245,7 @@
             <div id="right-scroll-container" class="w-full lg:max-w-[365px] space-y-5"> 
 
                 <!-- Приветствие -->
-                <div id="welcome-message" class="bg-black shadow-lg p-8 reveal-on-scroll scroll-animated-element text-center">
+                <div id="welcome-message" class="bg-black shadow-lg p-8 reveal-on-scroll text-center">
                     <h3 class="text-5xl font-medium text-white mb-4 tracking-custom-tight">Приветствую!</h3>
                     <div class="flex justify-center">
                         <p id="typing-output" class="text-base text-white/70 leading-relaxed typing-text mx-auto max-w-xs"></p>
@@ -211,7 +253,7 @@
                 </div>
 
                 <!-- Мобильное фото -->
-                <div class="block lg:hidden w-full h-[500px] left-side-bg relative flex flex-col justify-between p-5 reveal-on-scroll scroll-animated-element shadow-2xl">
+                <div class="block lg:hidden w-full h-[500px] left-side-bg relative flex flex-col justify-between p-5 reveal-on-scroll shadow-2xl">
                     <div class="absolute inset-0 bg-gradient-to-b from-black/00 to-black/20 pointer-events-none"></div>
                     <nav class="flex justify-between text-xs text-white/60 tracking-wider relative z-10">
                         <a href="#portfolio-section" class="nav-link hover:text-white transition duration-300">Портфолио</a>
@@ -226,46 +268,29 @@
                 </div>
                 
                 <!-- Информация -->
-                <div class="bg-white shadow-2xl p-5 reveal-on-scroll scroll-animated-element">
+                <div class="bg-white shadow-2xl p-5 reveal-on-scroll">
                     <h1 class="text-[36px] font-medium text-gray-900 tracking-custom-tight mb-2 leading-none">Баскаков Никита</h1>
                     <p class="text-base text-gray-600 mb-20 font-light">Портфолио веб-дизайнера</p>
                     <p class="text-sm text-gray-400 leading-relaxed">и просто хорошего человека</p>
                 </div>
 
                 <!-- Опыт -->
-                <div class="bg-white shadow-lg p-5 flex justify-between items-center reveal-on-scroll scroll-animated-element">
+                <div class="bg-white shadow-lg p-5 flex justify-between items-center reveal-on-scroll">
                     <span class="text-sm text-gray-600">Опыт:</span>
                     <span class="text-xl font-medium text-gray-900"> +4 года</span>
                 </div>
 
                 <!-- Заголовок портфолио -->
-                <div id="portfolio-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll scroll-animated-element">
+                <div id="portfolio-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll">
                     <h2 class="text-3xl sm:text-4xl font-medium text-white tracking-custom-tight">Портфолио</h2>
                 </div>
 
                 <!-- ПРОЕКТЫ -->
                 <div class="grid gap-5">
                     
-                    <!-- 1. DYOR 5 (LOCKED) -->
-                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element relative group">
-                        <div onclick="openLockedPopup('story')" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none relative">
-                             <div class="locked-overlay">
-                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Узнать подробнее</span>
-                            </div>
-                            <div class="w-full h-80 flex items-center justify-center">
-                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png" class="w-full h-full object-cover">
-                            </div>
-                            <div class="bg-white p-5 flex justify-between items-center">
-                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">DYOR 5</div>
-                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">UI Design / Web Design / Brand Design</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 2. Nu i Che (UNLOCKED + MAGIC) -->
-                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element">
-                         <a href="nuiche.html" class="magic-lock-wrapper portfolio-item bg-white shadow-xl relative block">
+                    <!-- 1. DYOR 5 (ОТКРЫТ + MAGIC) -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                         <a href="dyor5.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
                             <!-- Оверлей с замком -->
                             <div class="overlay-panel">
                                 <svg class="lock-svg" viewBox="0 0 24 24">
@@ -278,18 +303,43 @@
                             <canvas class="particles"></canvas>
                             <!-- Контент -->
                             <div class="relative z-0">
-                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39518_rwxdzz.png" class="w-full h-80 object-cover">
-                                <div class="bg-white p-5 flex justify-between">
-                                    <div class="text-lg font-medium text-gray-900">Nu i Che</div>
-                                    <div class="text-xs text-gray-500 uppercase">Web Design</div>
+                                <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                    <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png" class="w-full h-full object-cover">
+                                </div>
+                                <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                    <div class="title text-lg font-medium tracking-custom-tight">DYOR 5</div>
+                                    <div class="tags text-right text-xs tracking-wider uppercase">UI Design / Web Design / Brand Design</div>
                                 </div>
                             </div>
                         </a>
                     </div>
 
-                    <!-- 3. Nobee (UNLOCKED + MAGIC) -->
-                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element">
-                        <a href="nobee.html" class="magic-lock-wrapper portfolio-item bg-white shadow-xl relative block">
+                    <!-- 2. Nu i Che (ОТКРЫТ + MAGIC) -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                         <a href="nuiche.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
+                            <div class="overlay-panel">
+                                <svg class="lock-svg" viewBox="0 0 24 24">
+                                    <path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    <path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/>
+                                    <circle cx="12" cy="16" r="1.5" fill="#151515"/>
+                                </svg>
+                            </div>
+                            <canvas class="particles"></canvas>
+                            <div class="relative z-0">
+                                <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                    <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39518_rwxdzz.png" class="w-full h-full object-cover">
+                                </div>
+                                <div class="portfolio-item-text p-5 flex justify-between">
+                                    <div class="title text-lg font-medium">Nu i Che</div>
+                                    <div class="tags text-xs uppercase">Web Design</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- 3. Nobee (ОТКРЫТ + MAGIC) -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                        <a href="nobee.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
                              <div class="overlay-panel">
                                 <svg class="lock-svg" viewBox="0 0 24 24">
                                     <path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -299,20 +349,20 @@
                             </div>
                             <canvas class="particles"></canvas>
                             <div class="relative z-0">
-                                <div class="w-full h-80 flex items-center justify-center">
+                                <div class="w-full h-80 flex items-center justify-center overflow-hidden">
                                     <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39521_ck13rv.png" class="w-full h-full object-cover">
                                 </div>
-                                <div class="bg-white p-5 flex justify-between items-center">
-                                    <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Nobee</div>
-                                    <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Web Design</div>
+                                <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                    <div class="title text-lg font-medium tracking-custom-tight">Nobee</div>
+                                    <div class="tags text-right text-xs tracking-wider uppercase">Web Design</div>
                                 </div>
                             </div>
                         </a>
                     </div>
 
                     <!-- 4. Секретный проект (LOCKED) -->
-                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element relative group">
-                        <div onclick="openLockedPopup('coming_soon')" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none relative">
+                    <div class="project-card-wrapper relative group reveal-on-scroll">
+                        <div onclick="openLockedPopup('coming_soon')" class="portfolio-item shadow-xl overflow-hidden cursor-pointer relative">
                              <div class="locked-overlay" style="opacity: 1; background: rgba(255, 255, 255, 0.1);">
                                 <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                 <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Скоро</span>
@@ -320,16 +370,16 @@
                             <div class="w-full h-80 flex items-center justify-center bg-gray-100 overflow-hidden">
                                 <div class="w-full h-full bg-gradient-to-br from-gray-300 to-gray-500 blur-xl scale-110"></div>
                             </div>
-                            <div class="bg-white p-5 flex justify-between items-center filter blur-[2px]">
-                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Секретный проект</div>
-                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Coming Soon</div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center filter blur-[2px]">
+                                <div class="title text-lg font-medium tracking-custom-tight">Секретный проект</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">Coming Soon</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- 5. Секретный проект (LOCKED) -->
-                    <div class="project-card-wrapper reveal-on-scroll scroll-animated-element relative group">
-                        <div onclick="openLockedPopup('coming_soon')" class="portfolio-item bg-white shadow-xl overflow-hidden cursor-pointer transform transition duration-300 hover:scale-[1.01] hover:shadow-2xl rounded-none relative">
+                    <div class="project-card-wrapper relative group reveal-on-scroll">
+                        <div onclick="openLockedPopup('coming_soon')" class="portfolio-item shadow-xl overflow-hidden cursor-pointer relative">
                              <div class="locked-overlay" style="opacity: 1; background: rgba(255, 255, 255, 0.1);">
                                 <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                                 <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Скоро</span>
@@ -337,16 +387,16 @@
                             <div class="w-full h-80 flex items-center justify-center bg-gray-100 overflow-hidden">
                                 <div class="w-full h-full bg-gradient-to-bl from-gray-400 to-gray-600 blur-xl scale-110"></div>
                             </div>
-                            <div class="bg-white p-5 flex justify-between items-center filter blur-[2px]">
-                                <div class="text-lg font-medium text-gray-900 tracking-custom-tight">Секретный проект</div>
-                                <div class="text-right text-xs text-gray-500 tracking-wider uppercase">Coming Soon</div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center filter blur-[2px]">
+                                <div class="title text-lg font-medium tracking-custom-tight">Секретный проект</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">Coming Soon</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- КНОПКА "ВСЕ КЕЙСЫ" -->
-                <div class="pt-5 pb-5 reveal-on-scroll scroll-animated-element">
+                <div class="pt-5 pb-5 reveal-on-scroll">
                     <a href="all_cases.html" class="block w-full"> 
                         <button class="group relative w-full cursor-pointer overflow-hidden border border-white text-lg font-medium py-4 text-white shadow-xl transition duration-300 rounded-none hover:text-black">
                             <span class="inline-block transition-all duration-300 group-hover:-translate-x-8 group-hover:opacity-0 z-20 relative">
@@ -362,11 +412,11 @@
                 </div>
 
                 <!-- Стоимость -->
-                <div id="pricing-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll scroll-animated-element">
+                <div id="pricing-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll">
                     <h2 class="text-3xl sm:text-4xl font-medium text-white tracking-custom-tight">Стоимость</h2>
                 </div>
                 <div class="space-y-5">
-                    <div class="bg-white shadow-xl p-5 reveal-on-scroll scroll-animated-element">
+                    <div class="bg-white shadow-xl p-5 reveal-on-scroll">
                         <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Дизайн сайта (Figma)</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-8">Одностраничный сайт, промо-страница, посадочная страница для продукта или услуги. Только дизайн - без сборки.</p>
                         <div class="flex flex-col space-y-4">
@@ -380,7 +430,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white shadow-xl p-5 reveal-on-scroll scroll-animated-element">
+                    <div class="bg-white shadow-xl p-5 reveal-on-scroll">
                         <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Сайт под ключ (Figma + Tilda)</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-8">Одностраничный сайт, промо-страница, посадочная страница для продукта или услуги. Полный цикл: дизайн и сборка.</p>
                         <div class="flex flex-col space-y-4">
@@ -394,7 +444,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white shadow-xl p-5 reveal-on-scroll scroll-animated-element">
+                    <div class="bg-white shadow-xl p-5 reveal-on-scroll">
                         <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Другие продукты?</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-8">Графические задачи, не связанные напрямую с сайтами: баннеры, презентации, соцсети и другое.</p>
                         <div class="flex flex-col space-y-4">
@@ -465,62 +515,16 @@
             setTimeout(() => { window.location.href = href; }, 500);
         }
 
-        // === АНИМАЦИЯ КАРТОЧЕК ПРИ СКРОЛЛЕ (СУЖЕНИЕ/БЛЮР) ===
-        const scrollContainer = window.innerWidth >= 1024 ? document.getElementById('scroll-panel') : window; 
-        const scrollAnimatedElements = document.querySelectorAll('.scroll-animated-element');
-        const maxScaleReduction = 0.04;
-        const maxBlur = 2.5;
-        const maxOpacityReduction = 0.25;
-
-        if (scrollContainer && scrollAnimatedElements.length > 0) {
-            let ticking = false;
-            const updateAnimations = () => {
-                let viewportHeight, containerTop = 0;
-                if (scrollContainer === window) {
-                    viewportHeight = window.innerHeight;
-                } else {
-                    viewportHeight = scrollContainer.offsetHeight;
-                    containerTop = scrollContainer.getBoundingClientRect().top;
-                }
-                const viewportCenter = viewportHeight / 2;
-                const maxDistance = viewportHeight / 2;
-
-                scrollAnimatedElements.forEach(element => {
-                    const rect = element.getBoundingClientRect();
-                    let elementCenter;
-                    if (scrollContainer === window) elementCenter = rect.top + (rect.height / 2);
-                    else elementCenter = rect.top + (rect.height / 2) - containerTop;
-
-                    const distanceFromCenter = Math.abs(elementCenter - viewportCenter);
-                    const normalizedDistance = Math.min(distanceFromCenter / maxDistance, 1);
-                    const scale = 1 - (normalizedDistance * maxScaleReduction);
-                    const blur = normalizedDistance * maxBlur;
-                    const opacity = 1 - (normalizedDistance * maxOpacityReduction);
-                    
-                    element.style.transform = `scale(${scale}) translateZ(0)`;
-                    element.style.filter = `blur(${blur}px)`;
-                    element.style.opacity = opacity.toString();
-                });
-                ticking = false;
-            };
-            const onScroll = () => { if (!ticking) { window.requestAnimationFrame(updateAnimations); ticking = true; } };
-            scrollContainer.addEventListener('scroll', onScroll, { passive: true });
-            window.addEventListener('load', onScroll);
-            window.addEventListener('resize', () => { if (window.innerWidth >= 1024) onScroll(); });
-        }
-
         const initialObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const element = entry.target;
                 if (entry.isIntersecting) {
                     element.classList.remove('opacity-0', 'translate-y-4');
-                    element.classList.add('opacity-100', 'translate-y-0');
-                    element.style.filter = 'none'; 
-                    element.style.transform = 'scale(1) translateZ(0)';
+                    element.classList.add('opacity-100');
                     initialObserver.unobserve(element);
                 }
             });
-        }, { threshold: 0.5 }); // ИЗМЕНЕНО: 0.1 -> 0.5 для центрирования появления на мобильных
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }); 
 
         // === POPUP ===
         const popup = document.getElementById('lock-popup');
@@ -565,21 +569,18 @@
                 if (!c) return;
                 
                 const ctx = c.getContext('2d', { willReadFrequently: false });
-                
-                // Размеры канваса (который в 200% от карточки)
                 const rect = c.getBoundingClientRect();
                 c.width = rect.width * DPR;
                 c.height = rect.height * DPR;
 
                 let particles = [];
-                // Центр карточки в координатах 200%-канваса находится в его центре (50% от 200%)
                 const cx = c.width / 2;
                 const cy = c.height / 2;
 
-                const spreadFactor = 11 * DPR; // Слегка увеличенный разлет
-                const gravity = 0.1 * DPR;     // Меньшая гравитация для эффекта парения
-                const minDecay = 0.007;        // Очень медленное затухание (парение)
-                const maxDecay = 0.02;         // Медленное затухание
+                const spreadFactor = 11 * DPR;
+                const gravity = 0.1 * DPR;
+                const minDecay = 0.007;
+                const maxDecay = 0.02;
 
                 for (let i = 0; i < 45; i++) {
                     particles.push({
@@ -601,13 +602,13 @@
 
                     ctx.clearRect(0, 0, c.width, c.height);
                     ctx.fillStyle = '#fff';
-                    ctx.globalCompositeOperation = 'lighter'; // Эффект свечения
+                    ctx.globalCompositeOperation = 'lighter'; 
                     
                     for (let i = 0; i < particles.length; i++) {
                         let p = particles[i];
                         p.x += p.vx;
                         p.y += p.vy;
-                        p.vy += gravity; // Очень низкая гравитация
+                        p.vy += gravity;
                         p.alpha -= p.decay;
 
                         if (p.alpha <= 0) {
@@ -631,28 +632,22 @@
                 animate();
             }
 
-            // НОВЫЙ IntersectionObserver для активации при прокрутке (для центрирования на экране)
             const magicScrollObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     const card = entry.target;
-                    // Активируем, как только элемент входит в центральную зону
                     if (entry.isIntersecting) { 
                         activate(card);
-                        magicScrollObserver.unobserve(card); // Срабатывает один раз
+                        magicScrollObserver.unobserve(card);
                     }
                 });
             }, {
-                // rootMargin создает зону срабатывания только в центральных 20% экрана.
                 rootMargin: '-40% 0px -40% 0px', 
-                threshold: 0.01 // Почти сразу, как только элемент попадает в центральную зону
+                threshold: 0.01 
             });
 
             document.querySelectorAll('.magic-lock-wrapper')
                 .forEach(c => {
-                    // 1. Активация по наведению (для десктопа)
                     c.addEventListener('pointerenter', () => activate(c), { passive: true });
-                    
-                    // 2. Активация по скроллу (для всех устройств, включая мобильные)
                     magicScrollObserver.observe(c);
                 });
         })();
@@ -663,8 +658,8 @@
                 if (link.getAttribute('target') !== '_blank') link.addEventListener('click', showPreloader);
             });
             
-            scrollAnimatedElements.forEach(el => { 
-                el.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-700', 'ease-out');
+            document.querySelectorAll('.reveal-on-scroll').forEach((el, index) => {
+                el.style.transitionDelay = `${index * 50}ms`;
                 initialObserver.observe(el);
             });
         });
