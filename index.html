@@ -6,6 +6,8 @@
     <title>Баскаков Никита - Портфолио</title>
     <!-- Подключение Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение Lenis для плавного скролла -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
     <style>
         /* Настройка шрифта Inter (резервный) */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -25,17 +27,32 @@
         }
 
         body {
-            /* scroll-behavior: smooth обеспечивает нативную плавность скролла */
             font-family: 'TT Neoris', 'Inter', sans-serif;
-            scroll-behavior: smooth;
-            transition: scroll-behavior 0.8s ease-in-out;
             background-color: #000;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
+        /* Убираем стандартные скроллбары */
+        body::-webkit-scrollbar, 
+        #scroll-panel::-webkit-scrollbar { 
+            display: none; 
+        }
+        body, #scroll-panel { 
+            -ms-overflow-style: none; 
+            scrollbar-width: none; 
+        }
+
         @media (min-width: 1024px) {
-            body { overflow: hidden; }
-            #scroll-panel::-webkit-scrollbar { display: none; }
-            #scroll-panel { -ms-overflow-style: none; scrollbar-width: none; }
+            body { 
+                overflow: hidden; /* Блокируем скролл body на десктопе */
+            }
+            #scroll-panel {
+                height: 100vh;
+                overflow-y: auto; /* Разрешаем скролл контейнера */
+                /* Важно: убираем scroll-behavior: smooth, так как Lenis берет это на себя */
+                scroll-behavior: auto; 
+            }
         }
         
         /* === ПРЕЛОАДЕР === */
@@ -71,53 +88,45 @@
             height: 1.5em; display: inline-block; max-width: 100%;
         }
         
-        /* === НОВЫЕ СТИЛИ КАРТОЧЕК (Из all_cases.html) === */
+        /* === КАРТОЧКИ === */
         .portfolio-item { 
             position: relative;
             overflow: hidden;
-            /* ФОН КАРТОЧКИ СТАЛ ЧЕРНЫМ */
             background-color: #111; 
-            /* Обводка из all_cases */
             border: 1px solid rgba(255, 255, 255, 0.1); 
-            /* Новые переходы: только трансформация и тень */
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .portfolio-item:hover { 
-            /* Анимация при наведении */
             transform: scale(1.02); 
-            /* Новая тень из all_cases */
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.3); 
             z-index: 10;
         }
 
-        /* Стиль изображения */
         .portfolio-item img {
-            transition: transform 0.5s ease-out, filter 0.5s ease-out;
-            filter: grayscale(80%) brightness(0.9); /* Черно-белый по умолчанию */
+            will-change: transform, filter;
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.5s ease;
+            filter: grayscale(80%) brightness(0.9);
         }
         .portfolio-item:hover img {
-            filter: grayscale(0%) brightness(1); /* Цветной при наведении */
+            filter: grayscale(0%) brightness(1); 
             transform: scale(1.05);
         }
         
-        /* СТИЛЬ ДЛЯ БЛОКА С ТЕКСТОМ ВНУТРИ КАРТОЧКИ (Чтобы текст был белым) */
         .portfolio-item-text {
-            background-color: transparent; /* Убираем фон, он будет от .portfolio-item */
-            color: #fff; /* Делаем текст белым */
+            background-color: transparent; 
+            color: #fff;
         }
-        .portfolio-item-text .title {
-            color: #fff; /* Заголовок белый */
-        }
-        .portfolio-item-text .tags {
-            color: rgba(255, 255, 255, 0.5); /* Теги серые */
-        }
+        .portfolio-item-text .title { color: #fff; }
+        .portfolio-item-text .tags { color: rgba(255, 255, 255, 0.5); }
 
 
-        /* === АНИМАЦИЯ ПОЯВЛЕНИЯ (reveal-on-scroll) === */
+        /* === ПЛАВНОЕ ПОЯВЛЕНИЕ === */
         .reveal-on-scroll { 
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateY(30px); 
+            will-change: opacity, transform;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .reveal-on-scroll.opacity-100 {
             opacity: 1;
@@ -126,12 +135,12 @@
         
         #welcome-message { min-height: calc(100vh - 4rem); display: flex; flex-direction: column; justify-content: center; }
 
-        /* === LOCKED OVERLAY (Обычный) === */
+        /* === LOCKED OVERLAY === */
         .locked-overlay {
             position: absolute; inset: 0; background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(2px); display: flex; flex-direction: column;
             align-items: center; justify-content: center; opacity: 0;
-            transition: opacity 0.3s ease; z-index: 20;
+            transition: opacity 0.4s ease; z-index: 20;
         }
         .portfolio-item:hover .locked-overlay { opacity: 1; }
         @media (max-width: 768px) { .locked-overlay { opacity: 1; background: rgba(255, 255, 255, 0.2); } }
@@ -143,55 +152,35 @@
         }
 
         /* === POPUP === */
-        #lock-popup { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        #lock-popup { opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         #lock-popup.active { opacity: 1; pointer-events: all; }
-        .popup-content { transform: scale(0.95); transition: transform 0.3s ease; }
+        .popup-content { transform: scale(0.95); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         #lock-popup.active .popup-content { transform: scale(1); }
 
-        /* ========================================= */
-        /* === MAGIC LOCK STYLES (ОПТИМИЗАЦИЯ) === */
-        /* ========================================= */
-        .magic-lock-wrapper {
-            position: relative; display: block;
-            contain: layout paint style; 
-        }
-
-        /* Оверлей с замком */
+        /* === MAGIC LOCK === */
+        .magic-lock-wrapper { position: relative; display: block; contain: layout paint style; }
         .magic-lock-wrapper .overlay-panel {
             position: absolute; inset: 0;
-            background: rgba(0,0,0,0.7); /* Чуть темнее для контраста */
+            background: rgba(0,0,0,0.7); 
             display: flex; align-items: center; justify-content: center;
             z-index: 30;
             opacity: 1; visibility: visible;
-            transition: opacity 0.5s ease 0.2s, visibility 0.5s step-end 0.2s; /* Плавное исчезновение */
+            transition: opacity 0.6s ease 0.2s, visibility 0.6s step-end 0.2s; 
         }
-
-        /* Состояние "Разблокировано" */
-        .magic-lock-wrapper.unlocked .overlay-panel {
-            opacity: 0; visibility: hidden; pointer-events: none;
-        }
-
-        /* SVG Замок */
+        .magic-lock-wrapper.unlocked .overlay-panel { opacity: 0; visibility: hidden; pointer-events: none; }
         .lock-svg { width: 64px; height: 64px; overflow: visible; }
         .shackle {
             fill: none; stroke: #fff; stroke-width: 4; stroke-linecap: round;
             transform-origin: 22% 40%;
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            filter: drop-shadow(0 0 1px rgba(255,255,255,0.8)); /* Добавлена легкая тень для свечения */
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 0 1px rgba(255,255,255,0.8));
         }
-        
-        /* Анимация дужки при наведении (до исчезновения) */
         .magic-lock-wrapper.active .shackle {
             transform: translateY(-10px) rotate(35deg); 
-            filter: drop-shadow(0 0 5px rgba(255,255,255,1)); /* Усиленная тень при активации */
+            filter: drop-shadow(0 0 5px rgba(255,255,255,1));
         }
-
-        /* Канвас для частиц: СДЕЛАН КРУПНЕЕ ДЛЯ ВОЗДУШНОГО ЭФФЕКТА */
         canvas.particles {
-            position: absolute; 
-            inset: -50%; /* Растягиваем канвас на 200% от центра */
-            width: 200%; 
-            height: 200%;
+            position: absolute; inset: -50%; width: 200%; height: 200%;
             pointer-events: none; z-index: 40;
         }
     </style>
@@ -201,9 +190,7 @@
     <!-- ПРЕЛОАДЕР -->
     <div id="preloader" class="opacity-100">
         <div class="pulse-loader">
-            <span></span>
-            <span></span>
-            <span></span>
+            <span></span><span></span><span></span>
         </div>
     </div>
 
@@ -241,8 +228,9 @@
         </div>
         
         <!-- ПРАВАЯ ЧАСТЬ -->
+        <!-- Добавлен ID для контейнера контента, чтобы Lenis знал что скроллить -->
         <div id="scroll-panel" class="w-full lg:w-1/2 max-w-full lg:h-screen lg:p-12 p-4 sm:p-10 flex justify-center lg:overflow-y-auto scroll-mask-container">
-            <div id="right-scroll-container" class="w-full lg:max-w-[365px] space-y-5"> 
+            <div id="right-scroll-content" class="w-full lg:max-w-[365px] space-y-5"> 
 
                 <!-- Приветствие -->
                 <div id="welcome-message" class="bg-black shadow-lg p-8 reveal-on-scroll text-center">
@@ -260,7 +248,7 @@
                         <a href="#pricing-section" class="nav-link hover:text-white transition duration-300">Стоимость</a>
                         <a href="https://t.me/zorochik" target="_blank" class="hover:text-white transition duration-300">Связаться</a>
                     </nav>
-                     <div class="flex justify-between w-full text-[10px] text-white/50 tracking-wider relative z-10">
+                    <div class="flex justify-between w-full text-[10px] text-white/50 tracking-wider relative z-10">
                         <span></span>  
                         <span class="inline">Я живой, все в порядке</span>
                         <span></span>
@@ -288,20 +276,13 @@
                 <!-- ПРОЕКТЫ -->
                 <div class="grid gap-5">
                     
-                    <!-- 1. DYOR 5 (ОТКРЫТ + MAGIC) -->
+                    <!-- 1. DYOR 5 -->
                     <div class="project-card-wrapper reveal-on-scroll">
                          <a href="dyor5.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
-                            <!-- Оверлей с замком -->
                             <div class="overlay-panel">
-                                <svg class="lock-svg" viewBox="0 0 24 24">
-                                    <path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                                    <path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/>
-                                    <circle cx="12" cy="16" r="1.5" fill="#151515"/>
-                                </svg>
+                                <svg class="lock-svg" viewBox="0 0 24 24"><path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/><path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/><circle cx="12" cy="16" r="1.5" fill="#151515"/></svg>
                             </div>
-                            <!-- Канвас -->
                             <canvas class="particles"></canvas>
-                            <!-- Контент -->
                             <div class="relative z-0">
                                 <div class="w-full h-80 flex items-center justify-center overflow-hidden">
                                     <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png" class="w-full h-full object-cover">
@@ -314,15 +295,30 @@
                         </a>
                     </div>
 
-                    <!-- 2. Nu i Che (ОТКРЫТ + MAGIC) -->
+                    <!-- 2. American Museum of Natural History -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                         <a href="amnh.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
+                            <div class="overlay-panel">
+                                <svg class="lock-svg" viewBox="0 0 24 24"><path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/><path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/><circle cx="12" cy="16" r="1.5" fill="#151515"/></svg>
+                            </div>
+                            <canvas class="particles"></canvas>
+                            <div class="relative z-0">
+                                <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                    <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1766406851/%D0%9E%D0%B1%D0%BB%D0%BE%D0%B6%D0%BA%D0%B0_%D0%BA%D0%B5%D0%B9%D1%81%D0%B0_6_sobvrd.png" class="w-full h-full object-cover">
+                                </div>
+                                <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                    <div class="title text-lg font-medium tracking-custom-tight">American Museum of Natural History</div>
+                                    <div class="tags text-right text-xs tracking-wider uppercase">Web Design</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- 3. Nu i Che -->
                     <div class="project-card-wrapper reveal-on-scroll">
                          <a href="nuiche.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
                             <div class="overlay-panel">
-                                <svg class="lock-svg" viewBox="0 0 24 24">
-                                    <path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                                    <path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/>
-                                    <circle cx="12" cy="16" r="1.5" fill="#151515"/>
-                                </svg>
+                                <svg class="lock-svg" viewBox="0 0 24 24"><path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/><path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/><circle cx="12" cy="16" r="1.5" fill="#151515"/></svg>
                             </div>
                             <canvas class="particles"></canvas>
                             <div class="relative z-0">
@@ -337,15 +333,11 @@
                         </a>
                     </div>
 
-                    <!-- 3. Nobee (ОТКРЫТ + MAGIC) -->
+                    <!-- 4. Nobee -->
                     <div class="project-card-wrapper reveal-on-scroll">
                         <a href="nobee.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
                              <div class="overlay-panel">
-                                <svg class="lock-svg" viewBox="0 0 24 24">
-                                    <path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                                    <path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/>
-                                    <circle cx="12" cy="16" r="1.5" fill="#151515"/>
-                                </svg>
+                                <svg class="lock-svg" viewBox="0 0 24 24"><path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/><path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/><circle cx="12" cy="16" r="1.5" fill="#151515"/></svg>
                             </div>
                             <canvas class="particles"></canvas>
                             <div class="relative z-0">
@@ -360,24 +352,7 @@
                         </a>
                     </div>
 
-                    <!-- 4. Секретный проект (LOCKED) -->
-                    <div class="project-card-wrapper relative group reveal-on-scroll">
-                        <div onclick="openLockedPopup('coming_soon')" class="portfolio-item shadow-xl overflow-hidden cursor-pointer relative">
-                             <div class="locked-overlay" style="opacity: 1; background: rgba(255, 255, 255, 0.1);">
-                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Скоро</span>
-                            </div>
-                            <div class="w-full h-80 flex items-center justify-center bg-gray-100 overflow-hidden">
-                                <div class="w-full h-full bg-gradient-to-br from-gray-300 to-gray-500 blur-xl scale-110"></div>
-                            </div>
-                            <div class="portfolio-item-text p-5 flex justify-between items-center filter blur-[2px]">
-                                <div class="title text-lg font-medium tracking-custom-tight">Секретный проект</div>
-                                <div class="tags text-right text-xs tracking-wider uppercase">Coming Soon</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 5. Секретный проект (LOCKED) -->
+                    <!-- 5. Секретный проект -->
                     <div class="project-card-wrapper relative group reveal-on-scroll">
                         <div onclick="openLockedPopup('coming_soon')" class="portfolio-item shadow-xl overflow-hidden cursor-pointer relative">
                              <div class="locked-overlay" style="opacity: 1; background: rgba(255, 255, 255, 0.1);">
@@ -394,7 +369,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- КНОПКА "ВСЕ КЕЙСЫ" -->
                 <div class="pt-5 pb-5 reveal-on-scroll">
                     <a href="all_cases.html" class="block w-full"> 
@@ -652,12 +627,77 @@
                 });
         })();
 
-        // === ГЛОБАЛЬНЫЙ ЗАПУСК ===
+        // === ИНИЦИАЛИЗАЦИЯ И LENIS ===
         document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Инициализация Lenis (Только на десктопе для производительности)
+            if (window.innerWidth >= 1024) {
+                const scrollPanel = document.querySelector('#scroll-panel');
+                const scrollContent = document.querySelector('#right-scroll-content');
+                
+                const lenis = new Lenis({
+                    wrapper: scrollPanel, // Скроллим этот контейнер
+                    content: scrollContent, // Внутренний контент
+                    duration: 1.2, // Длительность инерции
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Easing function
+                    direction: 'vertical',
+                    gestureDirection: 'vertical',
+                    smooth: true,
+                    smoothTouch: false,
+                    touchMultiplier: 2,
+                });
+
+                function raf(time) {
+                    lenis.raf(time);
+                    requestAnimationFrame(raf);
+                }
+                requestAnimationFrame(raf);
+
+                // Сохраняем в window, чтобы использовать в кликах
+                window.lenis = lenis;
+            }
+
+            // 2. Обработка якорных ссылок (Исправление резкого прыжка)
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        if (window.lenis) {
+                            // Если Lenis активен, используем его метод scrollTo
+                            window.lenis.scrollTo(targetElement);
+                        } else {
+                            // Фоллбек для мобильных или если Lenis не загрузился
+                            // Для мобильных скроллим window, для десктопа (если вдруг) - панель
+                            if (window.innerWidth < 1024) {
+                                const y = targetElement.getBoundingClientRect().top + window.scrollY - 20; // -20 отступ
+                                window.scrollTo({top: y, behavior: 'smooth'});
+                            } else {
+                                const panel = document.getElementById('scroll-panel');
+                                if(panel) {
+                                    // Вычисляем позицию внутри скроллируемой панели
+                                    // offsetTop элемента относительно его родителя
+                                    // Важно: это работает, если родитель relative, а элемент внутри
+                                    // Простой вариант для нативного скролла контейнера:
+                                    panel.scrollTo({
+                                        top: targetElement.offsetTop,
+                                        behavior: 'smooth'
+                                    });
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            // 3. Прелоадер на переходы
             document.querySelectorAll('a[href^="index.html"], a[href$=".html"]').forEach(link => {
                 if (link.getAttribute('target') !== '_blank') link.addEventListener('click', showPreloader);
             });
             
+            // 4. Reveal анимация
             document.querySelectorAll('.reveal-on-scroll').forEach((el, index) => {
                 el.style.transitionDelay = `${index * 50}ms`;
                 initialObserver.observe(el);
