@@ -630,12 +630,15 @@
         // === ИНИЦИАЛИЗАЦИЯ И LENIS ===
         document.addEventListener('DOMContentLoaded', () => {
             
-            // 1. Инициализация Lenis (Только на десктопе для производительности)
+            // 1. Инициализация Lenis (Везде)
+            let lenis;
+            
             if (window.innerWidth >= 1024) {
+                // Desktop: скроллим панель
                 const scrollPanel = document.querySelector('#scroll-panel');
                 const scrollContent = document.querySelector('#right-scroll-content');
                 
-                const lenis = new Lenis({
+                lenis = new Lenis({
                     wrapper: scrollPanel, // Скроллим этот контейнер
                     content: scrollContent, // Внутренний контент
                     duration: 1.2, // Длительность инерции
@@ -643,19 +646,29 @@
                     direction: 'vertical',
                     gestureDirection: 'vertical',
                     smooth: true,
-                    smoothTouch: false,
+                    smoothTouch: false, // На десктопе обычно false, если не нужен тач-эмуляция
                     touchMultiplier: 2,
                 });
-
-                function raf(time) {
-                    lenis.raf(time);
-                    requestAnimationFrame(raf);
-                }
-                requestAnimationFrame(raf);
-
-                // Сохраняем в window, чтобы использовать в кликах
-                window.lenis = lenis;
+            } else {
+                // Mobile: скроллим окно (нативный контейнер)
+                lenis = new Lenis({
+                    duration: 1.2,
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Easing function
+                    direction: 'vertical',
+                    gestureDirection: 'vertical',
+                    smooth: true,
+                    smoothTouch: true, // Включаем сглаживание для тача на мобильных
+                    touchMultiplier: 2,
+                });
             }
+
+            function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+
+            window.lenis = lenis;
 
             // 2. Обработка якорных ссылок (Исправление резкого прыжка)
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
