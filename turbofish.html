@@ -103,7 +103,8 @@
             background-color: #111; /* Темный фон для карточки */
             overflow: hidden;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative; /* Для позиционирования overlay */
         }
 
         .related-project-card:hover {
@@ -116,6 +117,11 @@
             width: 100%;
             height: 150px; /* Фиксированная высота для превью */
             object-fit: cover;
+        }
+
+        /* Reveal Animation */
+        .reveal-on-scroll {
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
     </style>
 </head>
@@ -154,7 +160,7 @@
             <!-- Заголовок и вводная часть -->
             <div class="space-y-5 reveal-on-scroll">
                 <h1 class="case-title font-medium tracking-custom-tight">
-                    Turbofish <!-- ИМЯ ПРОЕКТА -->
+                    Turbofish
                 </h1>
                 <p class="text-xl text-white/80 max-w-4xl">
                     Комплексная разработка интернет-магазина Turbofish (рыболовные снасти) с отрисовкой более 200 экранов, созданием стилистики, каталога, корзины, личного кабинета и интерактивной панели администратора.
@@ -165,11 +171,11 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5 border-t border-b border-white/10 py-5 reveal-on-scroll">
                 <div>
                     <p class="text-sm text-white/60 uppercase">Роль</p>
-                    <p class="text-lg font-medium">UX/UI Дизайнер </p>
+                    <p class="text-lg font-medium">UX/UI Дизайнер</p>
                 </div>
                 <div>
                     <p class="text-sm text-white/60 uppercase">Стек</p>
-                    <p class="text-lg font-medium">Figma </p>
+                    <p class="text-lg font-medium">Figma</p>
                 </div>
                 <div>
                     <p class="text-sm text-white/60 uppercase">Срок</p>
@@ -193,7 +199,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 pt-10 reveal-on-scroll">
                 <div class="lg:col-span-2">
                     <h3 class="text-2xl font-medium tracking-custom-tight mb-4">Контекст, Проблема и Задачи</h3>
-                    <p class="text-base text-white/80 leading-relaxed space-y-4">
+                    <div class="text-base text-white/80 leading-relaxed space-y-4">
                         <p>Интернет-магазин Turbofish специализируется на рыболовных снастях. В рамках сотрудничества со школой Perasperadastra была разработана визуальная метафора, стилистика и интерактивная панель администратора.</p>
                         <p>**Основные задачи:**</p>
                         <ul class="list-disc list-inside space-y-2 ml-4">
@@ -201,7 +207,7 @@
                             <li>Проанализировать конкурентов в рыболовной нише. Выявить сильные и слабые стороны.</li>
                             <li>Отрисовать посадочную страницу, каталог, карточки товара, корзину, комментарии пользователей, личный кабинет, панель администратора. (Всего отрисовано более 200 экранов).</li>
                         </ul>
-                    </p>
+                    </div>
                 </div>
             </div>
             
@@ -233,60 +239,14 @@
                 </p>
             </div>
             
-            <!-- НОВЫЙ БЛОК: Ссылки на другие проекты (ВИЗУАЛЬНАЯ СЕТКА - 5 КЕЙСОВ) -->
+            <!-- АВТОМАТИЧЕСКАЯ ПОДГРУЗКА ДРУГИХ ПРОЕКТОВ -->
             <div class="pt-10 reveal-on-scroll">
                 <h2 class="text-3xl font-medium tracking-custom-tight mb-5">Смотрите также другие проекты:</h2>
                 
-                <!-- Сетка 2x2 на мобильных, 3x2 на планшетах, 5x1 на десктопе -->
+                <!-- ПУСТОЙ КОНТЕЙНЕР ДЛЯ СКРИПТА dynamic-loader.js -->
+                <!-- Сюда динамически загружаются карточки с главной страницы -->
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5" id="related-projects">
-                    
-                    <!-- Ссылка на DYOR 5 -->
-                    <a href="dyor5.html" data-project="dyor5" class="nav-link related-project-card">
-                        <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png" alt="Превью DYOR 5" class="w-full h-auto">
-                        <div class="p-4 text-left">
-                            <span class="text-lg font-medium tracking-custom-tight">DYOR 5</span>
-                            <p class="text-xs text-white/50">UI Design / Brand</p>
-                        </div>
-                    </a>
-                    
-                    <!-- Ссылка на Nu i Che -->
-                    <a href="nuiche.html" data-project="nuiche" class="nav-link related-project-card">
-                        <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39518_rwxdzz.png" alt="Превью Nu i Che" class="w-full h-auto">
-                        <div class="p-4 text-left">
-                            <span class="text-lg font-medium tracking-custom-tight">Nu i Che</span>
-                            <p class="text-xs text-white/50">Web Design</p>
-                        </div>
-                    </a>
-
-                    <!-- Ссылка на Nobee -->
-                    <a href="nobee.html" data-project="nobee" class="nav-link related-project-card">
-                        <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39521_ck13rv.png" alt="Превью Nobee" class="w-full h-auto">
-                        <div class="p-4 text-left">
-                            <span class="text-lg font-medium tracking-custom-tight">Nobee</span>
-                            <p class="text-xs text-white/50">Web Design</p>
-                        </div>
-                    </a>
-                    
-                    <!-- Ссылка на 9 circles of Hell -->
-                    <a href="circles.html" data-project="circles" class="nav-link related-project-card">
-                        <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764843389/%D1%8B%D0%B0%D0%B2%D0%B0%D0%B0_ik42xy.png" alt="Превью 9 circles of Hell" class="w-full h-auto">
-                        <div class="p-4 text-left">
-                            <span class="text-lg font-medium tracking-custom-tight">9 circles of Hell</span>
-                            <p class="text-xs text-white/50">Longread</p>
-                        </div>
-                    </a>
-                    
-                    <!-- Ссылка на Din Drone -->
-                    <a href="dindrone.html" data-project="dindrone" class="nav-link related-project-card">
-                        <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39517_rwlir2.png" alt="Превью Din Drone" class="w-full h-auto">
-                        <div class="p-4 text-left">
-                            <span class="text-lg font-medium tracking-custom-tight">Din Drone</span>
-                            <p class="text-xs text-white/50">UI Design / 3D</p>
-                        </div>
-                    </a>
-
-                    <!-- Скрываем текущий Turbofish -->
-                    <a href="turbofish.html" data-project="turbofish" class="current-project-link hidden"></a>
+                    <!-- Javascript заполнит это сам -->
                 </div>
             </div>
 
@@ -322,7 +282,10 @@
         </div>
     </main>
 
-    <!-- Скрипт для анимации скролла и ПРЕЛОАДЕРА -->
+    <!-- 1. ПОДКЛЮЧАЕМ СКРИПТ АВТОМАТИЗАЦИИ -->
+    <script src="dynamic-loader.js"></script>
+
+    <!-- 2. Скрипты страницы -->
     <script>
         // === ПРЕЛОАДЕР И ПЛАВНЫЕ ПЕРЕХОДЫ ===
         const preloader = document.getElementById('preloader');
@@ -362,22 +325,6 @@
             }, 500);
         }
 
-        // === ДИНАМИЧЕСКОЕ СКРЫТИЕ И АНИМАЦИИ ===
-        
-        // Функция для скрытия ссылки на текущий проект
-        function setupRelatedProjects() {
-            const path = window.location.pathname;
-            const currentFileName = path.split('/').pop(); 
-            const currentProjectSlug = currentFileName.replace('.html', ''); 
-
-            if (currentProjectSlug) {
-                const currentProjectLink = document.querySelector(`[data-project="${currentProjectSlug}"]`);
-                if (currentProjectLink) {
-                    currentProjectLink.classList.add('hidden'); // Используем Tailwind hidden
-                }
-            }
-        }
-        
         // === ЗАПУСК ===
         document.addEventListener('DOMContentLoaded', () => {
             // Инициализация Intersection Observer для анимации появления элементов при скролле
@@ -403,10 +350,7 @@
                 }
             });
             
-            // 2. Настраиваем скрытие ссылки на текущий проект
-            setupRelatedProjects();
-            
-            // 3. Настраиваем анимацию появления
+            // 2. Настраиваем анимацию появления
             const revealElements = document.querySelectorAll('.reveal-on-scroll');
             revealElements.forEach(el => {
                 el.classList.add('opacity-0', 'translate-y-4', 'transition-all', 'duration-700', 'ease-out');
@@ -414,7 +358,7 @@
             });
         });
 
-        // 4. Скрываем прелоадер после полной загрузки страницы
+        // 3. Скрываем прелоадер после полной загрузки страницы
         window.addEventListener('load', hidePreloader);
         
         // Дополнительная гарантия скрытия (на случай, если load не сработает быстро)
