@@ -1,53 +1,68 @@
 /**
  * ЕДИНЫЙ ЦЕНТР УПРАВЛЕНИЯ (Dynamic Loader)
  * 1. Загружает проекты в "Смотрите также" со страницы all_cases.html.
- * 2. Управляет кнопкой "Назад" в шапке (текст и действие).
+ * 2. Управляет кнопкой "Назад" в шапке (текст, действие и фикс зависания).
  */
 
 const CONFIG = {
-    // 1. Настройки подгрузки проектов
-    // Укажи здесь точное имя файла, где лежит список всех работ (all_cases.html, index.html и т.д.)
+    // Укажи здесь точное имя файла, где лежит список всех работ
     sourceFile: 'all_cases.html', 
     
-    // 2. Настройки кнопки в шапке
-    backButtonText: '← Назад',    // Текст, который будет на кнопке
+    // Настройки кнопки в шапке
+    backButtonText: '← Назад',
     
-    // ВАЖНО: Если true, кнопка работает как "История браузера" (возвращает туда, откуда пришел).
-    // Если false, она ведет на backButtonLink (например, index.html).
+    // ВАЖНО: true = кнопка работает как "История браузера".
     useBrowserBack: true,         
-    backButtonLink: 'index.html' // Игнорируется, если useBrowserBack: true
+    backButtonLink: 'index.html' // Резервная ссылка
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- ЗАПУСК ФУНКЦИЙ ---
     setupHeaderNavigation(); // Настраиваем кнопку в шапке
-    initRelatedProjects();   // Подгружаем проекты вниз
+    initRelatedProjects();   // Подгружаем проекты
+});
+
+// === ФИКС ЗАВИСАНИЯ ПРЕЛОАДЕРА (BFCache Fix) ===
+// Эта магия убирает черный экран, если ты вернулся на страницу кнопкой "Назад"
+window.addEventListener('pageshow', (event) => {
+    // event.persisted означает, что страница загружена из кэша (истории)
+    // Но мы на всякий случай убираем прелоадер всегда при показе страницы
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        preloader.style.opacity = '0';
+        setTimeout(() => {
+            preloader.style.zIndex = '-1';
+            preloader.style.pointerEvents = 'none';
+        }, 300);
+    }
 });
 
 // === ЛОГИКА КНОПКИ В ШАПКЕ ===
 function setupHeaderNavigation() {
-    // Ищем ссылку внутри nav в header. 
-    // Обычно это <nav><a href="...">...</a></nav>
     const navLink = document.querySelector('header nav a');
     
     if (navLink) {
-        // Меняем текст кнопки
-        navLink.textContent = CONFIG.backButtonText;
-
         if (CONFIG.useBrowserBack) {
-            // Режим "Назад в браузере"
-            navLink.href = '#'; // Чтобы не было перехода по умолчанию
-            navLink.addEventListener('click', (e) => {
+            // Клонируем кнопку, чтобы УДАЛИТЬ все старые слушатели (в том числе прелоадер)
+            // Это гарантирует, что при нажатии "Назад" текущая страница не начнет затемняться
+            const newLink = navLink.cloneNode(true);
+            navLink.parentNode.replaceChild(newLink, navLink);
+            
+            newLink.textContent = CONFIG.backButtonText;
+            newLink.href = '#'; 
+            
+            newLink.addEventListener('click', (e) => {
                 e.preventDefault();
-                // Если истории нет (человек открыл ссылку напрямую), можно отправлять на главную
+                e.stopPropagation(); // Останавливаем любые другие скрипты
+                
                 if (window.history.length > 1) {
                     window.history.back();
                 } else {
+                    // Если истории нет, идем на главную
                     window.location.href = CONFIG.backButtonLink;
                 }
             });
         } else {
-            // Режим "Ссылка на конкретную страницу"
+            navLink.textContent = CONFIG.backButtonText;
             navLink.href = CONFIG.backButtonLink;
         }
     }
@@ -56,7 +71,7 @@ function setupHeaderNavigation() {
 // === ЛОГИКА ПОДГРУЗКИ ПРОЕКТОВ ===
 function initRelatedProjects() {
     const container = document.getElementById('related-projects');
-    if (!container) return; // Если блока нет (мы не на странице кейса), выходим
+    if (!container) return; 
 
     fetch(CONFIG.sourceFile)
         .then(response => {
@@ -72,7 +87,6 @@ function initRelatedProjects() {
             tiles.forEach(tile => {
                 const link = tile.getAttribute('href');
                 const img = tile.querySelector('img')?.src;
-                // Ищем данные по классам Tailwind (проверь, что они совпадают с all_cases.html)
                 const title = tile.querySelector('.text-xl')?.innerText.trim();
                 const category = tile.querySelector('.text-xs')?.innerText.trim();
 
@@ -85,11 +99,8 @@ function initRelatedProjects() {
         })
         .catch(err => {
             console.error('DynamicLoader Error:', err);
-            // Показываем ошибку на странице, чтобы было видно сразу
-            container.innerHTML = `<div class="col-span-full text-red-500 text-xs border border-red-500/30 p-4 rounded bg-red-900/10">
-                <p><b>Ошибка скрипта:</b> Не удалось загрузить проекты.</p>
-                <p class="opacity-70 mt-1">1. Проверь, что файл называется точно <b>${CONFIG.sourceFile}</b>.</p>
-                <p class="opacity-70">2. Если файл открыт просто так (file://), браузер блокирует это. Запусти через Live Server или залей на GitHub.</p>
+            container.innerHTML = `<div class="col-span-full text-red-500 text-xs border border-red-500/30 p-4 rounded">
+                Ошибка: Не удалось загрузить проекты. Проверь имя файла <b>${CONFIG.sourceFile}</b> и запусти через сервер.
             </div>`;
         });
 }
@@ -98,16 +109,13 @@ function renderProjects(allProjects, container) {
     const currentPath = window.location.pathname;
     const currentFile = currentPath.substring(currentPath.lastIndexOf('/') + 1) || currentPath;
 
-    // Фильтруем: исключаем текущий проект из списка
     const projectsToShow = allProjects.filter(p => !currentFile.includes(p.link));
-    
-    // Лимит: показываем первые 5 проектов
     const finalProjects = projectsToShow.slice(0, 5);
 
     container.innerHTML = ''; 
 
     if (finalProjects.length === 0) {
-        container.innerHTML = '<div class="col-span-full text-white/30 text-sm">Нет других проектов для показа.</div>';
+        container.innerHTML = '<div class="col-span-full text-white/30 text-sm">Нет других проектов.</div>';
         return;
     }
 
@@ -126,7 +134,6 @@ function renderProjects(allProjects, container) {
         container.insertAdjacentHTML('beforeend', html);
     });
 
-    // Анимация появления карточек
     setTimeout(() => {
         container.querySelectorAll('.related-project-card').forEach(el => el.classList.add('opacity-100'));
     }, 100);
