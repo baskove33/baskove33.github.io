@@ -4,9 +4,9 @@
  * и показывает их в блоке "Смотрите также".
  */
 
-// !!! ВАЖНО: Впиши сюда точное имя файла твоей страницы "Все кейсы" !!!
-// Если файл называется "cases.html", напиши 'cases.html'
-const CASES_PAGE_URL = 'all_cases.html'; // <-- Поменяй это, если файл называется иначе
+// !!! ВАЖНО: Убедись, что файл на GitHub называется именно так (регистр важен!)
+// all_cases.html и All_Cases.html — это разные файлы.
+const CASES_PAGE_URL = 'all_cases.html'; 
 
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('related-projects');
@@ -14,60 +14,73 @@ document.addEventListener('DOMContentLoaded', () => {
     // Если на странице нет контейнера (мы не внутри кейса), ничего не делаем
     if (!container) return;
 
-    // 1. Загружаем HTML-код страницы со всеми кейсами
+    // Показываем статус загрузки (чтобы не было пустоты, пока грузится)
+    // container.innerHTML = '<p class="text-white/50 text-xs animate-pulse">Загрузка проектов...</p>';
+
     fetch(CASES_PAGE_URL)
         .then(response => {
-            if (!response.ok) throw new Error('Не удалось найти файл со списком кейсов');
+            if (!response.ok) {
+                throw new Error(`Ошибка загрузки: Файл "${CASES_PAGE_URL}" не найден (код ${response.status}). Проверь имя файла.`);
+            }
             return response.text();
         })
         .then(html => {
-            // 2. Превращаем текст в DOM (виртуальную страницу)
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
 
-            // 3. Ищем все карточки проектов (.project-tile) на той странице
+            // Ищем карточки. Если у тебя в all_cases.html другой класс (не .project-tile), скрипт не найдет их.
             const tiles = doc.querySelectorAll('.project-tile');
+            
+            if (tiles.length === 0) {
+                console.warn('Скрипт загрузил файл, но не нашел ни одного элемента с классом .project-tile');
+                // container.innerHTML = '<p class="text-red-400 text-xs">Ошибка: В файле all_cases.html не найдены блоки с классом .project-tile</p>';
+                return;
+            }
+
             const projects = [];
 
             tiles.forEach(tile => {
-                // Вытаскиваем данные прямо из твоей верстки
                 const link = tile.getAttribute('href');
                 const img = tile.querySelector('img')?.src;
                 
-                // Ищем заголовок и категорию по твоим классам
-                const title = tile.querySelector('.text-xl')?.innerText.trim();
-                const category = tile.querySelector('.text-xs')?.innerText.trim();
+                // Проверяем, есть ли заголовок с нужным классом
+                const titleEl = tile.querySelector('.text-xl'); 
+                const categoryEl = tile.querySelector('.text-xs');
 
-                if (link && title) {
-                    projects.push({ title, category, link, img });
+                if (link && titleEl) {
+                    projects.push({ 
+                        title: titleEl.innerText.trim(), 
+                        category: categoryEl ? categoryEl.innerText.trim() : 'Design', 
+                        link, 
+                        img 
+                    });
                 }
             });
 
-            // 4. Отрисовываем полученные данные
             renderRelatedProjects(projects, container);
         })
         .catch(err => {
-            console.warn('Автоматическая подгрузка не сработала (нужен локальный сервер или GitHub):', err);
-            container.innerHTML = '<p class="text-white/30 text-xs">Загрузка проектов...</p>';
+            console.error(err);
+            // Выводим ошибку прямо на экран, чтобы ты увидел
+            container.innerHTML = `<p class="text-red-500 text-sm border border-red-500 p-2 inline-block rounded">${err.message}</p>`;
         });
 });
 
 function renderRelatedProjects(allProjects, container) {
-    // Определяем текущую страницу
     const currentPath = window.location.pathname;
     const currentFile = currentPath.substring(currentPath.lastIndexOf('/') + 1) || currentPath;
 
-    // Фильтруем: убираем текущий проект из списка
+    // Фильтруем: убираем текущий проект
     const projectsToShow = allProjects.filter(p => !currentFile.includes(p.link));
 
-    // Берем первые 5 штук
     const limit = 5;
     const finalProjects = projectsToShow.slice(0, limit);
 
-    container.innerHTML = ''; // Очищаем
+    container.innerHTML = ''; 
 
     if (finalProjects.length === 0) {
-        container.innerHTML = '<p class="text-white/50 text-sm">Нет других проектов.</p>';
+        // Если проектов нет (или фильтр убрал всё), пишем об этом
+        container.innerHTML = '<p class="text-white/30 text-sm">Нет других проектов.</p>';
         return;
     }
 
@@ -86,7 +99,6 @@ function renderRelatedProjects(allProjects, container) {
         container.insertAdjacentHTML('beforeend', html);
     });
 
-    // Анимация появления
     setTimeout(() => {
         container.querySelectorAll('.related-project-card').forEach(el => el.classList.add('opacity-100'));
     }, 100);
