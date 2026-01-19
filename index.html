@@ -156,6 +156,33 @@
         .popup-content { transform: scale(0.95); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         #lock-popup.active .popup-content { transform: scale(1); }
 
+        /* === MAGIC LOCK === */
+        .magic-lock-wrapper { position: relative; display: block; contain: layout paint style; }
+        .magic-lock-wrapper .overlay-panel {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.7); 
+            display: flex; align-items: center; justify-content: center;
+            z-index: 30;
+            opacity: 1; visibility: visible;
+            transition: opacity 0.6s ease 0.2s, visibility 0.6s step-end 0.2s; 
+        }
+        .magic-lock-wrapper.unlocked .overlay-panel { opacity: 0; visibility: hidden; pointer-events: none; }
+        .lock-svg { width: 64px; height: 64px; overflow: visible; }
+        .shackle {
+            fill: none; stroke: #fff; stroke-width: 4; stroke-linecap: round;
+            transform-origin: 22% 40%;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 0 1px rgba(255,255,255,0.8));
+        }
+        .magic-lock-wrapper.active .shackle {
+            transform: translateY(-10px) rotate(35deg); 
+            filter: drop-shadow(0 0 5px rgba(255,255,255,1));
+        }
+        canvas.particles {
+            position: absolute; inset: -50%; width: 200%; height: 200%;
+            pointer-events: none; z-index: 40;
+        }
+
         /* === БЕГУЩАЯ СТРОКА ОТЗЫВОВ === */
         @keyframes infinite-scroll {
             from { transform: translateX(0); }
@@ -314,52 +341,76 @@
                     
                     <!-- 1. DYOR 5 -->
                     <div class="project-card-wrapper reveal-on-scroll">
-                         <a href="dyor5.html" class="portfolio-item shadow-xl relative block group">
-                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
-                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png" class="w-full h-full object-cover">
+                         <a href="dyor5.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
+                            <div class="overlay-panel">
+                                <svg class="lock-svg" viewBox="0 0 24 24"><path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/><path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/><circle cx="12" cy="16" r="1.5" fill="#151515"/></svg>
                             </div>
-                            <div class="portfolio-item-text p-5 flex justify-between items-center">
-                                <div class="title text-lg font-medium tracking-custom-tight">DYOR 5</div>
-                                <div class="tags text-right text-xs tracking-wider uppercase">UI Design / Web Design / Brand Design</div>
+                            <canvas class="particles"></canvas>
+                            <div class="relative z-0">
+                                <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                    <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png" class="w-full h-full object-cover">
+                                </div>
+                                <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                    <div class="title text-lg font-medium tracking-custom-tight">DYOR 5</div>
+                                    <div class="tags text-right text-xs tracking-wider uppercase">UI Design / Web Design / Brand Design</div>
+                                </div>
                             </div>
                         </a>
                     </div>
 
                     <!-- 2. American Museum of Natural History -->
                     <div class="project-card-wrapper reveal-on-scroll">
-                         <a href="amnh.html" class="portfolio-item shadow-xl relative block group">
-                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
-                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1766406851/%D0%9E%D0%B1%D0%BB%D0%BE%D0%B6%D0%BA%D0%B0_%D0%BA%D0%B5%D0%B9%D1%81%D0%B0_6_sobvrd.png" class="w-full h-full object-cover">
+                         <a href="amnh.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
+                            <div class="overlay-panel">
+                                <svg class="lock-svg" viewBox="0 0 24 24"><path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/><path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/><circle cx="12" cy="16" r="1.5" fill="#151515"/></svg>
                             </div>
-                            <div class="portfolio-item-text p-5 flex justify-between items-center">
-                                <div class="title text-lg font-medium tracking-custom-tight">American Museum of Natural History</div>
-                                <div class="tags text-right text-xs tracking-wider uppercase">Web Design</div>
+                            <canvas class="particles"></canvas>
+                            <div class="relative z-0">
+                                <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                    <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1766406851/%D0%9E%D0%B1%D0%BB%D0%BE%D0%B6%D0%BA%D0%B0_%D0%BA%D0%B5%D0%B9%D1%81%D0%B0_6_sobvrd.png" class="w-full h-full object-cover">
+                                </div>
+                                <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                    <div class="title text-lg font-medium tracking-custom-tight">American Museum of Natural History</div>
+                                    <div class="tags text-right text-xs tracking-wider uppercase">Web Design</div>
+                                </div>
                             </div>
                         </a>
                     </div>
 
                     <!-- 3. Nu i Che -->
                     <div class="project-card-wrapper reveal-on-scroll">
-                         <a href="nuiche.html" class="portfolio-item shadow-xl relative block group">
-                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
-                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39518_rwxdzz.png" class="w-full h-full object-cover">
+                         <a href="nuiche.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
+                            <div class="overlay-panel">
+                                <svg class="lock-svg" viewBox="0 0 24 24"><path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/><path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/><circle cx="12" cy="16" r="1.5" fill="#151515"/></svg>
                             </div>
-                            <div class="portfolio-item-text p-5 flex justify-between">
-                                <div class="title text-lg font-medium">Nu i Che</div>
-                                <div class="tags text-xs uppercase">Web Design</div>
+                            <canvas class="particles"></canvas>
+                            <div class="relative z-0">
+                                <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                    <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39518_rwxdzz.png" class="w-full h-full object-cover">
+                                </div>
+                                <div class="portfolio-item-text p-5 flex justify-between">
+                                    <div class="title text-lg font-medium">Nu i Che</div>
+                                    <div class="tags text-xs uppercase">Web Design</div>
+                                </div>
                             </div>
                         </a>
                     </div>
 
                     <!-- 4. Nobee -->
                     <div class="project-card-wrapper reveal-on-scroll">
-                        <a href="nobee.html" class="portfolio-item shadow-xl relative block group">
-                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
-                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39521_ck13rv.png" class="w-full h-full object-cover">
+                        <a href="nobee.html" class="magic-lock-wrapper portfolio-item shadow-xl relative block">
+                             <div class="overlay-panel">
+                                <svg class="lock-svg" viewBox="0 0 24 24"><path class="shackle" d="M7 11V7a5 5 0 0 1 10 0v4"/><path fill="#fff" d="M3 11h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V11z"/><circle cx="12" cy="16" r="1.5" fill="#151515"/></svg>
                             </div>
-                            <div class="portfolio-item-text p-5 flex justify-between items-center">
-                                <div class="title text-lg font-medium tracking-custom-tight">Nobee</div>
-                                <div class="tags text-right text-xs tracking-wider uppercase">Web Design</div>
+                            <canvas class="particles"></canvas>
+                            <div class="relative z-0">
+                                <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                    <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39521_ck13rv.png" class="w-full h-full object-cover">
+                                </div>
+                                <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                    <div class="title text-lg font-medium tracking-custom-tight">Nobee</div>
+                                    <div class="tags text-right text-xs tracking-wider uppercase">Web Design</div>
+                                </div>
                             </div>
                         </a>
                     </div>
@@ -775,7 +826,7 @@
             });
         }
         
-        // Экспорт функций для использования в HTML onclick
+        // Экспорт функций
         window.updateCurrency = updateCurrency;
 
         // === PRELOADER & INIT ===
@@ -806,6 +857,114 @@
         window.addEventListener('load', hidePreloader);
         setTimeout(hidePreloader, 3000);
 
+        // ===========================================
+        // === ОПТИМИЗИРОВАННАЯ МАГИЯ (MAGIC LOCK) ===
+        // ===========================================
+        (() => {
+            const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+
+            function activate(card) {
+                if (card.classList.contains('unlocked')) return;
+                if (card.classList.contains('active')) return;
+
+                card.classList.add('active');
+                
+                runMagicBurst(card);
+
+                setTimeout(() => {
+                    card.classList.add('unlocked');
+                }, 400);
+            }
+
+            function runMagicBurst(card) {
+                const c = card.querySelector('canvas.particles');
+                if (!c) return;
+                
+                const ctx = c.getContext('2d', { willReadFrequently: false });
+                const rect = c.getBoundingClientRect();
+                c.width = rect.width * DPR;
+                c.height = rect.height * DPR;
+
+                let particles = [];
+                const cx = c.width / 2;
+                const cy = c.height / 2;
+
+                const spreadFactor = 11 * DPR;
+                const gravity = 0.1 * DPR;
+                const minDecay = 0.007;
+                const maxDecay = 0.02;
+
+                for (let i = 0; i < 45; i++) {
+                    particles.push({
+                        x: cx,
+                        y: cy,
+                        vx: (Math.random() - 0.5) * spreadFactor, 
+                        vy: (Math.random() * -1) * spreadFactor - 2 * DPR, 
+                        size: (Math.random() * 3 + 1.5) * DPR, 
+                        alpha: 1,
+                        decay: Math.random() * (maxDecay - minDecay) + minDecay 
+                    });
+                }
+
+                function animate() {
+                    if (particles.length === 0) {
+                        ctx.clearRect(0, 0, c.width, c.height);
+                        return; 
+                    }
+
+                    ctx.clearRect(0, 0, c.width, c.height);
+                    ctx.fillStyle = '#fff';
+                    ctx.globalCompositeOperation = 'lighter'; 
+                    
+                    for (let i = 0; i < particles.length; i++) {
+                        let p = particles[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += gravity;
+                        p.alpha -= p.decay;
+
+                        if (p.alpha <= 0) {
+                            particles.splice(i, 1);
+                            i--;
+                            continue;
+                        }
+
+                        ctx.globalAlpha = p.alpha;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.globalAlpha = 1;
+
+                    requestAnimationFrame(animate);
+                }
+                
+                animate();
+            }
+
+            const magicScrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const card = entry.target;
+                    if (entry.isIntersecting) { 
+                        activate(card);
+                        magicScrollObserver.unobserve(card);
+                    }
+                });
+            }, {
+                rootMargin: '-40% 0px -40% 0px', 
+                threshold: 0.01 
+            });
+
+            document.querySelectorAll('.magic-lock-wrapper')
+                .forEach(c => {
+                    c.addEventListener('pointerenter', () => activate(c), { passive: true });
+                    magicScrollObserver.observe(c);
+                });
+        })();
+
+        // === ИНИЦИАЛИЗАЦИЯ И LENIS ===
         const initialObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const element = entry.target;
