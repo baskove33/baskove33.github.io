@@ -48,7 +48,7 @@
 
         .btn-option:disabled {
             opacity: 0.5;
-            cursor: not-allowed; /* Курсор запрета, пока грузимся */
+            cursor: not-allowed;
         }
 
         /* Активное состояние */
@@ -157,28 +157,27 @@
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-            <!-- Добавил disabled по умолчанию, разблокируем когда данные придут -->
-            <button onclick="setWorkload(0)" disabled id="btn-0" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
+            <button onclick="setWorkload(0)" id="btn-0" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
                 <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">0</span>
                 <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Free</span>
             </button>
-            <button onclick="setWorkload(1)" disabled id="btn-1" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
+            <button onclick="setWorkload(1)" id="btn-1" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
                 <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">1</span>
                 <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Light</span>
             </button>
-            <button onclick="setWorkload(2)" disabled id="btn-2" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
+            <button onclick="setWorkload(2)" id="btn-2" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
                 <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">2</span>
                 <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Normal</span>
             </button>
-            <button onclick="setWorkload(3)" disabled id="btn-3" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
+            <button onclick="setWorkload(3)" id="btn-3" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
                 <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">3</span>
                 <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Busy</span>
             </button>
-            <button onclick="setWorkload(4)" disabled id="btn-4" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
+            <button onclick="setWorkload(4)" id="btn-4" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
                 <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">4</span>
                 <span class="text-[10px] text-white/40 uppercase tracking-[0.2em] text-orange-500/80">High Demand</span>
             </button>
-            <button onclick="setWorkload(5)" disabled id="btn-5" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
+            <button onclick="setWorkload(5)" id="btn-5" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
                 <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">5</span>
                 <span class="text-[10px] text-white/40 uppercase tracking-[0.2em] text-red-500/80">Sold Out</span>
             </button>
@@ -259,7 +258,6 @@
         window.initFirebase = function() {
             console.log("Initializing Firebase...");
             
-            // ВСТАВЛЕН ТВОЙ КОНФИГ (Из диалога)
             const firebaseConfig = {
                 apiKey: "AIzaSyCzLSd-Jmlb2N-UIXYMqlLWfnkPZxBQFeU",
                 authDomain: "portfolio-1a9ea.firebaseapp.com",
@@ -278,6 +276,8 @@
             const statusEl = document.getElementById('connection-status');
             let currentUser = null;
             let isUpdating = false;
+            let currentLevelState = null; // Храним текущий уровень локально
+            let safetyTimeout = null; // Таймер для защиты от зависания
 
             const initAuth = async () => {
                 try {
@@ -293,7 +293,7 @@
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     currentUser = user;
-                    // Не пишем ONLINE сразу, ждем подключения к данным
+                    renderStatus('ONLINE');
                     listenToData();
                 }
             });
@@ -318,7 +318,7 @@
                         </div>
                     `;
                 } else if (mode === 'ERROR') {
-                    statusEl.innerHTML = `<span class="text-red-500 text-[10px] uppercase tracking-widest">DB Error (Check Console)</span>`;
+                    statusEl.innerHTML = `<span class="text-red-500 text-[10px] uppercase tracking-widest">Error</span>`;
                 } else if (mode === 'AUTH_ERROR') {
                     statusEl.innerHTML = `<span class="text-red-500 text-[10px] uppercase tracking-widest">Auth Error</span>`;
                 }
@@ -327,38 +327,33 @@
             function listenToData() {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
                 onSnapshot(docRef, (docSnap) => {
-                    // Успешное подключение к базе
-                    if (isUpdating) {
-                        renderStatus('SAVED');
-                        setTimeout(() => {
-                            renderStatus('ONLINE');
-                            isUpdating = false;
-                        }, 2000);
-                    } else {
-                        renderStatus('ONLINE');
-                    }
-
                     if (docSnap.exists()) {
                         const data = docSnap.data();
+                        
+                        // Сохраняем актуальный уровень
+                        currentLevelState = data.level;
+                        
+                        // Если это наше обновление, показываем SAVED -> ONLINE
+                        if (isUpdating) {
+                            renderStatus('SAVED');
+                            clearTimeout(safetyTimeout); // Очищаем таймер защиты
+                            setTimeout(() => {
+                                renderStatus('ONLINE');
+                                isUpdating = false;
+                            }, 2000);
+                        }
+                        
                         updateUI(data.level);
-                    } else {
-                        // Если документа нет (первый запуск), считаем что level = 0
-                        // и активируем кнопки, чтобы можно было создать его
-                        updateUI(0); 
                     }
-                }, (error) => {
-                    console.error("Snapshot error:", error);
-                    // Частая ошибка - нет прав или базы
-                    renderStatus('ERROR');
                 });
             }
 
             function updateUI(level) {
-                // Разблокируем кнопки (курсор wait убирается)
+                // Разблокируем кнопки
                 document.querySelectorAll('.btn-option').forEach(btn => {
                     btn.classList.remove('active', 'loading');
                     btn.disabled = false;
-                    btn.style.cursor = 'pointer'; // Явно возвращаем курсор
+                    btn.style.cursor = 'pointer';
                 });
 
                 if (level !== undefined && level !== null) {
@@ -372,26 +367,44 @@
             window.setWorkload = async (level) => {
                 if (!currentUser) return;
                 
+                // === ИСПРАВЛЕНИЕ: БЛОКИРОВКА ПОВТОРНОГО НАЖАТИЯ ===
+                if (level === currentLevelState) {
+                    console.log("Already set to level", level);
+                    // Можно мигнуть кнопкой или просто ничего не делать
+                    return;
+                }
+                
                 isUpdating = true;
                 renderStatus('UPDATING');
                 
                 const targetBtn = document.getElementById(`btn-${level}`);
                 if(targetBtn) targetBtn.classList.add('loading');
                 
+                // Блокируем кнопки
                 document.querySelectorAll('.btn-option').forEach(btn => {
                     btn.disabled = true;
+                    btn.style.cursor = 'wait';
                 });
+                
+                // === ЗАЩИТА ОТ ЗАВИСАНИЯ (5 сек) ===
+                safetyTimeout = setTimeout(() => {
+                    if(isUpdating) {
+                        console.warn("Update timed out, resetting UI");
+                        isUpdating = false;
+                        renderStatus('ONLINE'); // Возвращаем в Online
+                        updateUI(currentLevelState); // Возвращаем как было
+                    }
+                }, 5000);
 
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
                     await setDoc(docRef, { level: level });
                 } catch (e) {
                     console.error("Error", e);
-                    alert("Ошибка сохранения: " + e.message);
+                    alert("Ошибка сохранения");
                     isUpdating = false;
                     renderStatus('ERROR');
-                    // Сбрасываем блокировку
-                    document.querySelectorAll('.btn-option').forEach(btn => btn.disabled = false);
+                    updateUI(level); 
                 }
             };
         };
