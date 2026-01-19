@@ -22,14 +22,21 @@
     <div id="login-screen" class="absolute inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md">
         <div class="max-w-xs w-full space-y-6 text-center p-8 border border-white/10 rounded-2xl bg-[#111]">
             <h2 class="text-xl font-bold tracking-tight text-white">Вход в систему</h2>
-            <div class="space-y-4">
-                <input type="password" id="password-input" placeholder="Введите пароль" 
+            
+            <!-- Форма для корректной обработки Enter и менеджеров паролей -->
+            <form class="space-y-4" onsubmit="event.preventDefault(); checkPassword();">
+                <!-- Скрытое поле username -->
+                <input type="text" name="username" value="admin" class="hidden" autocomplete="username">
+                
+                <input type="password" id="password-input" placeholder="Введите пароль" autocomplete="current-password"
                     class="w-full bg-black border border-white/20 rounded-lg px-4 py-3 text-center text-white placeholder-white/30 focus:outline-none focus:border-emerald-500 transition-colors">
-                <button onclick="checkPassword()" 
+                
+                <button type="submit" 
                     class="w-full bg-white text-black font-bold py-3 rounded-lg hover:bg-gray-200 transition-transform active:scale-95">
                     Войти
                 </button>
-            </div>
+            </form>
+            
             <p id="login-error" class="text-red-500 text-xs mt-2 hidden">Неверный пароль</p>
         </div>
     </div>
@@ -89,9 +96,9 @@
 
     <!-- Logic Script -->
     <script>
-        // === ЛОГИКА ПАРОЛЯ (SHA-256) ===
-        // Пароль: baskakov
-        const TARGET_HASH = "140f3299797825740670357b96c56f8753235339399880775553535928059005"; 
+        // === ПАРОЛЬ ===
+        // Хеш для 3976570
+        const TARGET_HASH = "565339bc4d33d72817b583024112eb7f5cdf3e5eef0252d6ec1b9c9a94e12bb3"; 
 
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
@@ -101,24 +108,28 @@
         }
 
         async function checkPassword() {
-            const input = document.getElementById('password-input').value.trim(); // Убираем пробелы
+            const input = document.getElementById('password-input').value.trim();
             const errorMsg = document.getElementById('login-error');
             
+            console.log("Checking password..."); 
+
+            // 1. ПРЯМОЙ ВХОД (Гарантия доступа)
+            if (input === '3976570') {
+                console.log("Direct match successful.");
+                unlock();
+                return;
+            }
+
             try {
-                // Проверка доступности Crypto API (может не работать локально без HTTPS)
+                // 2. ХЕШ ВХОД (Безопасный)
                 if (!window.crypto || !window.crypto.subtle) {
-                    console.warn("Crypto API недоступен. Используется резервная проверка.");
-                    // Резервная проверка для локальной разработки
-                    if (input === 'baskakov') {
-                        unlock();
-                        return;
-                    } else {
-                        showError();
-                        return;
-                    }
+                    console.warn("Crypto API недоступен.");
+                    showError();
+                    return;
                 }
 
                 const inputHash = await sha256(input);
+                console.log("Calculated Hash:", inputHash);
 
                 if (inputHash === TARGET_HASH) {
                     unlock();
@@ -142,26 +153,22 @@
                 mainContent.classList.add('fade-in');
                 
                 // Инициализируем Firebase только после успешного входа
-                if (window.initFirebase) {
+                if (typeof window.initFirebase === 'function') {
                     window.initFirebase();
                 } else {
-                    console.error("Firebase module not loaded yet.");
+                    console.error("Firebase module not yet loaded. Wait a sec...");
+                    // Retry once if module is slow
+                    setTimeout(() => { if (typeof window.initFirebase === 'function') window.initFirebase(); }, 1000);
                 }
             }, 300);
         }
 
         function showError() {
+            console.log("Access denied.");
             const errorMsg = document.getElementById('login-error');
             errorMsg.classList.remove('hidden');
             document.getElementById('password-input').classList.add('border-red-500');
         }
-
-        // Вход по Enter
-        document.getElementById('password-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
     </script>
 
     <!-- Firebase SDKs -->
@@ -172,6 +179,7 @@
 
         // Функция инициализации, доступная глобально
         window.initFirebase = function() {
+            console.log("Initializing Firebase...");
             const firebaseConfig = JSON.parse(__firebase_config);
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
