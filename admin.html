@@ -24,12 +24,25 @@
         .fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* UI ELEMENTS - TALLER INPUTS */
+        /* UI ELEMENTS */
         input {
-            background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid rgba(255,255,255,0.15); 
+            background: #000; 
+            border: 1px solid #1a1a1a; 
             color: white;
-            padding: 30px 24px; /* Увеличена высота (padding) */
+            padding: 50px 30px; 
+            width: 100%; 
+            border-radius: 0px; 
+            outline: none; 
+            transition: all 0.3s;
+            font-family: 'TT Neoris', sans-serif;
+            font-size: 1.5rem; 
+            font-weight: 300;
+        }
+        textarea {
+            background: #000; 
+            border: 1px solid #1a1a1a; 
+            color: white;
+            padding: 40px; 
             width: 100%; 
             border-radius: 0px; 
             outline: none; 
@@ -37,28 +50,27 @@
             font-family: 'TT Neoris', sans-serif;
             font-size: 1.2rem;
         }
-        textarea {
-            background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid rgba(255,255,255,0.15); 
-            color: white;
-            padding: 24px; 
-            width: 100%; 
-            border-radius: 0px; 
-            outline: none; 
-            transition: all 0.3s;
-            font-family: 'TT Neoris', sans-serif;
-            font-size: 1.1rem;
-            min-height: 300px; /* Увеличена высота textarea */
-        }
-        input:focus, textarea:focus { border-color: white; background: #050505; }
+        input:focus, textarea:focus { border-color: #333; background: #050505; }
         
         label { 
             display: block; 
-            font-size: 0.8rem; 
+            font-size: 0.9rem; 
             text-transform: uppercase; 
             letter-spacing: 0.1em; 
-            color: rgba(255,255,255,0.4); 
-            margin-bottom: 12px; 
+            color: rgba(255,255,255,0.3); 
+            margin-bottom: 16px; 
+        }
+
+        /* CONVERTED PRICE DISPLAY - УМЕНЬШИЛ ШРИФТ */
+        .converted-price {
+            font-size: 0.85rem; /* Было 1.1rem */
+            color: rgba(255,255,255,0.4);
+            margin-top: 12px;
+            display: block;
+            font-variant-numeric: tabular-nums;
+            font-weight: 400;
+            padding-left: 30px; 
+            letter-spacing: 0.02em;
         }
         
         /* NAVIGATION */
@@ -90,9 +102,57 @@
         }
         .btn-action:hover { background: black; color: white; }
 
+        /* TOGGLE SWITCH */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #10B981;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #10B981;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #222;
+            transition: .4s;
+            border: 1px solid #333;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+        }
+        input:checked + .slider {
+            background-color: #fff;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+            background-color: #000;
+        }
+
         /* WORKLOAD BUTTONS */
         .btn-option { 
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid rgba(255, 255, 255, 0.1); 
             background: #050505;
             position: relative;
@@ -100,14 +160,16 @@
         }
         .btn-option:hover { background-color: #151515; }
         
-        /* ACTIVE STATE - THIN OUTLINE (FIXED) */
+        /* ACTIVE STATE */
         .btn-option.active { 
             background-color: transparent; 
-            border: 1px solid white; /* Тонкая обводка, как просил */
+            border: 1px solid white; 
             box-shadow: 0 0 20px rgba(255,255,255,0.1); 
             z-index: 10;
             transform: scale(1.02);
         }
+        .btn-option.active .num { color: white !important; opacity: 1; }
+        .btn-option.active .lbl { color: white !important; opacity: 1; }
         
         /* MODAL */
         .modal-overlay {
@@ -115,25 +177,37 @@
             backdrop-filter: blur(5px);
         }
 
-        /* GRID LAYOUT - FIXED SCROLL */
+        /* TOAST NOTIFICATION */
+        #toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 200;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+        #toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* GRID LAYOUT */
         .admin-layout {
             display: grid;
             grid-template-columns: 280px 1fr;
-            height: 100vh; /* Высота экрана */
-            overflow: hidden; /* Скрываем скролл у родителя */
+            height: 100vh; 
+            overflow: hidden; 
         }
-        
-        /* Sidebar static */
-        .sidebar {
-            overflow-y: auto;
-        }
-
-        /* Main content scrolls independently */
-        .scrollable-main {
-            overflow-y: auto;
-            height: 100%;
-            position: relative;
-        }
+        .sidebar { overflow-y: auto; }
+        .scrollable-main { overflow-y: auto; height: 100%; position: relative; }
 
         @media(max-width: 1024px) {
             .admin-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
@@ -144,6 +218,7 @@
 </head>
 <body class="bg-black h-full">
 
+    <!-- LOGIN SCREEN -->
     <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-black overflow-y-auto">
         <div class="w-full max-w-lg p-16 border border-white/20 bg-[#050505] shadow-2xl relative my-auto">
             <div class="absolute top-0 left-0 w-full h-0.5 bg-white"></div>
@@ -163,8 +238,10 @@
         </div>
     </div>
 
+    <!-- MAIN APP -->
     <div id="main-content" class="hidden-force opacity-0 w-full h-full admin-layout">
         
+        <!-- Sidebar -->
         <nav class="sidebar flex flex-col border-r border-white/10 bg-black">
             <div class="p-10 border-b border-white/10">
                 <h1 class="text-2xl font-medium tracking-tight">Baskakov</h1>
@@ -181,9 +258,11 @@
             </div>
         </nav>
 
+        <!-- Content Area -->
         <main class="scrollable-main bg-[#050505]">
             <div class="p-8 lg:p-20 w-full max-w-7xl mx-auto">
             
+                <!-- TAB: WORKLOAD -->
                 <div id="tab-workload" class="tab-content space-y-12 w-full pb-32">
                     <div class="border-b border-white/10 pb-8 flex justify-between items-end">
                         <div>
@@ -193,9 +272,11 @@
                     </div>
                     
                     <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                        </div>
+                        <!-- JS generated buttons -->
+                    </div>
                 </div>
 
+                <!-- TAB: PROFILE -->
                 <div id="tab-profile" class="tab-content hidden space-y-12 w-full pb-32">
                     <div class="border-b border-white/10 pb-8">
                         <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Профиль</h2>
@@ -213,29 +294,40 @@
                     </div>
                 </div>
 
+                <!-- TAB: PRICES -->
                 <div id="tab-prices" class="tab-content hidden space-y-16 w-full pb-48">
                     <div class="border-b border-white/10 pb-8 flex justify-between items-end">
                         <div>
                             <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Цена</h2>
-                            <p class="text-white/50 text-lg">Управление ценами и конвертацией</p>
+                            <p class="text-white/50 text-lg">Цены вводятся в рублях, конвертация автоматическая</p>
                         </div>
-                        <button onclick="initPrices()" class="btn-action px-6 py-3 text-xs min-w-0 border-white/30 hover:border-white">
-                            ⟳ Обновить данные
-                        </button>
+                        
+                        <!-- ROUNDING TOGGLE -->
+                        <div class="flex items-center gap-4">
+                            <span class="text-sm uppercase tracking-widest text-white/60">Округлять цены</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="rounding-toggle" onchange="toggleRounding()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
 
+                    <!-- Курс Валют -->
                     <div>
                         <div class="flex justify-between items-end mb-6">
-                            <label class="text-white text-sm">Текущий курс</label>
+                            <!-- Исправлено выравнивание: убрал глобальный отступ снизу у лейбла -->
+                            <label class="text-white text-sm mb-0">Текущий курс</label>
                             <button onclick="openRateModal()" class="text-xs uppercase tracking-widest border-b border-white/30 pb-1 hover:text-white hover:border-white transition">Редактировать курс</button>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <!-- USD Card -->
                             <div class="p-10 border border-white/10 bg-[#0a0a0a] flex flex-col justify-center items-center aspect-video relative group">
                                 <div class="text-white/30 text-xs uppercase tracking-widest absolute top-6 left-6">USD / RUB</div>
                                 <div class="text-4xl md:text-5xl font-light tracking-tight text-center">
                                     1 USD = <span id="display-rate-usd">...</span> ₽
                                 </div>
                             </div>
+                            <!-- KZT Card -->
                             <div class="p-10 border border-white/10 bg-[#0a0a0a] flex flex-col justify-center items-center aspect-video relative group">
                                 <div class="text-white/30 text-xs uppercase tracking-widest absolute top-6 left-6">RUB / KZT</div>
                                 <div class="text-4xl md:text-5xl font-light tracking-tight text-center">
@@ -245,23 +337,44 @@
                         </div>
                     </div>
                     
+                    <!-- Цены (Inputs) -->
                     <div class="space-y-12">
                         <div class="grid md:grid-cols-2 gap-12">
                             <div class="space-y-10">
                                 <h3 class="text-xl font-medium text-white border-b border-white/10 pb-4">Дизайн (Figma)</h3>
-                                <div><label>Лендинг (RUB)</label><input type="number" id="price-design-landing"></div>
-                                <div><label>Многостраничный (RUB)</label><input type="number" id="price-design-multi"></div>
+                                <div>
+                                    <label>Лендинг (RUB)</label>
+                                    <input type="number" id="price-design-landing" class="rub-input">
+                                    <span id="calc-design-landing" class="converted-price">≈ $0 / 0 ₸</span>
+                                </div>
+                                <div>
+                                    <label>Многостраничный (RUB)</label>
+                                    <input type="number" id="price-design-multi" class="rub-input">
+                                    <span id="calc-design-multi" class="converted-price">≈ $0 / 0 ₸</span>
+                                </div>
                             </div>
                             <div class="space-y-10">
                                 <h3 class="text-xl font-medium text-white border-b border-white/10 pb-4">Под ключ (Tilda)</h3>
-                                <div><label>Лендинг (RUB)</label><input type="number" id="price-turnkey-landing"></div>
-                                <div><label>Многостраничный (RUB)</label><input type="number" id="price-turnkey-multi"></div>
+                                <div>
+                                    <label>Лендинг (RUB)</label>
+                                    <input type="number" id="price-turnkey-landing" class="rub-input">
+                                    <span id="calc-turnkey-landing" class="converted-price">≈ $0 / 0 ₸</span>
+                                </div>
+                                <div>
+                                    <label>Многостраничный (RUB)</label>
+                                    <input type="number" id="price-turnkey-multi" class="rub-input">
+                                    <span id="calc-turnkey-multi" class="converted-price">≈ $0 / 0 ₸</span>
+                                </div>
                             </div>
                         </div>
                         
                         <div class="pt-8 border-t border-white/10">
                             <h3 class="text-xl font-medium text-white mb-6">Прочее</h3>
-                            <div class="max-w-md"><label>Стартовая цена (RUB)</label><input type="number" id="price-other"></div>
+                            <div class="max-w-md">
+                                <label>Стартовая цена (RUB)</label>
+                                <input type="number" id="price-other" class="rub-input">
+                                <span id="calc-other" class="converted-price">≈ $0 / 0 ₸</span>
+                            </div>
                         </div>
                     </div>
 
@@ -270,6 +383,7 @@
                     </div>
                 </div>
 
+                <!-- TAB: REVIEWS -->
                 <div id="tab-reviews" class="tab-content hidden space-y-12 w-full pb-32">
                     <div class="border-b border-white/10 pb-8 flex justify-between items-end">
                         <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Отзывы</h2>
@@ -282,18 +396,23 @@
                             <div class="md:col-span-2"><label>Автор</label><input type="text" id="rev-author" placeholder="@username"></div>
                             <div><label>Оценка</label><input type="number" id="rev-stars" value="5" min="1" max="5"></div>
                         </div>
-                        <div><label>Текст отзыва</label><textarea id="rev-text" rows="6" placeholder="Текст отзыва..."></textarea></div>
+                        <div>
+                            <label>Текст отзыва</label>
+                            <textarea id="rev-text" style="min-height: 600px;" placeholder="Текст отзыва..."></textarea>
+                        </div>
                         <button onclick="addReview()" class="btn-action">Добавить</button>
                     </div>
 
                     <div id="reviews-list" class="space-y-4 pb-20 grid gap-4 max-w-4xl">
-                        </div>
+                        <!-- JS List -->
+                    </div>
                 </div>
 
             </div>
         </main>
     </div>
 
+    <!-- MODAL: EDIT RATES -->
     <div id="rate-modal" class="fixed inset-0 z-[100] hidden modal-overlay flex items-center justify-center">
         <div class="bg-[#111] border border-white/20 p-12 w-full max-w-md relative shadow-2xl">
             <button onclick="closeRateModal()" class="absolute top-6 right-6 text-white/50 hover:text-white">✕</button>
@@ -312,6 +431,13 @@
         </div>
     </div>
 
+    <!-- TOAST -->
+    <div id="toast" class="rounded-full">
+        <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+        <span class="text-sm font-medium tracking-wide text-white uppercase">Успешно сохранено</span>
+    </div>
+
+    <!-- SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -333,6 +459,19 @@
         const db = getFirestore(app);
         const appId = 'portfolio-app';
 
+        // GLOBAL STATE
+        let isRounding = false;
+        let currentRates = { USD: 96.5, KZT: 5.15 };
+
+        // TOAST SYSTEM
+        window.showToast = () => {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
         // UI NAVIGATION
         window.switchTab = (tabName) => {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -340,10 +479,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             
-            // АВТОМАТИЧЕСКАЯ ЗАГРУЗКА ЦЕН ПРИ ПЕРЕХОДЕ НА ВКЛАДКУ
-            if(tabName === 'prices') {
-                initPrices();
-            }
+            if(tabName === 'prices') initPrices();
         };
 
         // AUTH
@@ -378,6 +514,10 @@
             initProfile();
             initPrices();
             initReviews();
+            // SETUP LIVE INPUT LISTENERS ONCE
+            document.querySelectorAll('.rub-input').forEach(input => {
+                input.addEventListener('input', updateCalculatedPrices);
+            });
         }
 
         // 1. WORKLOAD
@@ -393,7 +533,7 @@
                 btn.onclick = () => setWorkload(i);
                 btn.innerHTML = `
                     <span class="num text-6xl font-light text-white/30 group-hover:text-white transition-colors tracking-tighter">${i}</span>
-                    <span class="text-xs uppercase tracking-[0.2em] text-white/50 group-hover:text-white transition-colors">${label}</span>
+                    <span class="lbl text-xs uppercase tracking-[0.2em] text-white/50 group-hover:text-white transition-colors">${label}</span>
                 `;
                 container.appendChild(btn);
             });
@@ -428,47 +568,73 @@
             const name = document.getElementById('prof-name').value;
             const role = document.getElementById('prof-role').value;
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'profile'), { name, role });
-            alert('Сохранено');
+            showToast();
         };
 
         // 3. PRICES & RATES
-        let currentRates = { USD: 96.5, KZT: 5.15 };
 
         window.initPrices = function() {
-            // Force read from server
              getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'prices')).then((snap) => {
-                if (snap.exists()) {
-                    updatePricesUI(snap.data());
-                } else {
-                    console.log("No price data found");
-                }
-            }).catch(e => console.error("Err getting prices:", e));
-            
-            // Also listen for changes
+                if (snap.exists()) updatePricesUI(snap.data());
+            });
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'prices'), (snap) => {
-                if (snap.exists()) {
-                    updatePricesUI(snap.data());
-                }
+                if (snap.exists()) updatePricesUI(snap.data());
             });
         }
 
         function updatePricesUI(data) {
-            // Prices
-            document.getElementById('price-design-landing').value = data.design_landing || 0;
-            document.getElementById('price-design-multi').value = data.design_multi || 0;
-            document.getElementById('price-turnkey-landing').value = data.turnkey_landing || 0;
-            document.getElementById('price-turnkey-multi').value = data.turnkey_multi || 0;
-            document.getElementById('price-other').value = data.other || 0;
+            // Prices inputs
+            const inputs = ['price-design-landing', 'price-design-multi', 'price-turnkey-landing', 'price-turnkey-multi', 'price-other'];
+            inputs.forEach(id => {
+                document.getElementById(id).value = data[id.replace('price-', '').replace('-', '_')] || 0;
+            });
 
-            // Rates Display
+            // Toggle state
+            if(data.rounding !== undefined) {
+                isRounding = data.rounding;
+                document.getElementById('rounding-toggle').checked = isRounding;
+            }
+
+            // Rates
             if (data.rates) {
                 currentRates = data.rates;
                 document.getElementById('display-rate-usd').textContent = currentRates.USD;
                 document.getElementById('display-rate-kzt').textContent = currentRates.KZT;
-                
                 document.getElementById('modal-rate-usd').value = currentRates.USD;
                 document.getElementById('modal-rate-kzt').value = currentRates.KZT;
             }
+            
+            // Force recalculate display strings
+            updateCalculatedPrices();
+        }
+
+        window.toggleRounding = () => {
+            isRounding = document.getElementById('rounding-toggle').checked;
+            updateCalculatedPrices();
+        }
+
+        function updateCalculatedPrices() {
+            const inputs = ['price-design-landing', 'price-design-multi', 'price-turnkey-landing', 'price-turnkey-multi', 'price-other'];
+            inputs.forEach(id => {
+                const rubVal = parseFloat(document.getElementById(id).value) || 0;
+                let usdVal = rubVal / currentRates.USD;
+                let kztVal = rubVal * currentRates.KZT;
+
+                if (isRounding) {
+                    usdVal = Math.ceil(usdVal);
+                    kztVal = Math.ceil(kztVal);
+                } else {
+                    usdVal = usdVal.toFixed(0);
+                    kztVal = kztVal.toFixed(0);
+                }
+                
+                // Format numbers (space as thousands separator)
+                const fKzt = kztVal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                const fUsd = usdVal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                
+                const displayId = id.replace('price-', 'calc-');
+                document.getElementById(displayId).innerHTML = `≈ $${fUsd} <span class="mx-2 opacity-30">|</span> ${fKzt} ₸`;
+            });
         }
 
         // Modal Logic
@@ -480,19 +646,18 @@
                 USD: Number(document.getElementById('modal-rate-usd').value),
                 KZT: Number(document.getElementById('modal-rate-kzt').value)
             };
-            // Pass true as second arg to indicate we are saving rates only, 
-            // but here we just reuse savePrices logic for simplicity, merging current input values
-            savePrices(newRates);
+            await savePrices(newRates, false); 
             closeRateModal();
         };
 
-        window.savePrices = async (rateOverride = null) => {
+        window.savePrices = async (rateOverride = null, showNotif = true) => {
             const prices = {
                 design_landing: Number(document.getElementById('price-design-landing').value),
                 design_multi: Number(document.getElementById('price-design-multi').value),
                 turnkey_landing: Number(document.getElementById('price-turnkey-landing').value),
                 turnkey_multi: Number(document.getElementById('price-turnkey-multi').value),
                 other: Number(document.getElementById('price-other').value),
+                rounding: isRounding,
                 rates: rateOverride || {
                     USD: Number(document.getElementById('modal-rate-usd').value) || currentRates.USD,
                     KZT: Number(document.getElementById('modal-rate-kzt').value) || currentRates.KZT
@@ -500,7 +665,7 @@
             };
             
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'prices'), prices);
-            // alert('Сохранено'); // Optional feedback
+            if(showNotif) showToast();
         };
 
         // 4. REVIEWS
@@ -540,6 +705,7 @@
             
             document.getElementById('rev-author').value = '';
             document.getElementById('rev-text').value = '';
+            showToast();
         };
 
         window.delReview = async (id) => {
