@@ -48,7 +48,6 @@ function setupFavicon() {
     const head = document.head || document.getElementsByTagName('head')[0];
 
     // 1. Агрессивная зачистка: удаляем ВСЕ старые иконки, чтобы не было конфликтов
-    // Ищем и rel="icon" и rel="shortcut icon"
     const oldIcons = document.querySelectorAll("link[rel*='icon']");
     oldIcons.forEach(icon => icon.remove());
 
@@ -57,12 +56,12 @@ function setupFavicon() {
     link.type = 'image/svg+xml';
     link.rel = 'icon';
 
-    // Рисуем SVG логотип
-    // fill="#FF4500" — красно-оранжевый
+    // Рисуем SVG логотип (Вернули старый дизайн)
+    // rx="10" вместо 12, шрифт 28 вместо 32, bold вместо 900
     const svgIcon = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-            <rect x="0" y="0" width="64" height="64" rx="12" fill="#FF4500"/>
-            <text x="50%" y="55%" font-family="Arial, sans-serif" font-weight="900" font-size="32" fill="white" text-anchor="middle" dominant-baseline="middle">NB</text>
+            <rect x="0" y="0" width="64" height="64" rx="10" fill="#FF4500"/>
+            <text x="50%" y="54%" font-family="Arial, sans-serif" font-weight="bold" font-size="28" fill="white" text-anchor="middle" dominant-baseline="middle">NB</text>
         </svg>
     `.trim();
 
