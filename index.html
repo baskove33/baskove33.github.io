@@ -60,7 +60,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #000; z-index: 9999;
             display: flex; flex-direction: column; justify-content: flex-end;
-            padding: 2rem;
+            padding: 2rem; /* Отступы от краев экрана */
             transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .preloader-counter {
@@ -242,7 +242,8 @@
 
     <!-- ПРЕЛОАДЕР -->
     <div id="preloader">
-        <div class="w-full max-w-screen-xl mx-auto">
+        <!-- УБРАЛ ОГРАНИЧИТЕЛЬ max-w-screen-xl, ТЕПЕРЬ ПОЛОСА НА ВСЮ ШИРИНУ -->
+        <div class="w-full"> 
             <div class="preloader-counter" id="preloader-counter">0%</div>
             <div class="preloader-bar-bg">
                 <div class="preloader-bar-fill" id="preloader-bar"></div>
