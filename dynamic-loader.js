@@ -2,7 +2,8 @@
  * ЕДИНЫЙ ЦЕНТР УПРАВЛЕНИЯ (Dynamic Loader)
  * 1. Загружает проекты.
  * 2. Управляет кнопкой "Назад".
- * 3. Чинит зависание прелоадера (черного экрана).
+ * 3. Чинит зависание прелоадера.
+ * 4. Генерирует Favicon (NB).
  */
 
 const CONFIG = {
@@ -13,8 +14,6 @@ const CONFIG = {
 };
 
 // === 1. ГЛАВНЫЙ ФИКС ЗАВИСАНИЯ (ЛЕКАРСТВО) ===
-// Этот код срабатывает КАЖДЫЙ раз, когда страница показывается пользователю
-// (даже если вытащена из "истории" кнопкой Назад)
 function forceHidePreloader() {
     const preloader = document.getElementById('preloader');
     if (preloader) {
@@ -22,22 +21,20 @@ function forceHidePreloader() {
         setTimeout(() => {
             preloader.style.zIndex = '-1';
             preloader.style.pointerEvents = 'none';
-        }, 500); // Тайминг как в CSS
+        }, 500);
     }
 }
 
-// Слушаем событие "pageshow" - это самый надежный способ поймать возврат назад
-window.addEventListener('pageshow', (event) => {
-    // Если страница загружена из кэша (bfcache) ИЛИ просто загружена
-    forceHidePreloader();
-});
-
-// На всякий случай запускаем и при обычной загрузке
+// Слушаем события загрузки
+window.addEventListener('pageshow', forceHidePreloader);
 window.addEventListener('load', forceHidePreloader);
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Проверяем, где мы находимся
+    // 1. Устанавливаем Favicon на всех страницах
+    setupFavicon();
+
+    // 2. Проверяем, где мы находимся (внутри кейса или нет)
     const isCasePage = document.getElementById('related-projects');
 
     if (isCasePage) {
@@ -46,23 +43,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// === ГЕНЕРАТОР FAVICON (ИКОНКИ) ===
+function setupFavicon() {
+    // Проверяем, есть ли уже иконка, если нет — создаем
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    }
+
+    // Рисуем SVG иконку кодом (Красно-оранжевый фон #FF4500)
+    const svgIcon = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+            <rect x="0" y="0" width="64" height="64" rx="10" fill="#FF4500"/>
+            <text x="50%" y="54%" font-family="Arial, sans-serif" font-weight="bold" font-size="28" fill="white" text-anchor="middle" dominant-baseline="middle">NB</text>
+        </svg>
+    `.trim();
+
+    // Превращаем SVG в Data URI и назначаем
+    link.href = 'data:image/svg+xml;base64,' + btoa(svgIcon);
+}
+
 // === ЛОГИКА КНОПКИ "НАЗАД" С АНИМАЦИЕЙ ===
 function setupHeaderNavigation() {
     const navLink = document.querySelector('header nav a');
     
     if (navLink) {
-        // Клонируем, чтобы убрать старые обработчики (чистый лист)
         const newLink = navLink.cloneNode(true);
         navLink.parentNode.replaceChild(newLink, navLink);
         
         newLink.textContent = CONFIG.backButtonText;
-        newLink.href = '#'; // Чтобы не было дефолтного перехода
+        newLink.href = '#';
         
-        // Добавляем красивый переход с прелоадером
         newLink.addEventListener('click', (e) => {
             e.preventDefault();
             
-            // 1. Показываем прелоадер (Анимация ухода)
             const preloader = document.getElementById('preloader');
             if (preloader) {
                 preloader.style.opacity = '1';
@@ -70,14 +86,13 @@ function setupHeaderNavigation() {
                 preloader.style.pointerEvents = 'all';
             }
 
-            // 2. Ждем и переходим назад
             setTimeout(() => {
                 if (CONFIG.useBrowserBack && window.history.length > 1) {
                     window.history.back();
                 } else {
                     window.location.href = CONFIG.backButtonLink;
                 }
-            }, 500); // Ждем пока экран станет черным
+            }, 500);
         });
     }
 }
@@ -147,10 +162,8 @@ function renderProjects(allProjects, container) {
         container.insertAdjacentHTML('beforeend', html);
     });
 
-    // Добавляем слушатели клика на новые карточки для анимации
     container.querySelectorAll('a.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
-            // Если это не открытие в новой вкладке
             if (link.target !== '_blank') {
                 e.preventDefault();
                 const href = link.getAttribute('href');
