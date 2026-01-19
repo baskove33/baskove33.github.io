@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workload Control - Baskakov</title>
+    <title>Баскаков Никита - Портфолио</title>
+    <!-- Подключение Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение Lenis для плавного скролла -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
     <style>
+        /* Настройка шрифта Inter (резервный) */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
         /* TT Neoris */
@@ -13,7 +17,7 @@
             font-family: 'TT Neoris';
             src: url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859192/TT_Neoris_Regular_bb9kfp.woff2') format('woff2'),
                  url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859114/TT_Neoris_Regular_mj4jee.woff') format('woff');
-            font-weight: 400;
+            font-weight: 400; /* Regular */
             font-style: normal;
         }
 
@@ -24,44 +28,33 @@
             font-style: normal;
         }
 
+        /* CUSTOM TRACKING */
         .tracking-custom-tight {
             letter-spacing: -0.04em;
         }
 
         body {
-            font-family: 'TT Neoris', sans-serif;
+            font-family: 'TT Neoris', 'Inter', sans-serif;
             background-color: #000;
-            color: white;
             -webkit-font-smoothing: antialiased;
-        }
-
-        .btn-option {
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            -moz-osx-font-smoothing: grayscale;
         }
         
-        .btn-option:hover {
-            background-color: #1a1a1a;
-            border-color: rgba(255, 255, 255, 0.4);
-        }
+        /* Убираем стандартные скроллбары */
+        body::-webkit-scrollbar, 
+        #scroll-panel::-webkit-scrollbar { display: none; }
+        body, #scroll-panel { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .btn-option.active {
-            background-color: #fff;
-            color: #000;
-            border-color: #fff;
-            transform: scale(1.02);
-            box-shadow: 0 0 0 1px #fff;
+        @media (min-width: 1024px) {
+            body { overflow: hidden; }
+            #scroll-panel {
+                height: 100vh;
+                overflow-y: auto; 
+                scroll-behavior: auto; 
+            }
         }
-
-        .btn-option.active span {
-            color: #000 !important;
-        }
-
-        .hidden-force { display: none !important; }
         
-        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
+        /* === ПРЕЛОАДЕР === */
         #preloader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #000; opacity: 1; z-index: 9999;
@@ -81,233 +74,929 @@
             40% { opacity: 1; transform: scale(1.2); }
         }
         
-        ::placeholder {
-            letter-spacing: normal;
-            opacity: 0.3;
+        /* Стили */
+        .left-side-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.2)),
+                url('https://res.cloudinary.com/dt79npeea/image/upload/v1764843336/photo_2025-12-04_13-05-55_pwtepu.jpg');
+            background-size: cover; background-position: center 20%;
+        }
+
+        .typing-text {
+            border-right: 2px solid rgba(255, 255, 255, 0.7); 
+            white-space: nowrap; overflow: hidden; 
+            height: 1.5em; display: inline-block; max-width: 100%;
+        }
+        
+        /* === КАРТОЧКИ === */
+        .portfolio-item { 
+            position: relative;
+            overflow: hidden;
+            background-color: #111; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            will-change: transform, box-shadow;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .portfolio-item:hover { 
+            transform: scale(1.02); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.3); 
+            z-index: 10;
+        }
+
+        .portfolio-item img {
+            will-change: transform, filter;
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.5s ease;
+            filter: grayscale(80%) brightness(0.9);
+        }
+        .portfolio-item:hover img {
+            filter: grayscale(0%) brightness(1); 
+            transform: scale(1.05);
+        }
+        
+        .portfolio-item-text {
+            background-color: transparent; 
+            color: #fff;
+        }
+        .portfolio-item-text .title { color: #fff; }
+        .portfolio-item-text .tags { color: rgba(255, 255, 255, 0.5); }
+
+
+        /* === ПЛАВНОЕ ПОЯВЛЕНИЕ === */
+        .reveal-on-scroll { 
+            opacity: 0;
+            transform: translateY(30px); 
+            will-change: opacity, transform;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-on-scroll.opacity-100 {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        #welcome-message { min-height: calc(100vh - 4rem); display: flex; flex-direction: column; justify-content: center; }
+
+        /* === LOCKED OVERLAY === */
+        .locked-overlay {
+            position: absolute; inset: 0; background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(2px); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; opacity: 0;
+            transition: opacity 0.4s ease; z-index: 20;
+        }
+        .portfolio-item:hover .locked-overlay { opacity: 1; }
+        @media (max-width: 768px) { .locked-overlay { opacity: 1; background: rgba(255, 255, 255, 0.2); } }
+        .lock-icon { animation: wobble 2s infinite ease-in-out; }
+        @keyframes wobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        /* === POPUP === */
+        #lock-popup { opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        #lock-popup.active { opacity: 1; pointer-events: all; }
+        .popup-content { transform: scale(0.95); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        #lock-popup.active .popup-content { transform: scale(1); }
+
+        /* === MAGIC LOCK === */
+        .magic-lock-wrapper { position: relative; display: block; contain: layout paint style; }
+        .magic-lock-wrapper .overlay-panel {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.7); 
+            display: flex; align-items: center; justify-content: center;
+            z-index: 30;
+            opacity: 1; visibility: visible;
+            transition: opacity 0.6s ease 0.2s, visibility 0.6s step-end 0.2s; 
+        }
+        .magic-lock-wrapper.unlocked .overlay-panel { opacity: 0; visibility: hidden; pointer-events: none; }
+        .lock-svg { width: 64px; height: 64px; overflow: visible; }
+        .shackle {
+            fill: none; stroke: #fff; stroke-width: 4; stroke-linecap: round;
+            transform-origin: 22% 40%;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 0 1px rgba(255,255,255,0.8));
+        }
+        .magic-lock-wrapper.active .shackle {
+            transform: translateY(-10px) rotate(35deg); 
+            filter: drop-shadow(0 0 5px rgba(255,255,255,1));
+        }
+        canvas.particles {
+            position: absolute; inset: -50%; width: 200%; height: 200%;
+            pointer-events: none; z-index: 40;
+        }
+
+        /* === БЕГУЩАЯ СТРОКА ОТЗЫВОВ === */
+        @keyframes infinite-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+        .animate-infinite-scroll {
+            animation: infinite-scroll 30s linear infinite; /* Ускорил с 60s до 30s */
+            width: max-content;
+            display: flex;
+        }
+        .animate-infinite-scroll:hover {
+            animation-play-state: paused;
+        }
+        
+        /* Широкая маска градиента (40% по краям) */
+        .mask-gradient-sides {
+            mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+        }
+
+        /* === АНИМАЦИЯ ЦЕНЫ === */
+        .price-target {
+            display: inline-block;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                        filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity, transform, filter;
+        }
+        
+        .price-target.animating {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.95);
+            filter: blur(8px);
+        }
+
+        /* === ВАРИАНТ 1: ЛИНЕЙНАЯ ШКАЛА === */
+        .workload-segment {
+            height: 100%;
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: background-color 0.5s ease;
+            transform-origin: bottom; 
+            transform: scaleY(0); 
+        }
+        
+        @keyframes growBar {
+            from { transform: scaleY(0); opacity: 0; }
+            to { transform: scaleY(1); opacity: 1; }
+        }
+
+        .workload-segment.filled {
+            background-color: #fff;
+            animation: growBar 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        
+        .workload-segment.empty {
+            animation: growBar 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            transform: scaleY(1); 
+        }
+
+        .workload-high .workload-segment.filled {
+            background-color: #fff; 
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
     </style>
-    
-    <script>
-        window.setWorkload = function(level) {
-            console.warn("Система еще загружается... Подождите секунду.");
-        };
-    </script>
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-6 bg-black relative overflow-hidden">
+<body class="bg-black text-white antialiased">
 
+    <!-- ПРЕЛОАДЕР -->
     <div id="preloader" class="opacity-100">
         <div class="pulse-loader">
             <span></span><span></span><span></span>
         </div>
     </div>
 
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-black to-black pointer-events-none"></div>
-
-    <!-- ЭКРАН ВХОДА -->
-    <div id="login-screen" class="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm transition-opacity duration-500">
-        <div class="max-w-xs w-full space-y-8 text-center p-10 border border-white/20 bg-[#050505] relative shadow-2xl">
-            <h2 class="text-2xl font-medium tracking-custom-tight text-white">Access Control</h2>
-            
-            <form class="space-y-6" onsubmit="event.preventDefault(); checkPassword();">
-                <input type="text" name="username" value="admin" class="hidden" autocomplete="username">
-                <input type="password" id="password-input" placeholder="Passkey" autocomplete="current-password"
-                    class="w-full bg-transparent border-b border-white/20 px-4 py-3 text-center text-white placeholder-white/20 focus:outline-none focus:border-white transition-colors tracking-wide font-light text-lg">
-                <button type="submit" 
-                    class="group relative w-full cursor-pointer overflow-hidden border border-white text-sm font-medium py-3 text-white transition duration-300 hover:text-black">
-                    <span class="inline-block transition-all duration-300 group-hover:opacity-0 z-20 relative uppercase tracking-widest">Enter System</span>
-                    <div class="absolute left-0 top-0 h-full w-full bg-white transition-all duration-300 -translate-x-full group-hover:translate-x-0 z-0"></div>
-                    <div class="absolute top-0 z-10 flex h-full w-full items-center justify-center text-black opacity-0 transition-all duration-300 group-hover:opacity-100 uppercase tracking-widest">
-                        Enter System
-                    </div>
-                </button>
-            </form>
-            <p id="login-error" class="text-red-500 text-[10px] uppercase tracking-widest mt-4 hidden animate-pulse">Access Denied</p>
+    <!-- POPUP -->
+    <div id="lock-popup" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="popup-content bg-white text-black p-8 max-w-sm w-full shadow-2xl relative text-center">
+            <button onclick="closePopup()" class="absolute top-4 right-4 text-gray-400 hover:text-black transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div class="mb-6 flex justify-center text-black">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h3 id="popup-title" class="text-xl font-bold mb-3 tracking-custom-tight">История кейса</h3>
+            <p id="popup-message" class="text-sm text-gray-600 mb-8 leading-relaxed">...</p>
+            <a href="https://www.threads.net/@baskove33" target="_blank" class="block w-full bg-black text-white font-medium py-4 hover:bg-gray-800 transition duration-300">Перейти в Threads</a>
         </div>
     </div>
 
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
-    <div id="main-content" class="max-w-lg w-full space-y-10 hidden-force opacity-0 relative z-10">
-        <div class="text-center space-y-2">
-            <h1 class="text-3xl font-medium tracking-custom-tight">Workload Manager</h1>
-            <div id="connection-status" class="flex justify-center h-6">
-                <span class="text-white/30 text-[10px] uppercase tracking-widest">Connecting...</span>
+    <!-- КОНТЕЙНЕР -->
+    <div class="flex flex-col lg:flex-row min-h-screen lg:h-screen">
+
+        <!-- ЛЕВАЯ ЧАСТЬ -->
+        <div class="left-side-bg hidden lg:flex lg:w-1/2 lg:h-full relative flex-col justify-between p-5 sm:p-8">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/00 to-black/20 pointer-events-none"></div>
+            <nav class="flex justify-between text-xs text-white/60 tracking-wider relative z-10">
+                <a href="#portfolio-section" class="nav-link hover:text-white transition duration-300">Портфолио</a>
+                <a href="#pricing-section" class="nav-link hover:text-white transition duration-300">Стоимость</a>
+                <a href="https://t.me/zorochik" target="_blank" class="hover:text-white transition duration-300">Связаться</a>
+            </nav>
+            <div class="flex justify-between w-full text-[10px] text-white/50 tracking-wider relative z-10">
+                <span></span>  
+                <span class="hidden sm:inline">Я живой, все в порядке</span>
+                <span></span>
             </div>
         </div>
+        
+        <!-- ПРАВАЯ ЧАСТЬ -->
+        <div id="scroll-panel" class="w-full lg:w-1/2 max-w-full lg:h-screen lg:p-12 p-4 sm:p-10 flex justify-center lg:overflow-y-auto scroll-mask-container">
+            <div id="right-scroll-content" class="w-full lg:max-w-[365px] space-y-5"> 
 
-        <div class="grid grid-cols-2 gap-3">
-            <button onclick="setWorkload(0)" id="btn-0" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">0</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Free</span>
-            </button>
-            <button onclick="setWorkload(1)" id="btn-1" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">1</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Light</span>
-            </button>
-            <button onclick="setWorkload(2)" id="btn-2" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">2</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Normal</span>
-            </button>
-            <button onclick="setWorkload(3)" id="btn-3" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">3</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Busy</span>
-            </button>
-            <button onclick="setWorkload(4)" id="btn-4" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">4</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em] text-orange-500/80">High Demand</span>
-            </button>
-            <button onclick="setWorkload(5)" id="btn-5" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">5</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em] text-red-500/80">Sold Out</span>
-            </button>
-        </div>
+                <!-- Приветствие -->
+                <div id="welcome-message" class="bg-black shadow-lg p-8 reveal-on-scroll text-center">
+                    <h3 class="text-5xl font-medium text-white mb-4 tracking-custom-tight">Приветствую!</h3>
+                    <div class="flex justify-center">
+                        <p id="typing-output" class="text-base text-white/70 leading-relaxed typing-text mx-auto max-w-xs"></p>
+                    </div>
+                </div>
 
-        <div class="text-center pt-8 border-t border-white/10">
-            <a href="index.html" target="_blank" class="text-xs text-white/30 hover:text-white transition-colors uppercase tracking-widest">Open Portfolio →</a>
+                <!-- Мобильное фото -->
+                <div class="block lg:hidden w-full h-[500px] left-side-bg relative flex flex-col justify-between p-5 reveal-on-scroll shadow-2xl">
+                    <div class="absolute inset-0 bg-gradient-to-b from-black/00 to-black/20 pointer-events-none"></div>
+                    <nav class="flex justify-between text-xs text-white/60 tracking-wider relative z-10">
+                        <a href="#portfolio-section" class="nav-link hover:text-white transition duration-300">Портфолио</a>
+                        <a href="#pricing-section" class="nav-link hover:text-white transition duration-300">Стоимость</a>
+                        <a href="https://t.me/zorochik" target="_blank" class="hover:text-white transition duration-300">Связаться</a>
+                    </nav>
+                    <div class="flex justify-between w-full text-[10px] text-white/50 tracking-wider relative z-10">
+                        <span></span>  
+                        <span class="inline">Я живой, все в порядке</span>
+                        <span></span>
+                    </div>
+                </div>
+                
+                <!-- Информация -->
+                <div class="bg-white shadow-2xl p-5 reveal-on-scroll">
+                    <h1 class="text-[36px] font-medium text-gray-900 tracking-custom-tight mb-2 leading-none">Баскаков Никита</h1>
+                    <p class="text-base text-gray-600 mb-20 font-light">Портфолио UX/UI дизайнера</p>
+                    <p class="text-sm text-gray-400 leading-relaxed">и просто хорошего человека</p>
+                </div>
+
+                <!-- Опыт -->
+                <div class="bg-white shadow-lg p-5 flex justify-between items-center reveal-on-scroll">
+                    <span class="text-sm text-gray-600">Опыт:</span>
+                    <span class="text-xl font-medium text-gray-900"> +4 года</span>
+                </div>
+
+                <!-- Заголовок портфолио -->
+                <div id="portfolio-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll">
+                    <h2 class="text-3xl sm:text-4xl font-medium text-white tracking-custom-tight">Портфолио</h2>
+                </div>
+
+                <!-- ПРОЕКТЫ -->
+                <div class="grid gap-5">
+                    
+                    <!-- 1. DYOR 5 -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                         <a href="dyor5.html" class="portfolio-item shadow-xl relative block group">
+                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842242/Rectangle_39524_y5ycpn.png" class="w-full h-full object-cover">
+                            </div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                <div class="title text-lg font-medium tracking-custom-tight">DYOR 5</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">UI Design / Web Design / Brand Design</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- 2. American Museum of Natural History -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                         <a href="amnh.html" class="portfolio-item shadow-xl relative block group">
+                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1766406851/%D0%9E%D0%B1%D0%BB%D0%BE%D0%B6%D0%BA%D0%B0_%D0%BA%D0%B5%D0%B9%D1%81%D0%B0_6_sobvrd.png" class="w-full h-full object-cover">
+                            </div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                <div class="title text-lg font-medium tracking-custom-tight">American Museum of Natural History</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">Web Design</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- 3. Nu i Che -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                         <a href="nuiche.html" class="portfolio-item shadow-xl relative block group">
+                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39518_rwxdzz.png" class="w-full h-full object-cover">
+                            </div>
+                            <div class="portfolio-item-text p-5 flex justify-between">
+                                <div class="title text-lg font-medium">Nu i Che</div>
+                                <div class="tags text-xs uppercase">Web Design</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- 4. Nobee -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                        <a href="nobee.html" class="portfolio-item shadow-xl relative block group">
+                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39521_ck13rv.png" class="w-full h-full object-cover">
+                            </div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                <div class="title text-lg font-medium tracking-custom-tight">Nobee</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">Web Design</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- 5. Секретный проект -->
+                    <div class="project-card-wrapper relative group reveal-on-scroll">
+                        <div onclick="openLockedPopup('coming_soon')" class="portfolio-item shadow-xl overflow-hidden cursor-pointer relative">
+                             <div class="locked-overlay" style="opacity: 1; background: rgba(255, 255, 255, 0.1);">
+                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Скоро</span>
+                            </div>
+                            <div class="w-full h-80 flex items-center justify-center bg-gray-100 overflow-hidden">
+                                <div class="w-full h-full bg-gradient-to-bl from-gray-400 to-gray-600 blur-xl scale-110"></div>
+                            </div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center filter blur-[2px]">
+                                <div class="title text-lg font-medium tracking-custom-tight">Секретный проект</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">Coming Soon</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- КНОПКА "ВСЕ КЕЙСЫ" -->
+                <div class="pt-5 pb-5 reveal-on-scroll">
+                    <a href="all_cases.html" class="block w-full"> 
+                        <button class="group relative w-full cursor-pointer overflow-hidden border border-white text-lg font-medium py-4 text-white shadow-xl transition duration-300 rounded-none hover:text-black">
+                            <span class="inline-block transition-all duration-300 group-hover:-translate-x-8 group-hover:opacity-0 z-20 relative">
+                                Все кейсы
+                            </span>
+                            <div class="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-none bg-white transition-all duration-300 group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-white z-0"></div>
+                            <div class="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 text-black opacity-0 transition-all duration-300 group-hover:-translate-x-0 group-hover:opacity-100">
+                                <span>Перейти на страницу</span> 
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M5 12l14 0" /><path d="M15 16l4-4" /><path d="M15 8l4 4" /></svg>
+                            </div>
+                        </button>
+                    </a>
+                </div>
+
+                <!-- ОТЗЫВЫ (Бесконечная дорожка) -->
+                <div class="w-full overflow-hidden mb-12 reveal-on-scroll">
+                    <h3 class="text-2xl font-medium text-white mb-4 tracking-custom-tight sr-only">Отзывы</h3>
+                    <div class="w-full overflow-hidden mask-gradient-sides">
+                        <div class="animate-infinite-scroll">
+                            
+                            <!-- КАРТОЧКА 1 -->
+                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-medium text-gray-100 text-base">zkurbanov85</span>
+                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
+                                </div>
+                                <p class="text-sm text-white/70 leading-relaxed font-light">Никита, благодарю Вас! ! Ваша терпеливая и вдумчивая работа позволила мне наконец заиметь свой таплинк. Буду обращаться вновь! !</p>
+                            </div>
+                            
+                            <!-- КАРТОЧКА 2 -->
+                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-medium text-gray-100 text-base">aikaagness</span>
+                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
+                                </div>
+                                <p class="text-sm text-white/70 leading-relaxed font-light">Большое спасибо Никите за отличную работу! замечательный сайт, всё было сделано очень профессионально и в сроки. Я очень довольна результатом.</p>
+                            </div>
+
+                            <!-- КАРТОЧКА 3 -->
+                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-medium text-gray-100 text-base truncate max-w-[120px]">TyapkinaProProdazhi</span>
+                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
+                                </div>
+                                <p class="text-sm text-white/70 leading-relaxed font-light">Очень довольна работой! Выполнено было все быстро, все по ТЗ. Использовал интересные подходы, всё предложенное было красиво, хорошо оформленно.</p>
+                            </div>
+
+                            <!-- КАРТОЧКА 4 -->
+                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-medium text-gray-100 text-base">Yuristyuga</span>
+                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
+                                </div>
+                                <p class="text-sm text-white/70 leading-relaxed font-light">Огромная благодарность. Учтены все пожелания. Представил три варианта таплинка. Отвечает быстро. Работа выполнена в срок. Буду обращаться еще.</p>
+                            </div>
+
+                            <!-- ДУБЛИКАТЫ (для бесконечности) -->
+                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-medium text-gray-100 text-base">zkurbanov85</span>
+                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
+                                </div>
+                                <p class="text-sm text-white/70 leading-relaxed font-light">Никита, благодарю Вас! ! Ваша терпеливая и вдумчивая работа позволила мне наконец заиметь свой таплинк. Буду обращаться вновь! !</p>
+                            </div>
+                            
+                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-medium text-gray-100 text-base">aikaagness</span>
+                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
+                                </div>
+                                <p class="text-sm text-white/70 leading-relaxed font-light">Большое спасибо Никите за отличную работу! замечательный сайт, всё было сделано очень профессионально и в сроки. Я очень довольна результатом.</p>
+                            </div>
+
+                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-medium text-gray-100 text-base truncate max-w-[120px]">TyapkinaProProdazhi</span>
+                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
+                                </div>
+                                <p class="text-sm text-white/70 leading-relaxed font-light">Очень довольна работой! Выполнено было все быстро, все по ТЗ. Использовал интересные подходы, всё предложенное было красиво, хорошо оформленно.</p>
+                            </div>
+
+                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-medium text-gray-100 text-base">Yuristyuga</span>
+                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
+                                </div>
+                                <p class="text-sm text-white/70 leading-relaxed font-light">Огромная благодарность. Учтены все пожелания. Представил три варианта таплинка. Отвечает быстро. Работа выполнена в срок. Буду обращаться еще.</p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ИНДИКАТОР ЗАГРУЖЕННОСТИ (ВАРИАНТ 1) -->
+                <div class="mt-32 mb-8 reveal-on-scroll bg-[#111] p-6 border border-white/10 relative overflow-hidden group">
+                    <!-- Фоновый эффект -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+                    <div class="flex items-end justify-between mb-4 relative z-10">
+                        <div class="flex flex-col">
+                            <span class="text-xs text-white/50 uppercase tracking-widest mb-1">Current Workload</span>
+                            <span class="text-lg font-medium text-white tracking-custom-tight">Моя загруженность</span>
+                        </div>
+                        <span id="workload-value" class="text-3xl font-medium text-white/20">...</span>
+                    </div>
+
+                    <!-- Шкала -->
+                    <div id="workload-bar" class="flex gap-2 h-2 mb-4">
+                        <!-- Сюда JS добавит сегменты -->
+                    </div>
+
+                    <!-- Статус текст -->
+                    <div id="workload-status-text" class="text-sm text-white/70 font-light flex items-center gap-2">
+                        <!-- JS заполнит текст -->
+                        <span class="w-2 h-2 rounded-full bg-white/50 animate-pulse"></span> Подключение...
+                    </div>
+                </div>
+
+                <!-- Стоимость -->
+                <!-- Модифицированный заголовок с переключателем валют -->
+                <div id="pricing-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll flex items-end gap-4 flex-wrap">
+                    <h2 class="text-3xl sm:text-4xl font-medium text-white tracking-custom-tight">Стоимость</h2>
+                    <!-- Currency Switcher -->
+                    <div class="flex gap-2 text-sm font-medium mb-1.5 sm:mb-2" id="currency-switcher">
+                        <button class="currency-btn text-white transition-colors hover:opacity-80" onclick="updateCurrency('RUB')" data-currency="RUB">RUB</button>
+                        <span class="text-white/30">/</span>
+                        <button class="currency-btn text-white/40 hover:text-white transition-colors" onclick="updateCurrency('USD')" data-currency="USD">USD</button>
+                        <span class="text-white/30">/</span>
+                        <button class="currency-btn text-white/40 hover:text-white transition-colors" onclick="updateCurrency('KZT')" data-currency="KZT">KZT</button>
+                    </div>
+                </div>
+
+                <div class="space-y-5">
+                    <div class="bg-white shadow-xl p-5 reveal-on-scroll">
+                        <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Дизайн сайта (Figma)</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-8">Одностраничный сайт, промо-страница, посадочная страница для продукта или услуги. Только дизайн - без сборки.</p>
+                        <div class="flex flex-col space-y-4">
+                            <div class="bg-gray-100 p-4 flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Лендинг</span>
+                                <span class="price-target text-2xl font-medium text-gray-900" data-base-rub="45000" data-prefix=""> 45 000 ₽</span>
+                            </div>
+                            <div class="bg-gray-100 p-4 flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Многостраничный сайт</span>
+                                <span class="price-target text-2xl font-medium text-gray-900" data-base-rub="80000" data-prefix=""> 80 000 ₽</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white shadow-xl p-5 reveal-on-scroll">
+                        <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Сайт под ключ (Figma + Tilda)</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-8">Одностраничный сайт, промо-страница, посадочная страница для продукта или услуги. Полный цикл: дизайн и сборка.</p>
+                        <div class="flex flex-col space-y-4">
+                            <div class="bg-gray-100 p-4 flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Лендинг</span>
+                                <span class="price-target text-2xl font-medium text-gray-900" data-base-rub="65000" data-prefix="от "> от 65 000 ₽</span>
+                            </div>
+                            <div class="bg-gray-100 p-4 flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Многостраничный сайт</span>
+                                <span class="price-target text-2xl font-medium text-gray-900" data-base-rub="90000" data-prefix="от "> от 90 000 ₽</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white shadow-xl p-5 reveal-on-scroll">
+                        <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Другие продукты?</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed mb-8">Графические задачи, не связанные напрямую с сайтами: баннеры, презентации, соцсети и другое.</p>
+                        <div class="flex flex-col space-y-4">
+                            <div class="bg-gray-100 p-4 flex justify-between items-center">
+                                <span class="text-sm text-gray-600">По договоренности</span>
+                                <!-- Базовая цена для $50 (примерно 5000 рублей) -->
+                                <span class="price-target text-2xl font-medium text-gray-900" data-base-rub="5000" data-prefix="от "> от 5 000 ₽</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопка заказа -->
+                <a href="https://t.me/zorochik" target="_blank" class="block pt-10 reveal-on-scroll pb-12">
+                    <button class="group relative w-full cursor-pointer overflow-hidden border border-white text-lg font-medium py-6 text-white shadow-xl transition duration-300 rounded-none hover:text-black">
+                        <span class="inline-block transition-all duration-300 group-hover:-translate-x-8 group-hover:opacity-0 z-20 relative">Заказать сайт</span>
+                        <div class="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-none bg-white transition-all duration-300 group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-white z-0"></div>
+                        <div class="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 text-black opacity-0 transition-all duration-300 group-hover:-translate-x-0 group-hover:opacity-100">
+                            <span>Написать в Telegram</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M5 12l14 0" /><path d="M15 16l4-4" /><path d="M15 8l4 4" /></svg>
+                        </div>
+                    </button>
+                </a>
+            </div>
         </div>
     </div>
 
-    <script>
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            setTimeout(() => {
-                preloader.style.opacity = '0';
-                setTimeout(() => { preloader.style.display = 'none'; }, 500);
-            }, 1000);
-        });
-
-        const TARGET_HASH = "565339bc4d33d72817b583024112eb7f5cdf3e5eef0252d6ec1b9c9a94e12bb3"; 
-
-        async function sha256(message) {
-            const msgBuffer = new TextEncoder().encode(message);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        async function checkPassword() {
-            const input = document.getElementById('password-input').value.trim();
-            
-            if (input === '3976570') {
-                unlock();
-                return;
-            }
-
-            try {
-                if (!window.crypto || !window.crypto.subtle) {
-                    showError();
-                    return;
-                }
-                const inputHash = await sha256(input);
-                if (inputHash === TARGET_HASH) unlock();
-                else showError();
-            } catch (e) {
-                showError();
-            }
-        }
-
-        function unlock() {
-            const loginScreen = document.getElementById('login-screen');
-            const mainContent = document.getElementById('main-content');
-            loginScreen.style.opacity = '0';
-            setTimeout(() => {
-                loginScreen.style.display = 'none';
-                mainContent.classList.remove('hidden-force');
-                mainContent.classList.add('fade-in');
-                if (typeof window.initFirebase === 'function') window.initFirebase();
-            }, 500);
-        }
-
-        function showError() {
-            const errorMsg = document.getElementById('login-error');
-            errorMsg.classList.remove('hidden');
-            document.getElementById('password-input').classList.add('border-red-500');
-            setTimeout(() => {
-                document.getElementById('password-input').classList.remove('border-red-500');
-            }, 2000);
-        }
-    </script>
-
+    <!-- FIREBASE SDKs + Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        window.initFirebase = function() {
-            console.log("Initializing Firebase...");
+        // === ВАЖНО: КОНФИГУРАЦИЯ FIREBASE ===
+        const firebaseConfig = {
+            apiKey: "AIzaSyCzLSd-Jmlb2N-UIXYMqlLWfnkPZxBQFeU",
+            authDomain: "portfolio-1a9ea.firebaseapp.com",
+            projectId: "portfolio-1a9ea",
+            storageBucket: "portfolio-1a9ea.firebasestorage.app",
+            messagingSenderId: "314962967742",
+            appId: "1:314962967742:web:9cb039f7376d9f853372ef",
+            measurementId: "G-2QVRQB4GWY"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = 'portfolio-app';
+
+        // Глобальные переменные состояния
+        let currentWorkload = 2; 
+        let isHighDemand = false;
+        let priceMultiplier = 1;
+        let currentCurrency = 'RUB'; 
+
+        // --- AUTH & INIT ---
+        const initAuth = async () => {
+            try {
+                // Пытаемся войти анонимно для чтения данных
+                await signInAnonymously(auth);
+            } catch (error) {
+                console.error("Auth Error", error);
+            }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                startListening();
+            }
+        });
+
+        initAuth();
+
+        // --- FIRESTORE LISTENER ---
+        function startListening() {
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
             
-            const firebaseConfig = {
-                apiKey: "AIzaSyCzLSd-Jmlb2N-UIXYMqlLWfnkPZxBQFeU",
-                authDomain: "portfolio-1a9ea.firebaseapp.com",
-                projectId: "portfolio-1a9ea",
-                storageBucket: "portfolio-1a9ea.firebasestorage.app",
-                messagingSenderId: "314962967742",
-                appId: "1:314962967742:web:9cb039f7376d9f853372ef",
-                measurementId: "G-2QVRQB4GWY"
-            };
-
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
-            const db = getFirestore(app);
-            const appId = 'portfolio-app';
-
-            const statusEl = document.getElementById('connection-status');
-            let currentUser = null;
-
-            const initAuth = async () => {
-                try {
-                    await signInAnonymously(auth);
-                } catch (error) {
-                    console.error("Auth failed", error);
-                    if(statusEl) {
-                        let errorText = "Auth Error";
-                        if (error.code === 'auth/configuration-not-found') errorText = "Enable Anon Auth in Console";
-                        statusEl.innerHTML = `<span class="text-red-500 text-[10px] uppercase tracking-widest">${errorText}</span>`;
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    if (data && typeof data.level !== 'undefined') {
+                        currentWorkload = data.level;
+                        isHighDemand = currentWorkload >= 4;
+                        priceMultiplier = isHighDemand ? 1.2 : 1;
+                        renderWorkload();
+                        updateCurrency(currentCurrency);
                     }
+                } else {
+                    renderWorkload();
                 }
-            };
+            }, (error) => {
+                console.error("Error listening to data:", error);
+            });
+        }
 
-            initAuth();
+        window.updateCurrency = updateCurrency;
+        window.renderWorkload = renderWorkload; 
 
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    if(statusEl) statusEl.innerHTML = `<span class="text-emerald-500 text-[10px] uppercase tracking-widest flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Online</span>`;
-                    listenToData();
+        // === ПЕЧАТАЮЩИЙСЯ ТЕКСТ ===
+        const textToType = "Спасибо за то, что посетили мой сайт.";
+        const typingOutput = document.getElementById('typing-output');
+        const typingSpeed = 50;
+        let charIndex = 0;
+        
+        function typeText() {
+            if (charIndex < textToType.length) {
+                typingOutput.textContent += textToType.charAt(charIndex);
+                charIndex++;
+                typingOutput.style.width = (charIndex * 0.55) + 'em'; 
+                setTimeout(typeText, typingSpeed);
+            } else {
+                typingOutput.style.borderRight = 'none';
+                typingOutput.style.width = 'auto'; 
+            }
+        }
+
+        // === ВАЛЮТНЫЙ КАЛЬКУЛЯТОР ===
+        function renderWorkload() {
+            const bar = document.getElementById('workload-bar');
+            const valueDisplay = document.getElementById('workload-value');
+            const statusText = document.getElementById('workload-status-text');
+            
+            if(!bar || !valueDisplay || !statusText) return;
+
+            valueDisplay.textContent = `${currentWorkload}/5`;
+
+            bar.innerHTML = '';
+            if (isHighDemand) bar.classList.add('workload-high');
+            else bar.classList.remove('workload-high');
+
+            for (let i = 1; i <= 5; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'workload-segment';
+                segment.style.animationDelay = `${i * 100}ms`;
+
+                if (i <= currentWorkload) {
+                    segment.classList.add('filled');
+                } else {
+                    segment.classList.add('empty');
+                }
+                bar.appendChild(segment);
+            }
+
+            if (currentWorkload === 5) {
+                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]"></span> Мест нет. Запись только в лист ожидания (+20% к прайсу).';
+            } else if (currentWorkload === 4) {
+                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.6)]"></span> Осталось 1-2 места. Высокий спрос (+20% к прайсу).';
+            } else if (currentWorkload >= 1) {
+                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span> Принимаю заказы в штатном режиме.';
+            } else {
+                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Свободен для новых проектов.';
+            }
+        }
+
+        const currencyRates = {
+            RUB: 1,
+            USD: 1 / 78.25, 
+            KZT: 6.53 
+        };
+        const currencySymbols = {
+            RUB: '₽',
+            USD: '$',
+            KZT: '₸'
+        };
+
+        function updateCurrency(currency) {
+            currentCurrency = currency; 
+            
+            const targets = document.querySelectorAll('.price-target');
+            
+            document.querySelectorAll('.currency-btn').forEach(btn => {
+                if(btn.dataset.currency === currency) {
+                    btn.classList.remove('text-white/40');
+                    btn.classList.add('text-white');
+                } else {
+                    btn.classList.add('text-white/40');
+                    btn.classList.remove('text-white');
                 }
             });
 
-            function listenToData() {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
-                onSnapshot(docRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        updateUI(data.level);
+            const rate = currencyRates[currency];
+            const symbol = currencySymbols[currency];
+
+            targets.forEach(el => {
+                el.classList.add('animating');
+
+                setTimeout(() => {
+                    const baseRub = parseFloat(el.getAttribute('data-base-rub'));
+                    const prefix = el.getAttribute('data-prefix') || '';
+                    
+                    const adjustedBaseRub = baseRub * priceMultiplier;
+
+                    let convertedValue;
+
+                    if (currency === 'RUB') {
+                        convertedValue = adjustedBaseRub;
+                    } else if (currency === 'USD') {
+                        const rawValue = adjustedBaseRub * rate;
+                        convertedValue = Math.ceil(rawValue / 10) * 10;
+                    } else if (currency === 'KZT') {
+                        const rawValue = adjustedBaseRub * rate;
+                        convertedValue = Math.ceil(rawValue / 5000) * 5000;
+                    }
+                    
+                    const formatted = convertedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                    
+                    el.textContent = `${prefix} ${formatted} ${symbol}`;
+                    el.classList.remove('animating');
+                }, 300); 
+            });
+        }
+        
+        // === PRELOADER & INIT ===
+        const preloader = document.getElementById('preloader');
+
+        function hidePreloader() {
+            if (preloader) {
+                preloader.style.opacity = '0';
+                setTimeout(() => {
+                    preloader.style.zIndex = '-1';
+                    preloader.style.pointerEvents = 'none';
+                    if (typingOutput) typeText();
+                }, 500);
+            }
+        }
+
+        function showPreloader(e) {
+            const target = e.currentTarget;
+            const href = target.getAttribute('href');
+            if (href && (href.startsWith('#') || target.getAttribute('target') === '_blank')) return;
+            preloader.style.opacity = '1';
+            preloader.style.zIndex = '9999';
+            preloader.style.pointerEvents = 'all';
+            e.preventDefault();
+            setTimeout(() => { window.location.href = href; }, 500);
+        }
+
+        window.addEventListener('load', hidePreloader);
+        setTimeout(hidePreloader, 3000);
+
+        // ===========================================
+        // === ОПТИМИЗИРОВАННАЯ МАГИЯ (MAGIC LOCK) ===
+        // ===========================================
+        (() => {
+            const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+
+            function activate(card) {
+                if (card.classList.contains('unlocked')) return;
+                if (card.classList.contains('active')) return;
+
+                card.classList.add('active');
+                
+                runMagicBurst(card);
+
+                setTimeout(() => {
+                    card.classList.add('unlocked');
+                }, 400);
+            }
+
+            function runMagicBurst(card) {
+                const c = card.querySelector('canvas.particles');
+                if (!c) return;
+                
+                const ctx = c.getContext('2d', { willReadFrequently: false });
+                const rect = c.getBoundingClientRect();
+                c.width = rect.width * DPR;
+                c.height = rect.height * DPR;
+
+                let particles = [];
+                const cx = c.width / 2;
+                const cy = c.height / 2;
+
+                const spreadFactor = 11 * DPR;
+                const gravity = 0.1 * DPR;
+                const minDecay = 0.007;
+                const maxDecay = 0.02;
+
+                for (let i = 0; i < 45; i++) {
+                    particles.push({
+                        x: cx,
+                        y: cy,
+                        vx: (Math.random() - 0.5) * spreadFactor, 
+                        vy: (Math.random() * -1) * spreadFactor - 2 * DPR, 
+                        size: (Math.random() * 3 + 1.5) * DPR, 
+                        alpha: 1,
+                        decay: Math.random() * (maxDecay - minDecay) + minDecay 
+                    });
+                }
+
+                function animate() {
+                    if (particles.length === 0) {
+                        ctx.clearRect(0, 0, c.width, c.height);
+                        return; 
+                    }
+
+                    ctx.clearRect(0, 0, c.width, c.height);
+                    ctx.fillStyle = '#fff';
+                    ctx.globalCompositeOperation = 'lighter'; 
+                    
+                    for (let i = 0; i < particles.length; i++) {
+                        let p = particles[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += gravity;
+                        p.alpha -= p.decay;
+
+                        if (p.alpha <= 0) {
+                            particles.splice(i, 1);
+                            i--;
+                            continue;
+                        }
+
+                        ctx.globalAlpha = p.alpha;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    
+                    ctx.globalCompositeOperation = 'source-over';
+                    ctx.globalAlpha = 1;
+
+                    requestAnimationFrame(animate);
+                }
+                
+                animate();
+            }
+
+            const magicScrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const card = entry.target;
+                    if (entry.isIntersecting) { 
+                        activate(card);
+                        magicScrollObserver.unobserve(card);
                     }
                 });
-            }
+            }, {
+                rootMargin: '-40% 0px -40% 0px', 
+                threshold: 0.01 
+            });
 
-            function updateUI(level) {
-                document.querySelectorAll('.btn-option').forEach(btn => {
-                    btn.classList.remove('active');
+            document.querySelectorAll('.magic-lock-wrapper')
+                .forEach(c => {
+                    c.addEventListener('pointerenter', () => activate(c), { passive: true });
+                    magicScrollObserver.observe(c);
                 });
-                if (level !== undefined && level !== null) {
-                    const activeBtn = document.getElementById(`btn-${level}`);
-                    if (activeBtn) activeBtn.classList.add('active');
+        })();
+
+        // === ИНИЦИАЛИЗАЦИЯ И LENIS ===
+        const initialObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const element = entry.target;
+                if (entry.isIntersecting) {
+                    element.classList.remove('opacity-0', 'translate-y-4');
+                    element.classList.add('opacity-100');
+                    initialObserver.unobserve(element);
                 }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }); 
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.innerWidth >= 1024) {
+                const scrollPanel = document.querySelector('#scroll-panel');
+                const scrollContent = document.querySelector('#right-scroll-content');
+                
+                // Увеличенная плавность скролла (duration 2.0)
+                const lenis = new Lenis({
+                    wrapper: scrollPanel, 
+                    content: scrollContent,
+                    duration: 2.0, 
+                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+                    direction: 'vertical',
+                    gestureDirection: 'vertical',
+                    smooth: true,
+                    smoothTouch: false,
+                    touchMultiplier: 2,
+                });
+
+                function raf(time) {
+                    lenis.raf(time);
+                    requestAnimationFrame(raf);
+                }
+                requestAnimationFrame(raf);
+                window.lenis = lenis;
             }
 
-            window.setWorkload = async (level) => {
-                if (!currentUser) return;
-                updateUI(level);
-                try {
-                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
-                    await setDoc(docRef, { level: level });
-                } catch (e) {
-                    console.error("Error", e);
-                    alert("Ошибка сохранения: " + e.message);
-                }
-            };
-        };
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        if (window.lenis) {
+                            window.lenis.scrollTo(targetElement);
+                        } else {
+                            if (window.innerWidth < 1024) {
+                                const y = targetElement.getBoundingClientRect().top + window.scrollY - 20; 
+                                window.scrollTo({top: y, behavior: 'smooth'});
+                            } else {
+                                const panel = document.getElementById('scroll-panel');
+                                if(panel) {
+                                    panel.scrollTo({
+                                        top: targetElement.offsetTop,
+                                        behavior: 'smooth'
+                                    });
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('a[href^="index.html"], a[href$=".html"]').forEach(link => {
+                if (link.getAttribute('target') !== '_blank') link.addEventListener('click', showPreloader);
+            });
+            
+            document.querySelectorAll('.reveal-on-scroll').forEach((el, index) => {
+                el.style.transitionDelay = `${index * 50}ms`;
+                initialObserver.observe(el);
+            });
+
+            renderWorkload();
+            updateCurrency('RUB'); 
+        });
     </script>
 </body>
 </html>
