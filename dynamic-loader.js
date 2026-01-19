@@ -3,7 +3,7 @@
  * 1. Загружает проекты.
  * 2. Управляет кнопкой "Назад".
  * 3. Чинит зависание прелоадера.
- * 4. Генерирует Favicon (NB).
+ * 4. Генерирует Favicon (NB) — встроенный логотип.
  */
 
 const CONFIG = {
@@ -31,7 +31,7 @@ window.addEventListener('load', forceHidePreloader);
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Устанавливаем Favicon на всех страницах
+    // 1. Устанавливаем Favicon (логотип) на всех страницах
     setupFavicon();
 
     // 2. Проверяем, где мы находимся (внутри кейса или нет)
@@ -43,9 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// === ГЕНЕРАТОР FAVICON (ИКОНКИ) ===
+// === ГЕНЕРАТОР FAVICON (ВШИТЫЙ ЛОГОТИП) ===
 function setupFavicon() {
-    // Проверяем, есть ли уже иконка, если нет — создаем
+    // Ищем существующий тег favicon или создаем новый
     let link = document.querySelector("link[rel~='icon']");
     if (!link) {
         link = document.createElement('link');
@@ -53,15 +53,20 @@ function setupFavicon() {
         document.getElementsByTagName('head')[0].appendChild(link);
     }
 
-    // Рисуем SVG иконку кодом (Красно-оранжевый фон #FF4500)
+    // Указываем правильный тип для SVG
+    link.type = 'image/svg+xml';
+
+    // Рисуем SVG логотип прямо здесь.
+    // fill="#FF4500" — это красно-оранжевый цвет.
+    // rx="12" — скругление углов (форма как у иконок приложений).
     const svgIcon = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-            <rect x="0" y="0" width="64" height="64" rx="10" fill="#FF4500"/>
-            <text x="50%" y="54%" font-family="Arial, sans-serif" font-weight="bold" font-size="28" fill="white" text-anchor="middle" dominant-baseline="middle">NB</text>
+            <rect x="0" y="0" width="64" height="64" rx="12" fill="#FF4500"/>
+            <text x="50%" y="55%" font-family="Arial, sans-serif" font-weight="900" font-size="32" fill="white" text-anchor="middle" dominant-baseline="middle">NB</text>
         </svg>
     `.trim();
 
-    // Превращаем SVG в Data URI и назначаем
+    // Конвертируем SVG в формат, понятный браузеру (base64)
     link.href = 'data:image/svg+xml;base64,' + btoa(svgIcon);
 }
 
