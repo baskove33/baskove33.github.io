@@ -218,6 +218,38 @@
             transform: translateY(-10px) scale(0.95);
             filter: blur(8px);
         }
+
+        /* === ВАРИАНТ 1: ЛИНЕЙНАЯ ШКАЛА (Возврат) === */
+        .workload-segment {
+            height: 100%;
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: background-color 0.5s ease;
+            transform-origin: bottom; /* Растем снизу вверх */
+            transform: scaleY(0); /* Исходное состояние для анимации */
+        }
+        
+        /* Анимация появления */
+        @keyframes growBar {
+            from { transform: scaleY(0); opacity: 0; }
+            to { transform: scaleY(1); opacity: 1; }
+        }
+
+        .workload-segment.filled {
+            background-color: #fff;
+            animation: growBar 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        
+        .workload-segment.empty {
+            animation: growBar 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            transform: scaleY(1); /* Для пустых сразу ставим 1, но они прозрачные */
+        }
+
+        /* Если загрузка высокая (4-5), делаем заполненные блоки чуть агрессивнее */
+        .workload-high .workload-segment.filled {
+            background-color: #fff; 
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
     </style>
 </head>
 <body class="bg-black text-white antialiased">
@@ -422,7 +454,8 @@
                 </div>
 
                 <!-- ОТЗЫВЫ (Бесконечная дорожка) -->
-                <div class="w-full overflow-hidden mb-5 reveal-on-scroll">
+                <!-- Вернул стандартный отступ mb-12 -->
+                <div class="w-full overflow-hidden mb-12 reveal-on-scroll">
                     <h3 class="text-2xl font-medium text-white mb-4 tracking-custom-tight sr-only">Отзывы</h3>
                     <div class="w-full overflow-hidden mask-gradient-sides">
                         <div class="animate-infinite-scroll">
@@ -497,6 +530,31 @@
                             </div>
 
                         </div>
+                    </div>
+                </div>
+
+                <!-- ИНДИКАТОР ЗАГРУЖЕННОСТИ (ВАРИАНТ 1) -->
+                <!-- Добавил mt-32 (большой отступ сверху) для этого блока -->
+                <div class="mt-32 mb-8 reveal-on-scroll bg-[#111] p-6 border border-white/10 relative overflow-hidden group">
+                    <!-- Фоновый эффект -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+
+                    <div class="flex items-end justify-between mb-4 relative z-10">
+                        <div class="flex flex-col">
+                            <span class="text-xs text-white/50 uppercase tracking-widest mb-1">Current Workload</span>
+                            <span class="text-lg font-medium text-white tracking-custom-tight">Моя загруженность</span>
+                        </div>
+                        <span id="workload-value" class="text-3xl font-medium text-white/20">2/5</span>
+                    </div>
+
+                    <!-- Шкала -->
+                    <div id="workload-bar" class="flex gap-2 h-2 mb-4">
+                        <!-- Сюда JS добавит сегменты -->
+                    </div>
+
+                    <!-- Статус текст -->
+                    <div id="workload-status-text" class="text-sm text-white/70 font-light flex items-center gap-2">
+                        <!-- JS заполнит текст -->
                     </div>
                 </div>
 
@@ -590,12 +648,62 @@
             }
         }
 
-        // === ВАЛЮТНЫЙ КАЛЬКУЛЯТОР ===
+        // === ВАЛЮТНЫЙ КАЛЬКУЛЯТОР И ЗАГРУЖЕННОСТЬ ===
+        
+        // 1. НАСТРОЙКА ЗАГРУЖЕННОСТИ (0 - 5)
+        // Установили 2 деления, как и просили
+        const currentWorkload = 2; 
+
+        // Логика: если 4 или 5, то повышаем цену
+        const isHighDemand = currentWorkload >= 4;
+        const priceMultiplier = isHighDemand ? 1.2 : 1; 
+
+        // Отрисовка индикатора (ВАРИАНТ 1)
+        function renderWorkload() {
+            const bar = document.getElementById('workload-bar');
+            const valueDisplay = document.getElementById('workload-value');
+            const statusText = document.getElementById('workload-status-text');
+            
+            valueDisplay.textContent = `${currentWorkload}/5`;
+
+            // Генерация сегментов
+            bar.innerHTML = '';
+            if (isHighDemand) bar.classList.add('workload-high');
+
+            for (let i = 1; i <= 5; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'workload-segment';
+                
+                // Добавляем задержку для последовательной анимации
+                segment.style.animationDelay = `${i * 100}ms`;
+
+                if (i <= currentWorkload) {
+                    segment.classList.add('filled');
+                } else {
+                    segment.classList.add('empty'); // Чтобы пустые тоже анимировались при появлении
+                }
+                bar.appendChild(segment);
+            }
+
+            // Текст статуса
+            // Добавил animate-pulse для всех активных состояний
+            if (currentWorkload === 5) {
+                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]"></span> Мест нет. Запись только в лист ожидания (+20% к прайсу).';
+            } else if (currentWorkload === 4) {
+                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.6)]"></span> Осталось 1-2 места. Высокий спрос (+20% к прайсу).';
+            } else if (currentWorkload >= 1) {
+                // Здесь добавил animate-pulse и сделал цвет более "живым" (зеленым), чтобы было видно пульсацию
+                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span> Принимаю заказы в штатном режиме.';
+            } else {
+                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Свободен для новых проектов.';
+            }
+        }
+
         // База всегда RUB
         const currencyRates = {
             RUB: 1,
-            USD: 1 / 78.25, // Актуальный курс: 1 USD = 78.25 RUB
-            KZT: 6.53       // Актуальный курс: 1 RUB = 6.53 KZT
+            USD: 1 / 78.25, // Актуальный курс
+            KZT: 6.53       // Актуальный курс
         };
         const currencySymbols = {
             RUB: '₽',
@@ -621,37 +729,32 @@
             const symbol = currencySymbols[currency];
 
             targets.forEach(el => {
-                // 1. Запускаем анимацию исчезновения
                 el.classList.add('animating');
 
-                // 2. Ждем окончания анимации (300мс), меняем цифры и появляем обратно
                 setTimeout(() => {
-                    // Получаем базовую цену в рублях
                     const baseRub = parseFloat(el.getAttribute('data-base-rub'));
                     const prefix = el.getAttribute('data-prefix') || '';
                     
+                    // ПРИМЕНЯЕМ МУЛЬТИПЛИКАТОР ЗАГРУЖЕННОСТИ
+                    const adjustedBaseRub = baseRub * priceMultiplier;
+
                     let convertedValue;
 
                     if (currency === 'RUB') {
-                        convertedValue = baseRub;
+                        convertedValue = adjustedBaseRub;
                     } else if (currency === 'USD') {
-                        // Конвертация в USD: округление вверх до 10 (например, 468 -> 470)
-                        const rawValue = baseRub * rate;
+                        const rawValue = adjustedBaseRub * rate;
                         convertedValue = Math.ceil(rawValue / 10) * 10;
                     } else if (currency === 'KZT') {
-                        // Конвертация в KZT: округление вверх до 5000 (например, 293 850 -> 295 000)
-                        const rawValue = baseRub * rate;
+                        const rawValue = adjustedBaseRub * rate;
                         convertedValue = Math.ceil(rawValue / 5000) * 5000;
                     }
                     
-                    // Форматирование (пробелы разрядов)
                     const formatted = convertedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
                     
                     el.textContent = `${prefix} ${formatted} ${symbol}`;
-                    
-                    // Убираем класс анимации (плавное появление)
                     el.classList.remove('animating');
-                }, 300); // Тайминг должен совпадать с CSS transition (0.3s)
+                }, 300); 
             });
         }
 
@@ -892,6 +995,12 @@
                 el.style.transitionDelay = `${index * 50}ms`;
                 initialObserver.observe(el);
             });
+
+            // Инициализация загруженности
+            renderWorkload();
+            // Обновляем цены при загрузке (чтобы применился коэффициент)
+            // По умолчанию RUB, но с учетом workload
+            updateCurrency('RUB'); 
         });
 
         window.addEventListener('load', hidePreloader);
