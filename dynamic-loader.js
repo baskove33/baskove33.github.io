@@ -45,20 +45,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // === ГЕНЕРАТОР FAVICON (ВШИТЫЙ ЛОГОТИП) ===
 function setupFavicon() {
-    // Ищем существующий тег favicon или создаем новый
-    let link = document.querySelector("link[rel~='icon']");
-    if (!link) {
-        link = document.createElement('link');
-        link.rel = 'icon';
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }
+    const head = document.head || document.getElementsByTagName('head')[0];
 
-    // Указываем правильный тип для SVG
+    // 1. Агрессивная зачистка: удаляем ВСЕ старые иконки, чтобы не было конфликтов
+    // Ищем и rel="icon" и rel="shortcut icon"
+    const oldIcons = document.querySelectorAll("link[rel*='icon']");
+    oldIcons.forEach(icon => icon.remove());
+
+    // 2. Создаем новую чистую ссылку
+    const link = document.createElement('link');
     link.type = 'image/svg+xml';
+    link.rel = 'icon';
 
-    // Рисуем SVG логотип прямо здесь.
-    // fill="#FF4500" — это красно-оранжевый цвет.
-    // rx="12" — скругление углов (форма как у иконок приложений).
+    // Рисуем SVG логотип
+    // fill="#FF4500" — красно-оранжевый
     const svgIcon = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
             <rect x="0" y="0" width="64" height="64" rx="12" fill="#FF4500"/>
@@ -66,8 +66,10 @@ function setupFavicon() {
         </svg>
     `.trim();
 
-    // Конвертируем SVG в формат, понятный браузеру (base64)
     link.href = 'data:image/svg+xml;base64,' + btoa(svgIcon);
+    
+    // Добавляем в конец head
+    head.appendChild(link);
 }
 
 // === ЛОГИКА КНОПКИ "НАЗАД" С АНИМАЦИЕЙ ===
