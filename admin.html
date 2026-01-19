@@ -35,22 +35,43 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* Кнопки уровней */
         .btn-option {
-            transition: all 0.3s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .btn-option:hover {
+        .btn-option:hover:not(:disabled) {
             background-color: #1a1a1a;
             border-color: rgba(255, 255, 255, 0.4);
         }
 
+        .btn-option:disabled {
+            opacity: 0.5;
+            cursor: wait;
+        }
+
+        /* Активное состояние */
         .btn-option.active {
             background-color: #fff;
             color: #000;
             border-color: #fff;
             transform: scale(1.02);
-            box-shadow: 0 0 0 1px #fff;
+            box-shadow: 0 0 15px rgba(255,255,255,0.2);
+            opacity: 1 !important;
+        }
+
+        /* Состояние загрузки (нажатая кнопка) */
+        .btn-option.loading {
+            background-color: #222;
+            border-color: #fff;
+            animation: pulse-border 1s infinite;
+            opacity: 1 !important;
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0px rgba(255, 255, 255, 0.4); }
+            100% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
         }
 
         .btn-option.active span {
@@ -129,6 +150,7 @@
     <div id="main-content" class="max-w-lg w-full space-y-10 hidden-force opacity-0 relative z-10">
         <div class="text-center space-y-2">
             <h1 class="text-3xl font-medium tracking-custom-tight">Workload Manager</h1>
+            <!-- Статус соединения (динамический) -->
             <div id="connection-status" class="flex justify-center h-6">
                 <span class="text-white/30 text-[10px] uppercase tracking-widest">Connecting...</span>
             </div>
@@ -175,6 +197,7 @@
             }, 1000);
         });
 
+        // HASH for 3976570
         const TARGET_HASH = "565339bc4d33d72817b583024112eb7f5cdf3e5eef0252d6ec1b9c9a94e12bb3"; 
 
         async function sha256(message) {
@@ -252,17 +275,14 @@
 
             const statusEl = document.getElementById('connection-status');
             let currentUser = null;
+            let isUpdating = false;
 
             const initAuth = async () => {
                 try {
                     await signInAnonymously(auth);
                 } catch (error) {
                     console.error("Auth failed", error);
-                    if(statusEl) {
-                        let errorText = "Auth Error";
-                        if (error.code === 'auth/configuration-not-found') errorText = "Enable Anon Auth in Console";
-                        statusEl.innerHTML = `<span class="text-red-500 text-[10px] uppercase tracking-widest">${errorText}</span>`;
-                    }
+                    renderStatus('AUTH_ERROR');
                 }
             };
 
@@ -271,40 +291,99 @@
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     currentUser = user;
-                    if(statusEl) statusEl.innerHTML = `<span class="text-emerald-500 text-[10px] uppercase tracking-widest flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Online</span>`;
+                    renderStatus('ONLINE');
                     listenToData();
                 }
             });
+
+            // Функция рендеринга статуса
+            function renderStatus(mode) {
+                if (!statusEl) return;
+
+                const onlineHtml = `<span class="text-emerald-500 text-[10px] uppercase tracking-widest flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Online</span>`;
+
+                if (mode === 'CONNECTING') {
+                    statusEl.innerHTML = `<span class="text-white/30 text-[10px] uppercase tracking-widest">Connecting...</span>`;
+                } else if (mode === 'ONLINE') {
+                    statusEl.innerHTML = onlineHtml;
+                } else if (mode === 'UPDATING') {
+                    statusEl.innerHTML = `<span class="text-white/50 text-[10px] uppercase tracking-widest animate-pulse">Updating...</span>`;
+                } else if (mode === 'SAVED') {
+                    // ONLINE + SAVED (полупрозрачный)
+                    statusEl.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            ${onlineHtml}
+                            <span class="text-white/30 text-[10px] uppercase tracking-widest">Saved</span>
+                        </div>
+                    `;
+                } else if (mode === 'ERROR') {
+                    statusEl.innerHTML = `<span class="text-red-500 text-[10px] uppercase tracking-widest">Error</span>`;
+                } else if (mode === 'AUTH_ERROR') {
+                    statusEl.innerHTML = `<span class="text-red-500 text-[10px] uppercase tracking-widest">Auth Error</span>`;
+                }
+            }
 
             function listenToData() {
                 const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
                 onSnapshot(docRef, (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
+                        
+                        // Если это наше обновление, показываем SAVED -> ONLINE
+                        if (isUpdating) {
+                            renderStatus('SAVED');
+                            setTimeout(() => {
+                                renderStatus('ONLINE');
+                                isUpdating = false;
+                            }, 2000);
+                        }
+                        
                         updateUI(data.level);
                     }
                 });
             }
 
             function updateUI(level) {
+                // Разблокируем кнопки
                 document.querySelectorAll('.btn-option').forEach(btn => {
-                    btn.classList.remove('active');
+                    btn.classList.remove('active', 'loading');
+                    btn.disabled = false;
                 });
+
                 if (level !== undefined && level !== null) {
                     const activeBtn = document.getElementById(`btn-${level}`);
-                    if (activeBtn) activeBtn.classList.add('active');
+                    if (activeBtn) {
+                        activeBtn.classList.add('active');
+                    }
                 }
             }
 
             window.setWorkload = async (level) => {
                 if (!currentUser) return;
-                updateUI(level);
+                
+                isUpdating = true;
+                
+                // 1. Статус Updating
+                renderStatus('UPDATING');
+                
+                // 2. Анимация на кнопке
+                const targetBtn = document.getElementById(`btn-${level}`);
+                if(targetBtn) targetBtn.classList.add('loading');
+                
+                // 3. Блокируем кнопки
+                document.querySelectorAll('.btn-option').forEach(btn => {
+                    btn.disabled = true;
+                });
+
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
                     await setDoc(docRef, { level: level });
                 } catch (e) {
                     console.error("Error", e);
-                    alert("Ошибка сохранения: " + e.message);
+                    alert("Ошибка сохранения");
+                    isUpdating = false;
+                    renderStatus('ERROR');
+                    updateUI(level); // Сброс UI
                 }
             };
         };
