@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workload Control - Baskakov</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #000; color: white; }
+        .btn-option { transition: all 0.3s ease; }
+        .btn-option.active { transform: scale(1.05); box-shadow: 0 0 20px rgba(255,255,255,0.2); border-color: white; }
+        .hidden-force { display: none !important; }
+        /* Анимация входа */
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="h-screen flex flex-col items-center justify-center p-6 bg-black relative overflow-hidden">
+
+    <!-- === ЭКРАН ВХОДА === -->
+    <div id="login-screen" class="absolute inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md">
+        <div class="max-w-xs w-full space-y-6 text-center p-8 border border-white/10 rounded-2xl bg-[#111]">
+            <h2 class="text-xl font-bold tracking-tight text-white">Вход в систему</h2>
+            <div class="space-y-4">
+                <input type="password" id="password-input" placeholder="Введите пароль" 
+                    class="w-full bg-black border border-white/20 rounded-lg px-4 py-3 text-center text-white placeholder-white/30 focus:outline-none focus:border-emerald-500 transition-colors">
+                <button onclick="checkPassword()" 
+                    class="w-full bg-white text-black font-bold py-3 rounded-lg hover:bg-gray-200 transition-transform active:scale-95">
+                    Войти
+                </button>
+            </div>
+            <p id="login-error" class="text-red-500 text-xs mt-2 hidden">Неверный пароль</p>
+        </div>
+    </div>
+
+    <!-- === ОСНОВНОЙ КОНТЕНТ (Скрыт по умолчанию) === -->
+    <div id="main-content" class="max-w-md w-full space-y-8 hidden-force opacity-0">
+        <div class="text-center">
+            <h1 class="text-2xl font-bold tracking-tight">Управление загрузкой</h1>
+            <p class="text-white/50 text-sm mt-2">Изменения применяются мгновенно</p>
+        </div>
+
+        <!-- Статус соединения -->
+        <div id="connection-status" class="flex justify-center">
+            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-500 text-xs font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                Подключение...
+            </span>
+        </div>
+
+        <!-- Сетка кнопок -->
+        <div class="grid grid-cols-2 gap-4">
+            <button onclick="setWorkload(0)" id="btn-0" class="btn-option p-6 rounded-2xl border border-white/10 bg-[#111] hover:bg-[#222] flex flex-col items-center gap-2 group">
+                <span class="text-3xl font-bold text-emerald-500 group-hover:scale-110 transition-transform">0</span>
+                <span class="text-xs text-white/40 uppercase tracking-widest">Свободен</span>
+            </button>
+            
+            <button onclick="setWorkload(1)" id="btn-1" class="btn-option p-6 rounded-2xl border border-white/10 bg-[#111] hover:bg-[#222] flex flex-col items-center gap-2 group">
+                <span class="text-3xl font-bold text-emerald-400 group-hover:scale-110 transition-transform">1</span>
+                <span class="text-xs text-white/40 uppercase tracking-widest">Лайт</span>
+            </button>
+
+            <button onclick="setWorkload(2)" id="btn-2" class="btn-option p-6 rounded-2xl border border-white/10 bg-[#111] hover:bg-[#222] flex flex-col items-center gap-2 group">
+                <span class="text-3xl font-bold text-green-300 group-hover:scale-110 transition-transform">2</span>
+                <span class="text-xs text-white/40 uppercase tracking-widest">Норма</span>
+            </button>
+
+            <button onclick="setWorkload(3)" id="btn-3" class="btn-option p-6 rounded-2xl border border-white/10 bg-[#111] hover:bg-[#222] flex flex-col items-center gap-2 group">
+                <span class="text-3xl font-bold text-yellow-400 group-hover:scale-110 transition-transform">3</span>
+                <span class="text-xs text-white/40 uppercase tracking-widest">Плотно</span>
+            </button>
+
+            <button onclick="setWorkload(4)" id="btn-4" class="btn-option p-6 rounded-2xl border border-white/10 bg-[#111] hover:bg-[#222] flex flex-col items-center gap-2 group">
+                <span class="text-3xl font-bold text-orange-500 group-hover:scale-110 transition-transform">4</span>
+                <span class="text-xs text-white/40 uppercase tracking-widest">Запара</span>
+            </button>
+
+            <button onclick="setWorkload(5)" id="btn-5" class="btn-option p-6 rounded-2xl border border-white/10 bg-[#111] hover:bg-[#222] flex flex-col items-center gap-2 group">
+                <span class="text-3xl font-bold text-red-600 group-hover:scale-110 transition-transform">5</span>
+                <span class="text-xs text-white/40 uppercase tracking-widest">SOLD OUT</span>
+            </button>
+        </div>
+
+        <div class="text-center pt-8">
+            <a href="index.html" target="_blank" class="text-sm text-white/30 hover:text-white transition-colors">Перейти на сайт →</a>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        // === ЛОГИКА ПАРОЛЯ (SHA-256) ===
+        // Пароль: baskakov
+        const TARGET_HASH = "140f3299797825740670357b96c56f8753235339399880775553535928059005"; 
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function checkPassword() {
+            const input = document.getElementById('password-input').value.trim(); // Убираем пробелы
+            const errorMsg = document.getElementById('login-error');
+            
+            try {
+                // Проверка доступности Crypto API (может не работать локально без HTTPS)
+                if (!window.crypto || !window.crypto.subtle) {
+                    console.warn("Crypto API недоступен. Используется резервная проверка.");
+                    // Резервная проверка для локальной разработки
+                    if (input === 'baskakov') {
+                        unlock();
+                        return;
+                    } else {
+                        showError();
+                        return;
+                    }
+                }
+
+                const inputHash = await sha256(input);
+
+                if (inputHash === TARGET_HASH) {
+                    unlock();
+                } else {
+                    showError();
+                }
+            } catch (e) {
+                console.error("Login error:", e);
+                showError();
+            }
+        }
+
+        function unlock() {
+            const loginScreen = document.getElementById('login-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            loginScreen.style.opacity = '0';
+            setTimeout(() => {
+                loginScreen.style.display = 'none';
+                mainContent.classList.remove('hidden-force');
+                mainContent.classList.add('fade-in');
+                
+                // Инициализируем Firebase только после успешного входа
+                if (window.initFirebase) {
+                    window.initFirebase();
+                } else {
+                    console.error("Firebase module not loaded yet.");
+                }
+            }, 300);
+        }
+
+        function showError() {
+            const errorMsg = document.getElementById('login-error');
+            errorMsg.classList.remove('hidden');
+            document.getElementById('password-input').classList.add('border-red-500');
+        }
+
+        // Вход по Enter
+        document.getElementById('password-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Функция инициализации, доступная глобально
+        window.initFirebase = function() {
+            const firebaseConfig = JSON.parse(__firebase_config);
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+            const statusEl = document.getElementById('connection-status');
+            let currentUser = null;
+
+            // Auth Logic
+            const initAuth = async () => {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } catch (error) {
+                    console.error("Auth failed", error);
+                    statusEl.innerHTML = `<span class="text-red-500">Ошибка доступа</span>`;
+                }
+            };
+
+            initAuth();
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    statusEl.innerHTML = `<span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 text-xs font-medium"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Подключено</span>`;
+                    listenToData();
+                }
+            });
+
+            function listenToData() {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
+                onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        updateUI(data.level);
+                    }
+                }, (error) => {
+                    console.error("Snapshot error:", error);
+                });
+            }
+
+            function updateUI(level) {
+                document.querySelectorAll('.btn-option').forEach(btn => {
+                    btn.classList.remove('active', 'bg-[#333]', 'border-white');
+                    btn.classList.add('bg-[#111]', 'border-white/10');
+                });
+
+                if (level !== undefined && level !== null) {
+                    const activeBtn = document.getElementById(`btn-${level}`);
+                    if (activeBtn) {
+                        activeBtn.classList.remove('bg-[#111]', 'border-white/10');
+                        activeBtn.classList.add('active', 'bg-[#222]', 'border-white');
+                    }
+                }
+            }
+
+            // Expose setWorkload
+            window.setWorkload = async (level) => {
+                if (!currentUser) {
+                    alert("Нет соединения с сервером");
+                    return;
+                }
+                updateUI(level);
+                try {
+                    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
+                    await setDoc(docRef, { level: level });
+                } catch (e) {
+                    console.error("Error writing document: ", e);
+                    alert(`Ошибка сохранения: ${e.message}`);
+                }
+            };
+        };
+    </script>
+</body>
+</html>
