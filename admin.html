@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,21 +21,34 @@
         body { font-family: 'TT Neoris', sans-serif; background-color: #000; color: white; -webkit-font-smoothing: antialiased; }
         .tracking-custom-tight { letter-spacing: -0.04em; }
         .hidden-force { display: none !important; }
-        .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* UI ELEMENTS - WIDE & BIG */
-        input, textarea {
+        /* UI ELEMENTS - TALLER INPUTS */
+        input {
             background: rgba(255, 255, 255, 0.03); 
             border: 1px solid rgba(255,255,255,0.15); 
             color: white;
-            padding: 20px; 
+            padding: 30px 24px; /* Увеличена высота (padding) */
+            width: 100%; 
+            border-radius: 0px; 
+            outline: none; 
+            transition: all 0.3s;
+            font-family: 'TT Neoris', sans-serif;
+            font-size: 1.2rem;
+        }
+        textarea {
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255,255,255,0.15); 
+            color: white;
+            padding: 24px; 
             width: 100%; 
             border-radius: 0px; 
             outline: none; 
             transition: all 0.3s;
             font-family: 'TT Neoris', sans-serif;
             font-size: 1.1rem;
+            min-height: 300px; /* Увеличена высота textarea */
         }
         input:focus, textarea:focus { border-color: white; background: #050505; }
         
@@ -87,11 +100,11 @@
         }
         .btn-option:hover { background-color: #151515; }
         
-        /* ACTIVE STATE - BOLD WHITE OUTLINE */
+        /* ACTIVE STATE - THIN OUTLINE (FIXED) */
         .btn-option.active { 
             background-color: transparent; 
-            border: 4px solid white; 
-            box-shadow: 0 0 30px rgba(255,255,255,0.2); 
+            border: 1px solid white; /* Тонкая обводка, как просил */
+            box-shadow: 0 0 20px rgba(255,255,255,0.1); 
             z-index: 10;
             transform: scale(1.02);
         }
@@ -102,24 +115,37 @@
             backdrop-filter: blur(5px);
         }
 
-        /* GRID LAYOUT */
+        /* GRID LAYOUT - FIXED SCROLL */
         .admin-layout {
             display: grid;
             grid-template-columns: 280px 1fr;
-            height: 100vh;
+            height: 100vh; /* Высота экрана */
+            overflow: hidden; /* Скрываем скролл у родителя */
         }
+        
+        /* Sidebar static */
+        .sidebar {
+            overflow-y: auto;
+        }
+
+        /* Main content scrolls independently */
+        .scrollable-main {
+            overflow-y: auto;
+            height: 100%;
+            position: relative;
+        }
+
         @media(max-width: 1024px) {
             .admin-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-            .sidebar { overflow-x: auto; flex-direction: row !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.1); }
+            .sidebar { overflow-x: auto; flex-direction: row !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; height: auto; }
             .tab-btn { flex: 1; text-align: center; white-space: nowrap; padding: 15px; }
         }
     </style>
 </head>
-<body class="bg-black overflow-hidden">
+<body class="bg-black h-full">
 
-    <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
-        <div class="w-full max-w-lg p-16 border border-white/20 bg-[#050505] shadow-2xl relative">
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-black overflow-y-auto">
+        <div class="w-full max-w-lg p-16 border border-white/20 bg-[#050505] shadow-2xl relative my-auto">
             <div class="absolute top-0 left-0 w-full h-0.5 bg-white"></div>
             <h2 class="text-4xl font-medium tracking-custom-tight uppercase mb-10">CMS Access</h2>
             <form id="login-form" class="space-y-8">
@@ -137,10 +163,8 @@
         </div>
     </div>
 
-    <!-- MAIN APP -->
     <div id="main-content" class="hidden-force opacity-0 w-full h-full admin-layout">
         
-        <!-- Sidebar -->
         <nav class="sidebar flex flex-col border-r border-white/10 bg-black">
             <div class="p-10 border-b border-white/10">
                 <h1 class="text-2xl font-medium tracking-tight">Baskakov</h1>
@@ -157,145 +181,137 @@
             </div>
         </nav>
 
-        <!-- Content Area -->
-        <main class="flex-1 overflow-y-auto p-8 lg:p-20 relative bg-[#050505]">
+        <main class="scrollable-main bg-[#050505]">
+            <div class="p-8 lg:p-20 w-full max-w-7xl mx-auto">
             
-            <!-- TAB: WORKLOAD -->
-            <div id="tab-workload" class="tab-content space-y-12 w-full">
-                <div class="border-b border-white/10 pb-8 flex justify-between items-end">
-                    <div>
-                        <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Загруженность</h2>
-                        <p class="text-white/50 text-lg">Текущий статус на сайте: <span id="current-workload-text" class="text-white font-bold ml-2">...</span></p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-                    <!-- JS generated buttons -->
-                </div>
-            </div>
-
-            <!-- TAB: PROFILE -->
-            <div id="tab-profile" class="tab-content hidden space-y-12 w-full">
-                <div class="border-b border-white/10 pb-8">
-                    <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Профиль</h2>
-                </div>
-                <div class="space-y-10 w-full">
-                    <div>
-                        <label>Главный заголовок (Имя)</label>
-                        <input type="text" id="prof-name">
-                    </div>
-                    <div>
-                        <label>Подзаголовок (Роль)</label>
-                        <input type="text" id="prof-role">
-                    </div>
-                    <button onclick="saveProfile()" class="btn-action">Сохранить</button>
-                </div>
-            </div>
-
-            <!-- TAB: PRICES -->
-            <div id="tab-prices" class="tab-content hidden space-y-16 w-full">
-                <div class="border-b border-white/10 pb-8 flex justify-between items-end">
-                    <div>
-                        <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Цена</h2>
-                        <p class="text-white/50 text-lg">Управление ценами и конвертацией</p>
-                    </div>
-                </div>
-
-                <!-- Курс Валют (Квадраты) -->
-                <div>
-                    <div class="flex justify-between items-end mb-6">
-                        <label class="text-white text-sm">Текущий курс</label>
-                        <button onclick="openRateModal()" class="text-xs uppercase tracking-widest border-b border-white/30 pb-1 hover:text-white hover:border-white transition">Редактировать курс</button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- USD Card -->
-                        <div class="p-10 border border-white/10 bg-[#0a0a0a] flex flex-col justify-center items-center aspect-video relative group">
-                            <div class="text-white/30 text-xs uppercase tracking-widest absolute top-6 left-6">USD / RUB</div>
-                            <div class="text-4xl md:text-5xl font-light tracking-tight text-center">
-                                1 USD = <span id="display-rate-usd">...</span> ₽
-                            </div>
-                        </div>
-                        <!-- KZT Card -->
-                        <div class="p-10 border border-white/10 bg-[#0a0a0a] flex flex-col justify-center items-center aspect-video relative group">
-                            <div class="text-white/30 text-xs uppercase tracking-widest absolute top-6 left-6">RUB / KZT</div>
-                            <div class="text-4xl md:text-5xl font-light tracking-tight text-center">
-                                1 Рубль = <span id="display-rate-kzt">...</span> ₸
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Цены (Inputs) -->
-                <div class="space-y-12">
-                    <div class="grid md:grid-cols-2 gap-10">
-                        <div class="space-y-8">
-                            <h3 class="text-xl font-medium text-white border-b border-white/10 pb-4">Дизайн (Figma)</h3>
-                            <div><label>Лендинг (RUB)</label><input type="number" id="price-design-landing"></div>
-                            <div><label>Многостраничный (RUB)</label><input type="number" id="price-design-multi"></div>
-                        </div>
-                        <div class="space-y-8">
-                            <h3 class="text-xl font-medium text-white border-b border-white/10 pb-4">Под ключ (Tilda)</h3>
-                            <div><label>Лендинг (RUB)</label><input type="number" id="price-turnkey-landing"></div>
-                            <div><label>Многостраничный (RUB)</label><input type="number" id="price-turnkey-multi"></div>
+                <div id="tab-workload" class="tab-content space-y-12 w-full pb-32">
+                    <div class="border-b border-white/10 pb-8 flex justify-between items-end">
+                        <div>
+                            <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Загруженность</h2>
+                            <p class="text-white/50 text-lg">Текущий статус на сайте: <span id="current-workload-text" class="text-white font-bold ml-2">...</span></p>
                         </div>
                     </div>
                     
-                    <div class="pt-8 border-t border-white/10">
-                        <h3 class="text-xl font-medium text-white mb-6">Прочее</h3>
-                        <div class="max-w-md"><label>Стартовая цена (RUB)</label><input type="number" id="price-other"></div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                        </div>
+                </div>
+
+                <div id="tab-profile" class="tab-content hidden space-y-12 w-full pb-32">
+                    <div class="border-b border-white/10 pb-8">
+                        <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Профиль</h2>
+                    </div>
+                    <div class="space-y-10 w-full max-w-3xl">
+                        <div>
+                            <label>Главный заголовок (Имя)</label>
+                            <input type="text" id="prof-name">
+                        </div>
+                        <div>
+                            <label>Подзаголовок (Роль)</label>
+                            <input type="text" id="prof-role">
+                        </div>
+                        <button onclick="saveProfile()" class="btn-action">Сохранить</button>
                     </div>
                 </div>
 
-                <div class="fixed bottom-10 right-10 z-20">
-                     <button onclick="savePrices()" class="btn-action shadow-2xl">Сохранить изменения</button>
-                </div>
-            </div>
-
-            <!-- TAB: REVIEWS -->
-            <div id="tab-reviews" class="tab-content hidden space-y-12 w-full">
-                <div class="border-b border-white/10 pb-8 flex justify-between items-end">
-                    <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Отзывы</h2>
-                    <button onclick="seedReviews()" class="text-xs uppercase tracking-widest text-white/40 hover:text-white transition">Загрузить с сайта</button>
-                </div>
-
-                <div class="p-10 border border-white/10 bg-[#0a0a0a] space-y-8">
-                    <h3 class="text-xl font-medium text-white uppercase tracking-widest border-b border-white/10 pb-4">Новый отзыв</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="md:col-span-2"><label>Автор</label><input type="text" id="rev-author" placeholder="@username"></div>
-                        <div><label>Оценка</label><input type="number" id="rev-stars" value="5" min="1" max="5"></div>
+                <div id="tab-prices" class="tab-content hidden space-y-16 w-full pb-48">
+                    <div class="border-b border-white/10 pb-8 flex justify-between items-end">
+                        <div>
+                            <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Цена</h2>
+                            <p class="text-white/50 text-lg">Управление ценами и конвертацией</p>
+                        </div>
+                        <button onclick="initPrices()" class="btn-action px-6 py-3 text-xs min-w-0 border-white/30 hover:border-white">
+                            ⟳ Обновить данные
+                        </button>
                     </div>
-                    <div><label>Текст отзыва</label><textarea id="rev-text" rows="6" placeholder="Текст отзыва..."></textarea></div>
-                    <button onclick="addReview()" class="btn-action">Добавить</button>
+
+                    <div>
+                        <div class="flex justify-between items-end mb-6">
+                            <label class="text-white text-sm">Текущий курс</label>
+                            <button onclick="openRateModal()" class="text-xs uppercase tracking-widest border-b border-white/30 pb-1 hover:text-white hover:border-white transition">Редактировать курс</button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="p-10 border border-white/10 bg-[#0a0a0a] flex flex-col justify-center items-center aspect-video relative group">
+                                <div class="text-white/30 text-xs uppercase tracking-widest absolute top-6 left-6">USD / RUB</div>
+                                <div class="text-4xl md:text-5xl font-light tracking-tight text-center">
+                                    1 USD = <span id="display-rate-usd">...</span> ₽
+                                </div>
+                            </div>
+                            <div class="p-10 border border-white/10 bg-[#0a0a0a] flex flex-col justify-center items-center aspect-video relative group">
+                                <div class="text-white/30 text-xs uppercase tracking-widest absolute top-6 left-6">RUB / KZT</div>
+                                <div class="text-4xl md:text-5xl font-light tracking-tight text-center">
+                                    1 Рубль = <span id="display-rate-kzt">...</span> ₸
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-12">
+                        <div class="grid md:grid-cols-2 gap-12">
+                            <div class="space-y-10">
+                                <h3 class="text-xl font-medium text-white border-b border-white/10 pb-4">Дизайн (Figma)</h3>
+                                <div><label>Лендинг (RUB)</label><input type="number" id="price-design-landing"></div>
+                                <div><label>Многостраничный (RUB)</label><input type="number" id="price-design-multi"></div>
+                            </div>
+                            <div class="space-y-10">
+                                <h3 class="text-xl font-medium text-white border-b border-white/10 pb-4">Под ключ (Tilda)</h3>
+                                <div><label>Лендинг (RUB)</label><input type="number" id="price-turnkey-landing"></div>
+                                <div><label>Многостраничный (RUB)</label><input type="number" id="price-turnkey-multi"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-8 border-t border-white/10">
+                            <h3 class="text-xl font-medium text-white mb-6">Прочее</h3>
+                            <div class="max-w-md"><label>Стартовая цена (RUB)</label><input type="number" id="price-other"></div>
+                        </div>
+                    </div>
+
+                    <div class="fixed bottom-10 right-10 z-20">
+                         <button onclick="savePrices()" class="btn-action shadow-2xl">Сохранить изменения</button>
+                    </div>
                 </div>
 
-                <div id="reviews-list" class="space-y-4 pb-20 grid gap-4">
-                    <!-- JS List -->
+                <div id="tab-reviews" class="tab-content hidden space-y-12 w-full pb-32">
+                    <div class="border-b border-white/10 pb-8 flex justify-between items-end">
+                        <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Отзывы</h2>
+                        <button onclick="seedReviews()" class="text-xs uppercase tracking-widest text-white/40 hover:text-white transition">Загрузить с сайта</button>
+                    </div>
+
+                    <div class="p-10 border border-white/10 bg-[#0a0a0a] space-y-8 max-w-4xl">
+                        <h3 class="text-xl font-medium text-white uppercase tracking-widest border-b border-white/10 pb-4">Новый отзыв</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div class="md:col-span-2"><label>Автор</label><input type="text" id="rev-author" placeholder="@username"></div>
+                            <div><label>Оценка</label><input type="number" id="rev-stars" value="5" min="1" max="5"></div>
+                        </div>
+                        <div><label>Текст отзыва</label><textarea id="rev-text" rows="6" placeholder="Текст отзыва..."></textarea></div>
+                        <button onclick="addReview()" class="btn-action">Добавить</button>
+                    </div>
+
+                    <div id="reviews-list" class="space-y-4 pb-20 grid gap-4 max-w-4xl">
+                        </div>
                 </div>
+
             </div>
-
         </main>
     </div>
 
-    <!-- MODAL: EDIT RATES -->
     <div id="rate-modal" class="fixed inset-0 z-[100] hidden modal-overlay flex items-center justify-center">
-        <div class="bg-[#111] border border-white/20 p-10 w-full max-w-md relative shadow-2xl">
-            <button onclick="closeRateModal()" class="absolute top-4 right-4 text-white/50 hover:text-white">✕</button>
-            <h3 class="text-2xl font-medium mb-8">Редактирование курса</h3>
-            <div class="space-y-6">
+        <div class="bg-[#111] border border-white/20 p-12 w-full max-w-md relative shadow-2xl">
+            <button onclick="closeRateModal()" class="absolute top-6 right-6 text-white/50 hover:text-white">✕</button>
+            <h3 class="text-2xl font-medium mb-10 tracking-custom-tight">Редактирование курса</h3>
+            <div class="space-y-8">
                 <div>
                     <label>USD (Рублей за 1$)</label>
-                    <input type="number" id="modal-rate-usd" step="0.01">
+                    <input type="number" id="modal-rate-usd" step="0.01" class="text-2xl font-light">
                 </div>
                 <div>
                     <label>KZT (Тенге за 1₽)</label>
-                    <input type="number" id="modal-rate-kzt" step="0.01">
+                    <input type="number" id="modal-rate-kzt" step="0.01" class="text-2xl font-light">
                 </div>
-                <button onclick="saveRatesFromModal()" class="btn-action w-full">Сохранить</button>
+                <button onclick="saveRatesFromModal()" class="btn-action w-full mt-4">Сохранить</button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -323,6 +339,11 @@
             document.getElementById(`tab-${tabName}`).classList.remove('hidden');
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
+            
+            // АВТОМАТИЧЕСКАЯ ЗАГРУЗКА ЦЕН ПРИ ПЕРЕХОДЕ НА ВКЛАДКУ
+            if(tabName === 'prices') {
+                initPrices();
+            }
         };
 
         // AUTH
@@ -367,7 +388,6 @@
             
             labels.forEach((label, i) => {
                 const btn = document.createElement('button');
-                // No text colors, just white/gray
                 btn.className = 'btn-option p-12 bg-black flex flex-col items-center gap-4 relative group';
                 btn.id = `wl-btn-${i}`;
                 btn.onclick = () => setWorkload(i);
@@ -385,7 +405,6 @@
                     const active = document.getElementById(`wl-btn-${val}`);
                     if(active) active.classList.add('active');
                     
-                    // Обновляем текстовый индикатор
                     document.getElementById('current-workload-text').textContent = labels[val] + ` (${val})`;
                 }
             });
@@ -415,30 +434,41 @@
         // 3. PRICES & RATES
         let currentRates = { USD: 96.5, KZT: 5.15 };
 
-        function initPrices() {
+        window.initPrices = function() {
+            // Force read from server
+             getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'prices')).then((snap) => {
+                if (snap.exists()) {
+                    updatePricesUI(snap.data());
+                } else {
+                    console.log("No price data found");
+                }
+            }).catch(e => console.error("Err getting prices:", e));
+            
+            // Also listen for changes
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'prices'), (snap) => {
                 if (snap.exists()) {
-                    const data = snap.data();
-                    
-                    // Prices
-                    document.getElementById('price-design-landing').value = data.design_landing || 0;
-                    document.getElementById('price-design-multi').value = data.design_multi || 0;
-                    document.getElementById('price-turnkey-landing').value = data.turnkey_landing || 0;
-                    document.getElementById('price-turnkey-multi').value = data.turnkey_multi || 0;
-                    document.getElementById('price-other').value = data.other || 0;
-
-                    // Rates Display
-                    if (data.rates) {
-                        currentRates = data.rates;
-                        document.getElementById('display-rate-usd').textContent = currentRates.USD;
-                        document.getElementById('display-rate-kzt').textContent = currentRates.KZT;
-                        
-                        // Fill modal inputs too
-                        document.getElementById('modal-rate-usd').value = currentRates.USD;
-                        document.getElementById('modal-rate-kzt').value = currentRates.KZT;
-                    }
+                    updatePricesUI(snap.data());
                 }
             });
+        }
+
+        function updatePricesUI(data) {
+            // Prices
+            document.getElementById('price-design-landing').value = data.design_landing || 0;
+            document.getElementById('price-design-multi').value = data.design_multi || 0;
+            document.getElementById('price-turnkey-landing').value = data.turnkey_landing || 0;
+            document.getElementById('price-turnkey-multi').value = data.turnkey_multi || 0;
+            document.getElementById('price-other').value = data.other || 0;
+
+            // Rates Display
+            if (data.rates) {
+                currentRates = data.rates;
+                document.getElementById('display-rate-usd').textContent = currentRates.USD;
+                document.getElementById('display-rate-kzt').textContent = currentRates.KZT;
+                
+                document.getElementById('modal-rate-usd').value = currentRates.USD;
+                document.getElementById('modal-rate-kzt').value = currentRates.KZT;
+            }
         }
 
         // Modal Logic
@@ -450,17 +480,8 @@
                 USD: Number(document.getElementById('modal-rate-usd').value),
                 KZT: Number(document.getElementById('modal-rate-kzt').value)
             };
-            // Merge with existing prices logic in savePrices but update only rates is tricky without reading,
-            // so we'll just trigger a savePrices call but with new rates logic? 
-            // Better: update just the rates inside the main price object logic, or save everything.
-            // Let's just update the local state and call savePrices()
-            
-            // To ensure we don't overwrite prices with empty inputs if user hasn't visited that tab,
-            // we rely on the inputs being populated by onSnapshot.
-            
-            // Actually, best to just call savePrices which reads all inputs.
-            // But we need to update the rate inputs in the hidden modal to match? No, they are inputs.
-            // Just saving everything is safest.
+            // Pass true as second arg to indicate we are saving rates only, 
+            // but here we just reuse savePrices logic for simplicity, merging current input values
             savePrices(newRates);
             closeRateModal();
         };
@@ -479,7 +500,7 @@
             };
             
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'prices'), prices);
-            // alert('Сохранено');
+            // alert('Сохранено'); // Optional feedback
         };
 
         // 4. REVIEWS
