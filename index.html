@@ -291,10 +291,10 @@
                     </div>
                 </div>
                 
-                <!-- Информация -->
+                <!-- Информация (CMS: Profile) -->
                 <div class="bg-white shadow-2xl p-5 reveal-on-scroll">
-                    <h1 class="text-[36px] font-medium text-gray-900 tracking-custom-tight mb-2 leading-none">Баскаков Никита</h1>
-                    <p class="text-base text-gray-600 mb-20 font-light">Портфолио UX/UI дизайнера</p>
+                    <h1 id="hero-name" class="text-[36px] font-medium text-gray-900 tracking-custom-tight mb-2 leading-none">Баскаков Никита</h1>
+                    <p id="hero-role" class="text-base text-gray-600 mb-20 font-light">Портфолио UX/UI дизайнера</p>
                     <p class="text-sm text-gray-400 leading-relaxed">и просто хорошего человека</p>
                 </div>
 
@@ -309,10 +309,9 @@
                     <h2 class="text-3xl sm:text-4xl font-medium text-white tracking-custom-tight">Портфолио</h2>
                 </div>
 
-                <!-- ПРОЕКТЫ -->
+                <!-- ПРОЕКТЫ (Static) -->
                 <div class="grid gap-5">
-                    
-                    <!-- 1. DYOR 5 -->
+                    <!-- DYOR 5 -->
                     <div class="project-card-wrapper reveal-on-scroll">
                          <a href="dyor5.html" class="portfolio-item shadow-xl relative block group">
                             <div class="w-full h-80 flex items-center justify-center overflow-hidden">
@@ -324,8 +323,7 @@
                             </div>
                         </a>
                     </div>
-
-                    <!-- 2. American Museum of Natural History -->
+                    <!-- AMNH -->
                     <div class="project-card-wrapper reveal-on-scroll">
                          <a href="amnh.html" class="portfolio-item shadow-xl relative block group">
                             <div class="w-full h-80 flex items-center justify-center overflow-hidden">
@@ -337,8 +335,7 @@
                             </div>
                         </a>
                     </div>
-
-                    <!-- 3. Nu i Che -->
+                    <!-- Nu i Che -->
                     <div class="project-card-wrapper reveal-on-scroll">
                          <a href="nuiche.html" class="portfolio-item shadow-xl relative block group">
                             <div class="w-full h-80 flex items-center justify-center overflow-hidden">
@@ -350,8 +347,7 @@
                             </div>
                         </a>
                     </div>
-
-                    <!-- 4. Nobee -->
+                    <!-- Nobee -->
                     <div class="project-card-wrapper reveal-on-scroll">
                         <a href="nobee.html" class="portfolio-item shadow-xl relative block group">
                             <div class="w-full h-80 flex items-center justify-center overflow-hidden">
@@ -363,8 +359,7 @@
                             </div>
                         </a>
                     </div>
-
-                    <!-- 5. Секретный проект -->
+                    <!-- Secret -->
                     <div class="project-card-wrapper relative group reveal-on-scroll">
                         <div onclick="openLockedPopup('coming_soon')" class="portfolio-item shadow-xl overflow-hidden cursor-pointer relative">
                              <div class="locked-overlay" style="opacity: 1; background: rgba(255, 255, 255, 0.1);">
@@ -386,102 +381,28 @@
                 <div class="pt-5 pb-5 reveal-on-scroll">
                     <a href="all_cases.html" class="block w-full"> 
                         <button class="group relative w-full cursor-pointer overflow-hidden border border-white text-lg font-medium py-4 text-white shadow-xl transition duration-300 rounded-none hover:text-black">
-                            <span class="inline-block transition-all duration-300 group-hover:-translate-x-8 group-hover:opacity-0 z-20 relative">
-                                Все кейсы
-                            </span>
+                            <span class="inline-block transition-all duration-300 group-hover:-translate-x-8 group-hover:opacity-0 z-20 relative">Все кейсы</span>
                             <div class="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-none bg-white transition-all duration-300 group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-white z-0"></div>
                             <div class="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 text-black opacity-0 transition-all duration-300 group-hover:-translate-x-0 group-hover:opacity-100">
-                                <span>Перейти на страницу</span> 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M5 12l14 0" /><path d="M15 16l4-4" /><path d="M15 8l4 4" /></svg>
+                                <span>Перейти на страницу</span>
                             </div>
                         </button>
                     </a>
                 </div>
 
-                <!-- ОТЗЫВЫ (Бесконечная дорожка) -->
+                <!-- ОТЗЫВЫ (CMS: Reviews) -->
                 <div class="w-full overflow-hidden mb-12 reveal-on-scroll">
                     <h3 class="text-2xl font-medium text-white mb-4 tracking-custom-tight sr-only">Отзывы</h3>
                     <div class="w-full overflow-hidden mask-gradient-sides">
-                        <div class="animate-infinite-scroll">
-                            
-                            <!-- КАРТОЧКА 1 -->
-                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="font-medium text-gray-100 text-base">zkurbanov85</span>
-                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
-                                </div>
-                                <p class="text-sm text-white/70 leading-relaxed font-light">Никита, благодарю Вас! ! Ваша терпеливая и вдумчивая работа позволила мне наконец заиметь свой таплинк. Буду обращаться вновь! !</p>
-                            </div>
-                            
-                            <!-- КАРТОЧКА 2 -->
-                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="font-medium text-gray-100 text-base">aikaagness</span>
-                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
-                                </div>
-                                <p class="text-sm text-white/70 leading-relaxed font-light">Большое спасибо Никите за отличную работу! замечательный сайт, всё было сделано очень профессионально и в сроки. Я очень довольна результатом.</p>
-                            </div>
-
-                            <!-- КАРТОЧКА 3 -->
-                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="font-medium text-gray-100 text-base truncate max-w-[120px]">TyapkinaProProdazhi</span>
-                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
-                                </div>
-                                <p class="text-sm text-white/70 leading-relaxed font-light">Очень довольна работой! Выполнено было все быстро, все по ТЗ. Использовал интересные подходы, всё предложенное было красиво, хорошо оформленно.</p>
-                            </div>
-
-                            <!-- КАРТОЧКА 4 -->
-                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="font-medium text-gray-100 text-base">Yuristyuga</span>
-                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
-                                </div>
-                                <p class="text-sm text-white/70 leading-relaxed font-light">Огромная благодарность. Учтены все пожелания. Представил три варианта таплинка. Отвечает быстро. Работа выполнена в срок. Буду обращаться еще.</p>
-                            </div>
-
-                            <!-- ДУБЛИКАТЫ (для бесконечности) -->
-                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="font-medium text-gray-100 text-base">zkurbanov85</span>
-                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
-                                </div>
-                                <p class="text-sm text-white/70 leading-relaxed font-light">Никита, благодарю Вас! ! Ваша терпеливая и вдумчивая работа позволила мне наконец заиметь свой таплинк. Буду обращаться вновь! !</p>
-                            </div>
-                            
-                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="font-medium text-gray-100 text-base">aikaagness</span>
-                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
-                                </div>
-                                <p class="text-sm text-white/70 leading-relaxed font-light">Большое спасибо Никите за отличную работу! замечательный сайт, всё было сделано очень профессионально и в сроки. Я очень довольна результатом.</p>
-                            </div>
-
-                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="font-medium text-gray-100 text-base truncate max-w-[120px]">TyapkinaProProdazhi</span>
-                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
-                                </div>
-                                <p class="text-sm text-white/70 leading-relaxed font-light">Очень довольна работой! Выполнено было все быстро, все по ТЗ. Использовал интересные подходы, всё предложенное было красиво, хорошо оформленно.</p>
-                            </div>
-
-                            <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="font-medium text-gray-100 text-base">Yuristyuga</span>
-                                    <div class="flex text-white text-xs tracking-widest">★★★★★</div>
-                                </div>
-                                <p class="text-sm text-white/70 leading-relaxed font-light">Огромная благодарность. Учтены все пожелания. Представил три варианта таплинка. Отвечает быстро. Работа выполнена в срок. Буду обращаться еще.</p>
-                            </div>
-
+                        <div class="animate-infinite-scroll" id="reviews-track">
+                            <!-- JS наполнит это контентом -->
                         </div>
                     </div>
                 </div>
 
-                <!-- ИНДИКАТОР ЗАГРУЖЕННОСТИ (ВАРИАНТ 1) -->
+                <!-- ИНДИКАТОР ЗАГРУЖЕННОСТИ (CMS: Workload) -->
                 <div class="mt-32 mb-8 reveal-on-scroll bg-[#111] p-6 border border-white/10 relative overflow-hidden group">
-                    <!-- Фоновый эффект -->
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-
                     <div class="flex items-end justify-between mb-4 relative z-10">
                         <div class="flex flex-col">
                             <span class="text-xs text-white/50 uppercase tracking-widest mb-1">Current Workload</span>
@@ -489,24 +410,15 @@
                         </div>
                         <span id="workload-value" class="text-3xl font-medium text-white/20">...</span>
                     </div>
-
-                    <!-- Шкала -->
-                    <div id="workload-bar" class="flex gap-2 h-2 mb-4">
-                        <!-- Сюда JS добавит сегменты -->
-                    </div>
-
-                    <!-- Статус текст -->
+                    <div id="workload-bar" class="flex gap-2 h-2 mb-4"></div>
                     <div id="workload-status-text" class="text-sm text-white/70 font-light flex items-center gap-2">
-                        <!-- JS заполнит текст -->
                         <span class="w-2 h-2 rounded-full bg-white/50 animate-pulse"></span> Подключение...
                     </div>
                 </div>
 
-                <!-- Стоимость -->
-                <!-- Модифицированный заголовок с переключателем валют -->
+                <!-- Стоимость (CMS: Prices) -->
                 <div id="pricing-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll flex items-end gap-4 flex-wrap">
                     <h2 class="text-3xl sm:text-4xl font-medium text-white tracking-custom-tight">Стоимость</h2>
-                    <!-- Currency Switcher -->
                     <div class="flex gap-2 text-sm font-medium mb-1.5 sm:mb-2" id="currency-switcher">
                         <button class="currency-btn text-white transition-colors hover:opacity-80" onclick="updateCurrency('RUB')" data-currency="RUB">RUB</button>
                         <span class="text-white/30">/</span>
@@ -517,42 +429,44 @@
                 </div>
 
                 <div class="space-y-5">
+                    <!-- Design -->
                     <div class="bg-white shadow-xl p-5 reveal-on-scroll">
                         <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Дизайн сайта (Figma)</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-8">Одностраничный сайт, промо-страница, посадочная страница для продукта или услуги. Только дизайн - без сборки.</p>
                         <div class="flex flex-col space-y-4">
                             <div class="bg-gray-100 p-4 flex justify-between items-center">
                                 <span class="text-sm text-gray-600">Лендинг</span>
-                                <span class="price-target text-2xl font-medium text-gray-900" data-base-rub="45000" data-prefix=""> 45 000 ₽</span>
+                                <span class="price-target text-2xl font-medium text-gray-900" data-key="design_landing" data-base-rub="45000" data-prefix="">45 000 ₽</span>
                             </div>
                             <div class="bg-gray-100 p-4 flex justify-between items-center">
                                 <span class="text-sm text-gray-600">Многостраничный сайт</span>
-                                <span class="price-target text-2xl font-medium text-gray-900" data-base-rub="80000" data-prefix=""> 80 000 ₽</span>
+                                <span class="price-target text-2xl font-medium text-gray-900" data-key="design_multi" data-base-rub="80000" data-prefix="">80 000 ₽</span>
                             </div>
                         </div>
                     </div>
+                    <!-- Turnkey -->
                     <div class="bg-white shadow-xl p-5 reveal-on-scroll">
                         <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Сайт под ключ (Figma + Tilda)</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-8">Одностраничный сайт, промо-страница, посадочная страница для продукта или услуги. Полный цикл: дизайн и сборка.</p>
                         <div class="flex flex-col space-y-4">
                             <div class="bg-gray-100 p-4 flex justify-between items-center">
                                 <span class="text-sm text-gray-600">Лендинг</span>
-                                <span class="price-target text-2xl font-medium text-gray-900" data-base-rub="65000" data-prefix="от "> от 65 000 ₽</span>
+                                <span class="price-target text-2xl font-medium text-gray-900" data-key="turnkey_landing" data-base-rub="65000" data-prefix="от ">ot 65 000 ₽</span>
                             </div>
                             <div class="bg-gray-100 p-4 flex justify-between items-center">
                                 <span class="text-sm text-gray-600">Многостраничный сайт</span>
-                                <span class="price-target text-2xl font-medium text-gray-900" data-base-rub="90000" data-prefix="от "> от 90 000 ₽</span>
+                                <span class="price-target text-2xl font-medium text-gray-900" data-key="turnkey_multi" data-base-rub="90000" data-prefix="от ">ot 90 000 ₽</span>
                             </div>
                         </div>
                     </div>
+                    <!-- Other -->
                     <div class="bg-white shadow-xl p-5 reveal-on-scroll">
                         <h3 class="text-2xl font-medium text-gray-900 mb-4 tracking-custom-tight">Другие продукты?</h3>
                         <p class="text-sm text-gray-600 leading-relaxed mb-8">Графические задачи, не связанные напрямую с сайтами: баннеры, презентации, соцсети и другое.</p>
                         <div class="flex flex-col space-y-4">
                             <div class="bg-gray-100 p-4 flex justify-between items-center">
                                 <span class="text-sm text-gray-600">По договоренности</span>
-                                <!-- Базовая цена для $50 (примерно 5000 рублей) -->
-                                <span class="price-target text-2xl font-medium text-gray-900" data-base-rub="5000" data-prefix="от "> от 5 000 ₽</span>
+                                <span class="price-target text-2xl font-medium text-gray-900" data-key="other" data-base-rub="5000" data-prefix="от ">ot 5 000 ₽</span>
                             </div>
                         </div>
                     </div>
@@ -565,7 +479,6 @@
                         <div class="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-none bg-white transition-all duration-300 group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-white z-0"></div>
                         <div class="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 text-black opacity-0 transition-all duration-300 group-hover:-translate-x-0 group-hover:opacity-100">
                             <span>Написать в Telegram</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M5 12l14 0" /><path d="M15 16l4-4" /><path d="M15 8l4 4" /></svg>
                         </div>
                     </button>
                 </a>
@@ -573,13 +486,12 @@
         </div>
     </div>
 
-    <!-- FIREBASE SDKs + Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, collection, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // === ВСТАВЛЕН ТВОЙ КОНФИГ FIREBASE ===
+        // === ВСТАВЬ КОНФИГ СЮДА ===
         const firebaseConfig = {
             apiKey: "AIzaSyCzLSd-Jmlb2N-UIXYMqlLWfnkPZxBQFeU",
             authDomain: "portfolio-1a9ea.firebaseapp.com",
@@ -595,56 +507,85 @@
         const db = getFirestore(app);
         const appId = 'portfolio-app';
 
-        // Глобальные переменные состояния
         let currentWorkload = 2; 
         let isHighDemand = false;
         let priceMultiplier = 1;
         let currentCurrency = 'RUB'; 
+        let currentPrices = { design_landing: 45000, design_multi: 80000, turnkey_landing: 65000, turnkey_multi: 90000, other: 5000 };
 
-        // --- AUTH & INIT ---
-        const initAuth = async () => {
-            try {
-                // Пытаемся войти анонимно для чтения данных
-                await signInAnonymously(auth);
-            } catch (error) {
-                console.error("Auth Error", error);
-            }
-        };
+        // AUTH
+        signInAnonymously(auth).catch(console.error);
 
+        // LISTENERS
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                startListening();
-            }
-        });
-
-        initAuth();
-
-        // --- FIRESTORE LISTENER ---
-        function startListening() {
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
-            
-            onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if (data && typeof data.level !== 'undefined') {
-                        currentWorkload = data.level;
+                // 1. Listen to Workload
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload'), (snap) => {
+                    if (snap.exists()) {
+                        currentWorkload = snap.data().level;
                         isHighDemand = currentWorkload >= 4;
                         priceMultiplier = isHighDemand ? 1.2 : 1;
                         renderWorkload();
                         updateCurrency(currentCurrency);
                     }
-                } else {
-                    renderWorkload();
-                }
-            }, (error) => {
-                console.error("Error listening to data:", error);
-            });
-        }
+                });
+
+                // 2. Listen to Profile
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'profile'), (snap) => {
+                    if (snap.exists()) {
+                        const d = snap.data();
+                        if(d.name) document.getElementById('hero-name').textContent = d.name;
+                        if(d.role) document.getElementById('hero-role').textContent = d.role;
+                    }
+                });
+
+                // 3. Listen to Prices
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'prices'), (snap) => {
+                    if (snap.exists()) {
+                        currentPrices = { ...currentPrices, ...snap.data() };
+                        // Update data attributes in DOM
+                        document.querySelector('[data-key="design_landing"]').setAttribute('data-base-rub', currentPrices.design_landing);
+                        document.querySelector('[data-key="design_multi"]').setAttribute('data-base-rub', currentPrices.design_multi);
+                        document.querySelector('[data-key="turnkey_landing"]').setAttribute('data-base-rub', currentPrices.turnkey_landing);
+                        document.querySelector('[data-key="turnkey_multi"]').setAttribute('data-base-rub', currentPrices.turnkey_multi);
+                        document.querySelector('[data-key="other"]').setAttribute('data-base-rub', currentPrices.other);
+                        updateCurrency(currentCurrency);
+                    }
+                });
+
+                // 4. Listen to Reviews
+                const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'reviews'), orderBy('timestamp', 'desc'));
+                onSnapshot(q, (snap) => {
+                    const track = document.getElementById('reviews-track');
+                    if(snap.empty) return; // Default html fallback if needed
+
+                    let html = '';
+                    const reviews = [];
+                    snap.forEach(doc => reviews.push(doc.data()));
+
+                    // Генерация карточек
+                    const renderCard = (r) => `
+                        <div class="w-80 bg-black p-6 border border-white/20 flex-shrink-0 mx-3 hover:border-white/40 transition-colors rounded-none">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="font-medium text-gray-100 text-base">${r.author}</span>
+                                <div class="flex text-white text-xs tracking-widest">${'★'.repeat(r.stars)}</div>
+                            </div>
+                            <p class="text-sm text-white/70 leading-relaxed font-light">${r.text}</p>
+                        </div>
+                    `;
+
+                    // Оригинал + Дубликаты для бесконечного скролла
+                    reviews.forEach(r => html += renderCard(r));
+                    reviews.forEach(r => html += renderCard(r)); // Duplicate
+                    
+                    track.innerHTML = html;
+                });
+            }
+        });
 
         window.updateCurrency = updateCurrency;
-        window.renderWorkload = renderWorkload; 
 
-        // === ПЕЧАТАЮЩИЙСЯ ТЕКСТ ===
+        // UI Functions
         const textToType = "Спасибо за то, что посетили мой сайт.";
         const typingOutput = document.getElementById('typing-output');
         const typingSpeed = 50;
@@ -662,7 +603,6 @@
             }
         }
 
-        // === ВАЛЮТНЫЙ КАЛЬКУЛЯТОР ===
         function renderWorkload() {
             const bar = document.getElementById('workload-bar');
             const valueDisplay = document.getElementById('workload-value');
@@ -671,7 +611,6 @@
             if(!bar || !valueDisplay || !statusText) return;
 
             valueDisplay.textContent = `${currentWorkload}/5`;
-
             bar.innerHTML = '';
             if (isHighDemand) bar.classList.add('workload-high');
             else bar.classList.remove('workload-high');
@@ -680,19 +619,15 @@
                 const segment = document.createElement('div');
                 segment.className = 'workload-segment';
                 segment.style.animationDelay = `${i * 100}ms`;
-
-                if (i <= currentWorkload) {
-                    segment.classList.add('filled');
-                } else {
-                    segment.classList.add('empty');
-                }
+                if (i <= currentWorkload) segment.classList.add('filled');
+                else segment.classList.add('empty');
                 bar.appendChild(segment);
             }
 
             if (currentWorkload === 5) {
-                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]"></span> Мест нет. Запись только в лист ожидания (+20% к прайсу).';
+                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]"></span> Мест нет. Запись в лист ожидания (+20%).';
             } else if (currentWorkload === 4) {
-                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.6)]"></span> Осталось 1-2 места. Высокий спрос (+20% к прайсу).';
+                statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse shadow-[0_0_8px_rgba(249,115,22,0.6)]"></span> Осталось 1-2 места. Высокий спрос (+20%).';
             } else if (currentWorkload >= 1) {
                 statusText.innerHTML = '<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.4)]"></span> Принимаю заказы в штатном режиме.';
             } else {
@@ -700,167 +635,95 @@
             }
         }
 
-        const currencyRates = {
-            RUB: 1,
-            USD: 1 / 78.25, 
-            KZT: 6.53 
-        };
-        const currencySymbols = {
-            RUB: '₽',
-            USD: '$',
-            KZT: '₸'
-        };
+        const currencyRates = { RUB: 1, USD: 1 / 78.25, KZT: 6.53 };
+        const currencySymbols = { RUB: '₽', USD: '$', KZT: '₸' };
 
         function updateCurrency(currency) {
-            currentCurrency = currency; 
-            
-            const targets = document.querySelectorAll('.price-target');
-            
+            currentCurrency = currency;
             document.querySelectorAll('.currency-btn').forEach(btn => {
                 if(btn.dataset.currency === currency) {
-                    btn.classList.remove('text-white/40');
-                    btn.classList.add('text-white');
+                    btn.classList.remove('text-white/40'); btn.classList.add('text-white');
                 } else {
-                    btn.classList.add('text-white/40');
-                    btn.classList.remove('text-white');
+                    btn.classList.add('text-white/40'); btn.classList.remove('text-white');
                 }
             });
-
             const rate = currencyRates[currency];
             const symbol = currencySymbols[currency];
 
-            targets.forEach(el => {
+            document.querySelectorAll('.price-target').forEach(el => {
                 el.classList.add('animating');
-
                 setTimeout(() => {
                     const baseRub = parseFloat(el.getAttribute('data-base-rub'));
                     const prefix = el.getAttribute('data-prefix') || '';
-                    
                     const adjustedBaseRub = baseRub * priceMultiplier;
-
                     let convertedValue;
 
-                    if (currency === 'RUB') {
-                        convertedValue = adjustedBaseRub;
-                    } else if (currency === 'USD') {
-                        const rawValue = adjustedBaseRub * rate;
-                        convertedValue = Math.ceil(rawValue / 10) * 10;
-                    } else if (currency === 'KZT') {
-                        const rawValue = adjustedBaseRub * rate;
-                        convertedValue = Math.ceil(rawValue / 5000) * 5000;
-                    }
+                    if (currency === 'RUB') convertedValue = adjustedBaseRub;
+                    else if (currency === 'USD') convertedValue = Math.ceil((adjustedBaseRub * rate) / 10) * 10;
+                    else if (currency === 'KZT') convertedValue = Math.ceil((adjustedBaseRub * rate) / 5000) * 5000;
                     
                     const formatted = convertedValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-                    
                     el.textContent = `${prefix} ${formatted} ${symbol}`;
                     el.classList.remove('animating');
-                }, 300); 
+                }, 300);
             });
         }
-        
-        // === PRELOADER & INIT ===
-        const preloader = document.getElementById('preloader');
 
-        function hidePreloader() {
-            if (preloader) {
+        // Init
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
                 preloader.style.opacity = '0';
-                setTimeout(() => {
-                    preloader.style.zIndex = '-1';
-                    preloader.style.pointerEvents = 'none';
-                    if (typingOutput) typeText();
-                }, 500);
-            }
-        }
+                setTimeout(() => { preloader.style.zIndex = '-1'; if(typingOutput) typeText(); }, 500);
+            }, 1000);
+        });
 
-        function showPreloader(e) {
-            const target = e.currentTarget;
-            const href = target.getAttribute('href');
-            if (href && (href.startsWith('#') || target.getAttribute('target') === '_blank')) return;
-            preloader.style.opacity = '1';
-            preloader.style.zIndex = '9999';
-            preloader.style.pointerEvents = 'all';
-            e.preventDefault();
-            setTimeout(() => { window.location.href = href; }, 500);
-        }
+        // Other setup
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    if (window.lenis) window.lenis.scrollTo(target);
+                    else target.scrollIntoView({behavior:'smooth'});
+                }
+            });
+        });
 
-        window.addEventListener('load', hidePreloader);
-        setTimeout(hidePreloader, 3000);
-
+        // 4. Reveal animation
         const initialObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                const element = entry.target;
                 if (entry.isIntersecting) {
-                    element.classList.remove('opacity-0', 'translate-y-4');
-                    element.classList.add('opacity-100');
-                    initialObserver.unobserve(element);
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                    entry.target.classList.add('opacity-100');
+                    initialObserver.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }); 
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.reveal-on-scroll').forEach((el, index) => {
+            el.style.transitionDelay = `${index * 50}ms`;
+            initialObserver.observe(el);
+        });
 
+        // Lenis
         document.addEventListener('DOMContentLoaded', () => {
             if (window.innerWidth >= 1024) {
-                const scrollPanel = document.querySelector('#scroll-panel');
-                const scrollContent = document.querySelector('#right-scroll-content');
-                
                 const lenis = new Lenis({
-                    wrapper: scrollPanel, 
-                    content: scrollContent,
-                    duration: 2.0, // Увеличенная плавность
-                    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
-                    direction: 'vertical',
-                    gestureDirection: 'vertical',
-                    smooth: true,
-                    smoothTouch: false,
-                    touchMultiplier: 2,
+                    wrapper: document.querySelector('#scroll-panel'), 
+                    content: document.querySelector('#right-scroll-content'),
+                    duration: 2.0, smooth: true
                 });
-
-                function raf(time) {
-                    lenis.raf(time);
-                    requestAnimationFrame(raf);
-                }
+                function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
                 requestAnimationFrame(raf);
                 window.lenis = lenis;
             }
-
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    const targetElement = document.querySelector(targetId);
-                    
-                    if (targetElement) {
-                        if (window.lenis) {
-                            window.lenis.scrollTo(targetElement);
-                        } else {
-                            if (window.innerWidth < 1024) {
-                                const y = targetElement.getBoundingClientRect().top + window.scrollY - 20; 
-                                window.scrollTo({top: y, behavior: 'smooth'});
-                            } else {
-                                const panel = document.getElementById('scroll-panel');
-                                if(panel) {
-                                    panel.scrollTo({
-                                        top: targetElement.offsetTop,
-                                        behavior: 'smooth'
-                                    });
-                                }
-                            }
-                        }
-                    }
-                });
-            });
-
-            document.querySelectorAll('a[href^="index.html"], a[href$=".html"]').forEach(link => {
-                if (link.getAttribute('target') !== '_blank') link.addEventListener('click', showPreloader);
-            });
-            
-            document.querySelectorAll('.reveal-on-scroll').forEach((el, index) => {
-                el.style.transitionDelay = `${index * 50}ms`;
-                initialObserver.observe(el);
-            });
-
-            renderWorkload();
-            updateCurrency('RUB'); 
         });
+        
+        function openLockedPopup() { document.getElementById('lock-popup').classList.add('active'); }
+        function closePopup() { document.getElementById('lock-popup').classList.remove('active'); }
+        window.openLockedPopup = openLockedPopup;
+        window.closePopup = closePopup;
     </script>
 </body>
 </html>
