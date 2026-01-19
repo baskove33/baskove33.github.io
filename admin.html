@@ -6,7 +6,10 @@
     <title>Workload Control - Baskakov</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Только TT Neoris */
+        /* Настройка шрифта Inter (резервный) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* TT Neoris */
         @font-face {
             font-family: 'TT Neoris';
             src: url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859192/TT_Neoris_Regular_bb9kfp.woff2') format('woff2'),
@@ -49,7 +52,7 @@
             color: #000;
             border-color: #fff;
             transform: scale(1.02);
-            box-shadow: 0 0 0 1px #fff; /* Эффект двойной обводки или свечения без размытия */
+            box-shadow: 0 0 0 1px #fff;
         }
 
         /* Цвет текста внутри активной кнопки */
@@ -82,7 +85,6 @@
             40% { opacity: 1; transform: scale(1.2); }
         }
         
-        /* Стилизация плейсхолдера */
         ::placeholder {
             letter-spacing: normal;
             opacity: 0.3;
@@ -103,15 +105,12 @@
 
     <!-- === ЭКРАН ВХОДА === -->
     <div id="login-screen" class="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm transition-opacity duration-500">
-        <!-- Карточка входа: убрал градиент, оставил строгую рамку -->
         <div class="max-w-xs w-full space-y-8 text-center p-10 border border-white/20 bg-[#050505] relative shadow-2xl">
-            
             <h2 class="text-2xl font-medium tracking-custom-tight text-white">Access Control</h2>
             
             <form class="space-y-6" onsubmit="event.preventDefault(); checkPassword();">
                 <input type="text" name="username" value="admin" class="hidden" autocomplete="username">
                 
-                <!-- Трекинг для ввода и плейсхолдера уменьшен (tracking-wide вместо widest) -->
                 <input type="password" id="password-input" placeholder="Passkey" autocomplete="current-password"
                     class="w-full bg-transparent border-b border-white/20 px-4 py-3 text-center text-white placeholder-white/20 focus:outline-none focus:border-white transition-colors tracking-wide font-light text-lg">
                 
@@ -185,7 +184,7 @@
 
     <!-- Logic Script -->
     <script>
-        // Предотвращаем ошибки до загрузки модуля
+        // Заглушка, чтобы кнопки не выдавали ошибку до загрузки Firebase
         window.setWorkload = function() {
             console.log("System initializing...");
         };
@@ -199,7 +198,7 @@
             }, 1000);
         });
 
-        // === ЛОГИКА ПАРОЛЯ (SHA-256) ===
+        // === ЛОГИКА ПАРОЛЯ ===
         // Пароль: 3976570
         const TARGET_HASH = "565339bc4d33d72817b583024112eb7f5cdf3e5eef0252d6ec1b9c9a94e12bb3"; 
 
@@ -214,19 +213,17 @@
             const input = document.getElementById('password-input').value.trim();
             const errorMsg = document.getElementById('login-error');
             
-            // 1. ПРЯМОЙ ВХОД (Гарантия доступа)
+            // Прямой вход (гарантия доступа)
             if (input === '3976570') {
                 unlock();
                 return;
             }
 
             try {
-                // 2. ХЕШ ВХОД
                 if (!window.crypto || !window.crypto.subtle) {
                     showError();
                     return;
                 }
-
                 const inputHash = await sha256(input);
                 if (inputHash === TARGET_HASH) {
                     unlock();
@@ -249,7 +246,7 @@
                 mainContent.classList.remove('hidden-force');
                 mainContent.classList.add('fade-in');
                 
-                // Инициализируем Firebase
+                // Инициализируем Firebase после входа
                 if (typeof window.initFirebase === 'function') {
                     window.initFirebase();
                 } else {
@@ -277,36 +274,36 @@
         window.initFirebase = function() {
             console.log("Initializing Firebase...");
             
-            // === ВАЖНО ДЛЯ GITHUB PAGES ===
-            // Если код запущен вне этой среды, __firebase_config не будет существовать.
-            // Нужно вставить свой конфиг ниже.
             let firebaseConfig;
             
+            // ПРОВЕРКА КОНФИГА
             if (typeof __firebase_config !== 'undefined') {
-                // Работает внутри среды разработки
                 firebaseConfig = JSON.parse(__firebase_config);
             } else {
-                // !!! ДЛЯ GITHUB: ВСТАВЬТЕ СЮДА СВОЙ КОНФИГ FIREBASE !!!
-                // Получите его в консоли Firebase: Project settings -> General -> Your apps
+                // !!! СЮДА НУЖНО ВСТАВИТЬ КОНФИГ ДЛЯ GITHUB PAGES !!!
+                // Раскомментируй и заполни данными из консоли Firebase
                 /*
                 firebaseConfig = {
-                    apiKey: "AIzaSy...",
-                    authDomain: "...",
-                    projectId: "...",
-                    storageBucket: "...",
+                    apiKey: "ТВОЙ_API_KEY",
+                    authDomain: "ТВОЙ_PROJECT_ID.firebaseapp.com",
+                    projectId: "ТВОЙ_PROJECT_ID",
+                    storageBucket: "ТВОЙ_PROJECT_ID.appspot.com",
                     messagingSenderId: "...",
                     appId: "..."
                 };
                 */
-               console.warn("Firebase Config не найден. Вставьте его в код для работы на GitHub.");
-               document.getElementById('connection-status').innerHTML = `<span class="text-red-500 text-[10px] uppercase tracking-widest">Config Missing</span>`;
-               return; 
+                
+                if (!firebaseConfig) {
+                    console.warn("Firebase Config не найден. Админка работает в демо-режиме.");
+                    const statusEl = document.getElementById('connection-status');
+                    if(statusEl) statusEl.innerHTML = `<span class="text-red-500 text-[10px] uppercase tracking-widest">Config Missing</span>`;
+                    return;
+                }
             }
 
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
             const db = getFirestore(app);
-            // Если запущен на GitHub, appId будет 'default-app-id' или нужно задать свой
             const appId = typeof __app_id !== 'undefined' ? __app_id : 'portfolio-app';
 
             const statusEl = document.getElementById('connection-status');
@@ -359,11 +356,21 @@
             }
 
             window.setWorkload = async (level) => {
-                if (!currentUser) {
-                    alert("Нет соединения с базой данных");
+                // Если конфига нет, просто обновляем UI локально
+                if (!firebaseConfig) {
+                    alert("Ошибка: Не настроен Firebase Config в коде.");
+                    updateUI(level);
                     return;
                 }
+                
+                if (!currentUser) {
+                    alert("Соединение устанавливается...");
+                    return;
+                }
+                
+                // Оптимистичное обновление
                 updateUI(level);
+                
                 try {
                     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
                     await setDoc(docRef, { level: level });
