@@ -3,189 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workload Control - Baskakov</title>
+    <title>Baskakov CMS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        /* TT Neoris */
+        /* FONTS */
         @font-face {
             font-family: 'TT Neoris';
-            src: url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859192/TT_Neoris_Regular_bb9kfp.woff2') format('woff2'),
-                 url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859114/TT_Neoris_Regular_mj4jee.woff') format('woff');
-            font-weight: 400;
-            font-style: normal;
+            src: url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859192/TT_Neoris_Regular_bb9kfp.woff2') format('woff2');
+            font-weight: 400; font-style: normal;
         }
         @font-face {
             font-family: 'TT Neoris';
             src: url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859192/TT_Neoris_Regular_bb9kfp.woff2') format('woff2');
-            font-weight: 500;
-            font-style: normal;
+            font-weight: 500; font-style: normal;
         }
 
+        body { font-family: 'TT Neoris', sans-serif; background-color: #000; color: white; -webkit-font-smoothing: antialiased; }
         .tracking-custom-tight { letter-spacing: -0.04em; }
-
-        body {
-            font-family: 'TT Neoris', sans-serif;
-            background-color: #000;
-            color: white;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Кнопки уровней */
-        .btn-option {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .btn-option:hover:not(:disabled) {
-            background-color: #1a1a1a;
-            border-color: rgba(255, 255, 255, 0.4);
-        }
-        .btn-option:disabled {
-            opacity: 0.5;
-            cursor: wait;
-        }
-        .btn-option.active {
-            background-color: #fff;
-            color: #000;
-            border-color: #fff;
-            transform: scale(1.02);
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-            opacity: 1 !important;
-        }
-        .btn-option.loading {
-            background-color: #222;
-            border-color: #fff;
-            animation: pulse-border 1s infinite;
-            opacity: 1 !important;
-        }
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 0 0px rgba(255, 255, 255, 0.4); }
-            100% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
-        }
-        .btn-option.active span { color: #000 !important; }
-        
         .hidden-force { display: none !important; }
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* UI ELEMENTS - WIDE & BIG */
+        input, textarea {
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255,255,255,0.15); 
+            color: white;
+            padding: 20px; 
+            width: 100%; 
+            border-radius: 0px; 
+            outline: none; 
+            transition: all 0.3s;
+            font-family: 'TT Neoris', sans-serif;
+            font-size: 1.1rem;
+        }
+        input:focus, textarea:focus { border-color: white; background: #050505; }
+        
+        label { 
+            display: block; 
+            font-size: 0.8rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.1em; 
+            color: rgba(255,255,255,0.4); 
+            margin-bottom: 12px; 
+        }
+        
+        /* NAVIGATION */
+        .tab-btn {
+            padding: 24px 32px; 
+            font-size: 0.9rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em;
+            color: rgba(255,255,255,0.4); 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            transition: all 0.3s;
+            text-align: left;
+            background: black;
+            width: 100%;
+        }
+        .tab-btn:hover { color: white; background: #0a0a0a; }
+        .tab-btn.active { color: white; border-bottom: 1px solid white; background: #111; }
+        
+        /* BUTTONS */
+        .btn-action {
+            background: white; color: black; font-weight: 500; 
+            padding: 20px 40px; border-radius: 0; 
+            transition: all 0.3s; border: 1px solid white;
+            text-transform: uppercase; letter-spacing: 0.05em; font-size: 1rem;
+            cursor: pointer;
+            width: auto;
+            min-width: 200px;
+            text-align: center;
+        }
+        .btn-action:hover { background: black; color: white; }
 
-        /* ПРЕЛОАДЕР */
-        #preloader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #000; opacity: 1; z-index: 9999;
-            transition: opacity 0.5s ease-out;
-            display: flex; justify-content: center; align-items: center;
-            pointer-events: none;
+        /* WORKLOAD BUTTONS */
+        .btn-option { 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            background: #050505;
+            position: relative;
+            cursor: pointer;
         }
-        .pulse-loader span {
-            display: inline-block; width: 10px; height: 10px; margin: 0 5px;
-            background: #fff; border-radius: 50%; opacity: 0.5;
-            animation: pulse 1.2s infinite ease-in-out;
+        .btn-option:hover { background-color: #151515; }
+        
+        /* ACTIVE STATE - BOLD WHITE OUTLINE */
+        .btn-option.active { 
+            background-color: transparent; 
+            border: 4px solid white; 
+            box-shadow: 0 0 30px rgba(255,255,255,0.2); 
+            z-index: 10;
+            transform: scale(1.02);
         }
-        .pulse-loader span:nth-child(2) { animation-delay: 0.2s; }
-        .pulse-loader span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes pulse {
-            0%, 80%, 100% { opacity: 0.5; transform: scale(1); }
-            40% { opacity: 1; transform: scale(1.2); }
+        
+        /* MODAL */
+        .modal-overlay {
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
         }
-        ::placeholder { letter-spacing: normal; opacity: 0.3; }
+
+        /* GRID LAYOUT */
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+        }
+        @media(max-width: 1024px) {
+            .admin-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+            .sidebar { overflow-x: auto; flex-direction: row !important; border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.1); }
+            .tab-btn { flex: 1; text-align: center; white-space: nowrap; padding: 15px; }
+        }
     </style>
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-6 bg-black relative overflow-hidden">
+<body class="bg-black overflow-hidden">
 
-    <div id="preloader" class="opacity-100">
-        <div class="pulse-loader"><span></span><span></span><span></span></div>
-    </div>
-
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 via-black to-black pointer-events-none"></div>
-
-    <!-- ЭКРАН ВХОДА (Email/Pass) -->
-    <div id="login-screen" class="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm transition-opacity duration-500">
-        <div class="max-w-xs w-full space-y-8 text-center p-10 border border-white/20 bg-[#050505] relative shadow-2xl">
-            <h2 class="text-2xl font-medium tracking-custom-tight text-white">Secure Access</h2>
-            
-            <form id="login-form" class="space-y-4">
-                <input type="email" id="email-input" placeholder="Admin Email" autocomplete="username" required
-                    class="w-full bg-transparent border-b border-white/20 px-4 py-3 text-center text-white placeholder-white/20 focus:outline-none focus:border-white transition-colors tracking-wide font-light text-base">
-                
-                <input type="password" id="password-input" placeholder="Password" autocomplete="current-password" required
-                    class="w-full bg-transparent border-b border-white/20 px-4 py-3 text-center text-white placeholder-white/20 focus:outline-none focus:border-white transition-colors tracking-wide font-light text-base">
-                
-                <button type="submit" 
-                    class="group relative w-full cursor-pointer overflow-hidden border border-white text-sm font-medium py-3 text-white transition duration-300 hover:text-black mt-4">
-                    <span class="inline-block transition-all duration-300 group-hover:opacity-0 z-20 relative uppercase tracking-widest">Login</span>
-                    <div class="absolute left-0 top-0 h-full w-full bg-white transition-all duration-300 -translate-x-full group-hover:translate-x-0 z-0"></div>
-                    <div class="absolute top-0 z-10 flex h-full w-full items-center justify-center text-black opacity-0 transition-all duration-300 group-hover:opacity-100 uppercase tracking-widest">Login</div>
-                </button>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-black">
+        <div class="w-full max-w-lg p-16 border border-white/20 bg-[#050505] shadow-2xl relative">
+            <div class="absolute top-0 left-0 w-full h-0.5 bg-white"></div>
+            <h2 class="text-4xl font-medium tracking-custom-tight uppercase mb-10">CMS Access</h2>
+            <form id="login-form" class="space-y-8">
+                <div>
+                    <label>Email</label>
+                    <input type="email" id="email-input" placeholder="admin@example.com" required class="tracking-wide">
+                </div>
+                <div>
+                    <label>Password</label>
+                    <input type="password" id="password-input" placeholder="••••••" required class="tracking-wide">
+                </div>
+                <button type="submit" class="btn-action w-full mt-6">Login</button>
             </form>
-            
-            <p id="login-error" class="text-red-500 text-[10px] uppercase tracking-widest mt-4 hidden animate-pulse">Invalid Credentials</p>
+            <p id="login-error" class="text-red-500 text-xs uppercase tracking-widest mt-6 hidden text-center animate-pulse">Incorrect Credentials</p>
         </div>
     </div>
 
-    <!-- ОСНОВНОЙ КОНТЕНТ (Появится после успешного входа через Firebase) -->
-    <div id="main-content" class="max-w-lg w-full space-y-10 hidden-force opacity-0 relative z-10">
-        <div class="text-center space-y-2">
-            <h1 class="text-3xl font-medium tracking-custom-tight">Workload Manager</h1>
-            <div id="connection-status" class="flex justify-center h-6">
-                <span class="text-white/30 text-[10px] uppercase tracking-widest">Verifying...</span>
+    <!-- MAIN APP -->
+    <div id="main-content" class="hidden-force opacity-0 w-full h-full admin-layout">
+        
+        <!-- Sidebar -->
+        <nav class="sidebar flex flex-col border-r border-white/10 bg-black">
+            <div class="p-10 border-b border-white/10">
+                <h1 class="text-2xl font-medium tracking-tight">Baskakov</h1>
+                <span id="connection-status" class="text-[10px] uppercase tracking-widest text-emerald-500 mt-2 block flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Online
+                </span>
+            </div>
+            <button class="tab-btn active" onclick="switchTab('workload')">Загруженность</button>
+            <button class="tab-btn" onclick="switchTab('profile')">Профиль</button>
+            <button class="tab-btn" onclick="switchTab('prices')">Цена</button>
+            <button class="tab-btn" onclick="switchTab('reviews')">Отзывы</button>
+            <div class="mt-auto p-8">
+                <button onclick="window.logout()" class="text-xs text-white/30 hover:text-white uppercase tracking-widest transition">Выйти</button>
+            </div>
+        </nav>
+
+        <!-- Content Area -->
+        <main class="flex-1 overflow-y-auto p-8 lg:p-20 relative bg-[#050505]">
+            
+            <!-- TAB: WORKLOAD -->
+            <div id="tab-workload" class="tab-content space-y-12 w-full">
+                <div class="border-b border-white/10 pb-8 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Загруженность</h2>
+                        <p class="text-white/50 text-lg">Текущий статус на сайте: <span id="current-workload-text" class="text-white font-bold ml-2">...</span></p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+                    <!-- JS generated buttons -->
+                </div>
+            </div>
+
+            <!-- TAB: PROFILE -->
+            <div id="tab-profile" class="tab-content hidden space-y-12 w-full">
+                <div class="border-b border-white/10 pb-8">
+                    <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Профиль</h2>
+                </div>
+                <div class="space-y-10 w-full">
+                    <div>
+                        <label>Главный заголовок (Имя)</label>
+                        <input type="text" id="prof-name">
+                    </div>
+                    <div>
+                        <label>Подзаголовок (Роль)</label>
+                        <input type="text" id="prof-role">
+                    </div>
+                    <button onclick="saveProfile()" class="btn-action">Сохранить</button>
+                </div>
+            </div>
+
+            <!-- TAB: PRICES -->
+            <div id="tab-prices" class="tab-content hidden space-y-16 w-full">
+                <div class="border-b border-white/10 pb-8 flex justify-between items-end">
+                    <div>
+                        <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Цена</h2>
+                        <p class="text-white/50 text-lg">Управление ценами и конвертацией</p>
+                    </div>
+                </div>
+
+                <!-- Курс Валют (Квадраты) -->
+                <div>
+                    <div class="flex justify-between items-end mb-6">
+                        <label class="text-white text-sm">Текущий курс</label>
+                        <button onclick="openRateModal()" class="text-xs uppercase tracking-widest border-b border-white/30 pb-1 hover:text-white hover:border-white transition">Редактировать курс</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- USD Card -->
+                        <div class="p-10 border border-white/10 bg-[#0a0a0a] flex flex-col justify-center items-center aspect-video relative group">
+                            <div class="text-white/30 text-xs uppercase tracking-widest absolute top-6 left-6">USD / RUB</div>
+                            <div class="text-4xl md:text-5xl font-light tracking-tight text-center">
+                                1 USD = <span id="display-rate-usd">...</span> ₽
+                            </div>
+                        </div>
+                        <!-- KZT Card -->
+                        <div class="p-10 border border-white/10 bg-[#0a0a0a] flex flex-col justify-center items-center aspect-video relative group">
+                            <div class="text-white/30 text-xs uppercase tracking-widest absolute top-6 left-6">RUB / KZT</div>
+                            <div class="text-4xl md:text-5xl font-light tracking-tight text-center">
+                                1 Рубль = <span id="display-rate-kzt">...</span> ₸
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Цены (Inputs) -->
+                <div class="space-y-12">
+                    <div class="grid md:grid-cols-2 gap-10">
+                        <div class="space-y-8">
+                            <h3 class="text-xl font-medium text-white border-b border-white/10 pb-4">Дизайн (Figma)</h3>
+                            <div><label>Лендинг (RUB)</label><input type="number" id="price-design-landing"></div>
+                            <div><label>Многостраничный (RUB)</label><input type="number" id="price-design-multi"></div>
+                        </div>
+                        <div class="space-y-8">
+                            <h3 class="text-xl font-medium text-white border-b border-white/10 pb-4">Под ключ (Tilda)</h3>
+                            <div><label>Лендинг (RUB)</label><input type="number" id="price-turnkey-landing"></div>
+                            <div><label>Многостраничный (RUB)</label><input type="number" id="price-turnkey-multi"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-8 border-t border-white/10">
+                        <h3 class="text-xl font-medium text-white mb-6">Прочее</h3>
+                        <div class="max-w-md"><label>Стартовая цена (RUB)</label><input type="number" id="price-other"></div>
+                    </div>
+                </div>
+
+                <div class="fixed bottom-10 right-10 z-20">
+                     <button onclick="savePrices()" class="btn-action shadow-2xl">Сохранить изменения</button>
+                </div>
+            </div>
+
+            <!-- TAB: REVIEWS -->
+            <div id="tab-reviews" class="tab-content hidden space-y-12 w-full">
+                <div class="border-b border-white/10 pb-8 flex justify-between items-end">
+                    <h2 class="text-5xl font-medium mb-3 tracking-custom-tight">Отзывы</h2>
+                    <button onclick="seedReviews()" class="text-xs uppercase tracking-widest text-white/40 hover:text-white transition">Загрузить с сайта</button>
+                </div>
+
+                <div class="p-10 border border-white/10 bg-[#0a0a0a] space-y-8">
+                    <h3 class="text-xl font-medium text-white uppercase tracking-widest border-b border-white/10 pb-4">Новый отзыв</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="md:col-span-2"><label>Автор</label><input type="text" id="rev-author" placeholder="@username"></div>
+                        <div><label>Оценка</label><input type="number" id="rev-stars" value="5" min="1" max="5"></div>
+                    </div>
+                    <div><label>Текст отзыва</label><textarea id="rev-text" rows="6" placeholder="Текст отзыва..."></textarea></div>
+                    <button onclick="addReview()" class="btn-action">Добавить</button>
+                </div>
+
+                <div id="reviews-list" class="space-y-4 pb-20 grid gap-4">
+                    <!-- JS List -->
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL: EDIT RATES -->
+    <div id="rate-modal" class="fixed inset-0 z-[100] hidden modal-overlay flex items-center justify-center">
+        <div class="bg-[#111] border border-white/20 p-10 w-full max-w-md relative shadow-2xl">
+            <button onclick="closeRateModal()" class="absolute top-4 right-4 text-white/50 hover:text-white">✕</button>
+            <h3 class="text-2xl font-medium mb-8">Редактирование курса</h3>
+            <div class="space-y-6">
+                <div>
+                    <label>USD (Рублей за 1$)</label>
+                    <input type="number" id="modal-rate-usd" step="0.01">
+                </div>
+                <div>
+                    <label>KZT (Тенге за 1₽)</label>
+                    <input type="number" id="modal-rate-kzt" step="0.01">
+                </div>
+                <button onclick="saveRatesFromModal()" class="btn-action w-full">Сохранить</button>
             </div>
         </div>
-
-        <div class="grid grid-cols-2 gap-3">
-            <button onclick="window.setWorkload(0)" disabled id="btn-0" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">0</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Free</span>
-            </button>
-            <button onclick="window.setWorkload(1)" disabled id="btn-1" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">1</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Light</span>
-            </button>
-            <button onclick="window.setWorkload(2)" disabled id="btn-2" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">2</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Normal</span>
-            </button>
-            <button onclick="window.setWorkload(3)" disabled id="btn-3" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">3</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em]">Busy</span>
-            </button>
-            <button onclick="window.setWorkload(4)" disabled id="btn-4" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">4</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em] text-orange-500/80">High Demand</span>
-            </button>
-            <button onclick="window.setWorkload(5)" disabled id="btn-5" class="btn-option p-8 bg-[#0a0a0a] flex flex-col items-center gap-3 group">
-                <span class="text-4xl font-light text-white/40 group-hover:text-white transition-colors tracking-tighter">5</span>
-                <span class="text-[10px] text-white/40 uppercase tracking-[0.2em] text-red-500/80">Sold Out</span>
-            </button>
-        </div>
-
-        <div class="text-center pt-8 border-t border-white/10 flex justify-between items-center px-4">
-            <button onclick="window.logout()" class="text-xs text-red-500/50 hover:text-red-500 transition-colors uppercase tracking-widest">Logout</button>
-            <a href="index.html" target="_blank" class="text-xs text-white/30 hover:text-white transition-colors uppercase tracking-widest">Open Portfolio →</a>
-        </div>
     </div>
 
-    <script>
-        // Preloader
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            setTimeout(() => {
-                preloader.style.opacity = '0';
-                setTimeout(() => { preloader.style.display = 'none'; }, 500);
-            }, 1000);
-        });
-
-        // Заглушки функций до загрузки модуля
-        window.setWorkload = () => console.warn("Firebase not loaded yet");
-        window.logout = () => console.warn("Firebase not loaded yet");
-    </script>
-
-    <!-- Firebase SDKs (Module) -->
+    <!-- SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc, deleteDoc, query, orderBy, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // === FIREBASE INIT ===
+        // ТВОЙ КОНФИГ
         const firebaseConfig = {
             apiKey: "AIzaSyCzLSd-Jmlb2N-UIXYMqlLWfnkPZxBQFeU",
             authDomain: "portfolio-1a9ea.firebaseapp.com",
@@ -201,188 +317,232 @@
         const db = getFirestore(app);
         const appId = 'portfolio-app';
 
-        // UI Refs
-        const loginScreen = document.getElementById('login-screen');
-        const mainContent = document.getElementById('main-content');
-        const statusEl = document.getElementById('connection-status');
-        const loginForm = document.getElementById('login-form');
-        const emailInput = document.getElementById('email-input');
-        const passInput = document.getElementById('password-input');
-        const loginError = document.getElementById('login-error');
+        // UI NAVIGATION
+        window.switchTab = (tabName) => {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        };
 
-        let currentUser = null;
-        let isUpdating = false;
-        let currentLevelState = null;
-        let safetyTimeout = null;
-
-        // --- AUTH LOGIC (Server-Side Check) ---
-        
-        // Слушаем состояние входа (сохраняется в браузере)
+        // AUTH
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Если вошли - скрываем логин, показываем контент
-                currentUser = user;
-                hideLoginShowContent();
-                renderStatus('ONLINE');
-                
-                // Первичная загрузка и подписка
-                initialLoadAndListen();
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('main-content').classList.remove('hidden-force');
+                document.getElementById('main-content').classList.add('fade-in');
+                initData();
             } else {
-                // Если не вошли - показываем логин
-                showLoginHideContent();
+                document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('main-content').classList.add('hidden-force');
             }
         });
 
-        // Обработка формы входа
-        loginForm.addEventListener('submit', async (e) => {
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = emailInput.value;
-            const password = passInput.value;
-
-            // Блокируем форму визуально
-            loginForm.style.opacity = '0.5';
-            
+            const email = document.getElementById('email-input').value;
+            const pass = document.getElementById('password-input').value;
             try {
-                await signInWithEmailAndPassword(auth, email, password);
-                // Успех обработает onAuthStateChanged
-            } catch (error) {
-                console.error("Login Failed", error);
-                loginError.textContent = "Invalid Credentials";
-                loginError.classList.remove('hidden');
-                loginForm.style.opacity = '1';
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (e) {
+                document.getElementById('login-error').classList.remove('hidden');
             }
         });
 
-        // Функция выхода
-        window.logout = async () => {
-            await signOut(auth);
-        };
+        window.logout = () => signOut(auth);
 
-        // --- UI HELPERS ---
-
-        function showLoginHideContent() {
-            loginScreen.style.display = 'flex';
-            setTimeout(() => loginScreen.style.opacity = '1', 10);
-            mainContent.classList.remove('fade-in');
-            mainContent.classList.add('hidden-force');
-            mainContent.style.opacity = '0';
+        // DATA INIT
+        function initData() {
+            initWorkload();
+            initProfile();
+            initPrices();
+            initReviews();
         }
 
-        function hideLoginShowContent() {
-            loginScreen.style.opacity = '0';
-            setTimeout(() => {
-                loginScreen.style.display = 'none';
-                mainContent.classList.remove('hidden-force');
-                mainContent.classList.add('fade-in');
-            }, 500);
-        }
+        // 1. WORKLOAD
+        function initWorkload() {
+            const container = document.querySelector('#tab-workload .grid');
+            container.innerHTML = '';
+            const labels = ['Free', 'Light', 'Normal', 'Busy', 'High Demand', 'Sold Out'];
+            
+            labels.forEach((label, i) => {
+                const btn = document.createElement('button');
+                // No text colors, just white/gray
+                btn.className = 'btn-option p-12 bg-black flex flex-col items-center gap-4 relative group';
+                btn.id = `wl-btn-${i}`;
+                btn.onclick = () => setWorkload(i);
+                btn.innerHTML = `
+                    <span class="num text-6xl font-light text-white/30 group-hover:text-white transition-colors tracking-tighter">${i}</span>
+                    <span class="text-xs uppercase tracking-[0.2em] text-white/50 group-hover:text-white transition-colors">${label}</span>
+                `;
+                container.appendChild(btn);
+            });
 
-        // --- DATA LOGIC ---
-
-        async function initialLoadAndListen() {
-             try {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    currentLevelState = data.level;
-                    updateUI(data.level);
-                } else {
-                    currentLevelState = 0;
-                    updateUI(0);
-                }
-                
-                // Запускаем слушатель для синхронизации
-                listenToData();
-                
-            } catch (e) {
-                console.error("Init Error", e);
-                renderStatus('ERROR');
-            }
-        }
-
-        function listenToData() {
-            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
-            onSnapshot(docRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    if (data.level !== currentLevelState) {
-                        currentLevelState = data.level;
-                        updateUI(data.level);
-                    }
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload'), (snap) => {
+                if (snap.exists()) {
+                    const val = snap.data().level;
+                    document.querySelectorAll('[id^="wl-btn-"]').forEach(b => b.classList.remove('active'));
+                    const active = document.getElementById(`wl-btn-${val}`);
+                    if(active) active.classList.add('active');
                     
-                    if (isUpdating) {
-                        renderStatus('SAVED');
-                        clearTimeout(safetyTimeout);
-                        setTimeout(() => {
-                            renderStatus('ONLINE');
-                            isUpdating = false;
-                        }, 2000);
+                    // Обновляем текстовый индикатор
+                    document.getElementById('current-workload-text').textContent = labels[val] + ` (${val})`;
+                }
+            });
+        }
+        
+        window.setWorkload = async (level) => {
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload'), { level });
+        };
+
+        // 2. PROFILE
+        function initProfile() {
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'profile'), (snap) => {
+                if (snap.exists()) {
+                    const d = snap.data();
+                    document.getElementById('prof-name').value = d.name || '';
+                    document.getElementById('prof-role').value = d.role || '';
+                }
+            });
+        }
+        window.saveProfile = async () => {
+            const name = document.getElementById('prof-name').value;
+            const role = document.getElementById('prof-role').value;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'profile'), { name, role });
+            alert('Сохранено');
+        };
+
+        // 3. PRICES & RATES
+        let currentRates = { USD: 96.5, KZT: 5.15 };
+
+        function initPrices() {
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'prices'), (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    
+                    // Prices
+                    document.getElementById('price-design-landing').value = data.design_landing || 0;
+                    document.getElementById('price-design-multi').value = data.design_multi || 0;
+                    document.getElementById('price-turnkey-landing').value = data.turnkey_landing || 0;
+                    document.getElementById('price-turnkey-multi').value = data.turnkey_multi || 0;
+                    document.getElementById('price-other').value = data.other || 0;
+
+                    // Rates Display
+                    if (data.rates) {
+                        currentRates = data.rates;
+                        document.getElementById('display-rate-usd').textContent = currentRates.USD;
+                        document.getElementById('display-rate-kzt').textContent = currentRates.KZT;
+                        
+                        // Fill modal inputs too
+                        document.getElementById('modal-rate-usd').value = currentRates.USD;
+                        document.getElementById('modal-rate-kzt').value = currentRates.KZT;
                     }
                 }
-            }, (error) => {
-                 console.error("Snapshot error (Permission?)", error);
-                 renderStatus('ERROR');
             });
         }
 
-        function renderStatus(mode) {
-            if (!statusEl) return;
-            const onlineHtml = `<span class="text-emerald-500 text-[10px] uppercase tracking-widest flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>Online</span>`;
-            if (mode === 'ONLINE') statusEl.innerHTML = onlineHtml;
-            else if (mode === 'UPDATING') statusEl.innerHTML = `<span class="text-white/50 text-[10px] uppercase tracking-widest animate-pulse">Updating...</span>`;
-            else if (mode === 'SAVED') statusEl.innerHTML = `<div class="flex items-center gap-3">${onlineHtml}<span class="text-white/30 text-[10px] uppercase tracking-widest">Saved</span></div>`;
-            else if (mode === 'ERROR') statusEl.innerHTML = `<span class="text-red-500 text-[10px] uppercase tracking-widest">DB Error</span>`;
-        }
-
-        function updateUI(level) {
-            document.querySelectorAll('.btn-option').forEach(btn => {
-                btn.classList.remove('active', 'loading');
-                btn.disabled = false;
-                btn.style.cursor = 'pointer';
-            });
-            if (level !== undefined && level !== null) {
-                const activeBtn = document.getElementById(`btn-${level}`);
-                if (activeBtn) activeBtn.classList.add('active');
-            }
-        }
-
-        // --- GLOBAL ACTION ---
-        window.setWorkload = async (level) => {
-            if (!currentUser) return;
-            if (level === currentLevelState) return;
-
-            isUpdating = true;
-            renderStatus('UPDATING');
+        // Modal Logic
+        window.openRateModal = () => document.getElementById('rate-modal').classList.remove('hidden');
+        window.closeRateModal = () => document.getElementById('rate-modal').classList.add('hidden');
+        
+        window.saveRatesFromModal = async () => {
+            const newRates = {
+                USD: Number(document.getElementById('modal-rate-usd').value),
+                KZT: Number(document.getElementById('modal-rate-kzt').value)
+            };
+            // Merge with existing prices logic in savePrices but update only rates is tricky without reading,
+            // so we'll just trigger a savePrices call but with new rates logic? 
+            // Better: update just the rates inside the main price object logic, or save everything.
+            // Let's just update the local state and call savePrices()
             
-            const targetBtn = document.getElementById(`btn-${level}`);
-            if(targetBtn) targetBtn.classList.add('loading');
+            // To ensure we don't overwrite prices with empty inputs if user hasn't visited that tab,
+            // we rely on the inputs being populated by onSnapshot.
             
-            document.querySelectorAll('.btn-option').forEach(btn => {
-                btn.disabled = true;
-                btn.style.cursor = 'wait';
-            });
-            
-            safetyTimeout = setTimeout(() => {
-                if(isUpdating) {
-                    isUpdating = false;
-                    renderStatus('ONLINE');
-                    updateUI(currentLevelState);
+            // Actually, best to just call savePrices which reads all inputs.
+            // But we need to update the rate inputs in the hidden modal to match? No, they are inputs.
+            // Just saving everything is safest.
+            savePrices(newRates);
+            closeRateModal();
+        };
+
+        window.savePrices = async (rateOverride = null) => {
+            const prices = {
+                design_landing: Number(document.getElementById('price-design-landing').value),
+                design_multi: Number(document.getElementById('price-design-multi').value),
+                turnkey_landing: Number(document.getElementById('price-turnkey-landing').value),
+                turnkey_multi: Number(document.getElementById('price-turnkey-multi').value),
+                other: Number(document.getElementById('price-other').value),
+                rates: rateOverride || {
+                    USD: Number(document.getElementById('modal-rate-usd').value) || currentRates.USD,
+                    KZT: Number(document.getElementById('modal-rate-kzt').value) || currentRates.KZT
                 }
-            }, 5000);
+            };
+            
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'prices'), prices);
+            // alert('Сохранено');
+        };
 
-            try {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'workload');
-                await setDoc(docRef, { level: level });
-            } catch (e) {
-                console.error("Write Error", e);
-                alert("Ошибка: Недостаточно прав (проверь Rules в консоли)");
-                isUpdating = false;
-                renderStatus('ERROR');
-                updateUI(level);
+        // 4. REVIEWS
+        function initReviews() {
+            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'reviews'), orderBy('timestamp', 'desc'));
+            onSnapshot(q, (snap) => {
+                const list = document.getElementById('reviews-list');
+                list.innerHTML = '';
+                snap.forEach(docSnap => {
+                    const r = docSnap.data();
+                    const el = document.createElement('div');
+                    el.className = 'p-6 border border-white/10 bg-[#0a0a0a] flex justify-between items-start';
+                    el.innerHTML = `
+                        <div>
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="font-bold text-white text-lg">${r.author}</span>
+                                <span class="text-white/50 text-sm">★ ${r.stars}</span>
+                            </div>
+                            <p class="text-white/70 text-base leading-relaxed">${r.text}</p>
+                        </div>
+                        <button onclick="delReview('${docSnap.id}')" class="text-red-500 hover:text-white px-4 py-2 border border-red-500/20 hover:bg-red-500/10 transition uppercase tracking-widest text-xs">Удалить</button>
+                    `;
+                    list.appendChild(el);
+                });
+            });
+        }
+
+        window.addReview = async () => {
+            const author = document.getElementById('rev-author').value;
+            const stars = Number(document.getElementById('rev-stars').value);
+            const text = document.getElementById('rev-text').value;
+            if(!author || !text) return alert("Заполните поля");
+
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'reviews'), {
+                author, stars, text, timestamp: Date.now()
+            });
+            
+            document.getElementById('rev-author').value = '';
+            document.getElementById('rev-text').value = '';
+        };
+
+        window.delReview = async (id) => {
+            if(confirm("Удалить?")) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'reviews', id));
             }
         };
+
+        window.seedReviews = async () => {
+            if(!confirm("Добавить стандартные отзывы?")) return;
+            const batch = writeBatch(db);
+            const defaults = [
+                { author: "zkurbanov85", stars: 5, text: "Никита, благодарю Вас! ! Ваша терпеливая и вдумчивая работа позволила мне наконец заиметь свой таплинк. Буду обращаться вновь! !" },
+                { author: "aikaagness", stars: 5, text: "Большое спасибо Никите за отличную работу! замечательный сайт, всё было сделано очень профессионально и в сроки. Я очень довольна результатом." },
+                { author: "TyapkinaProProdazhi", stars: 5, text: "Очень довольна работой! Выполнено было все быстро, все по ТЗ. Использовал интересные подходы, всё предложенное было красиво, хорошо оформленно." },
+                { author: "Yuristyuga", stars: 5, text: "Огромная благодарность. Учтены все пожелания. Представил три варианта таплинка. Отвечает быстро. Работа выполнена в срок. Буду обращаться еще." }
+            ];
+            defaults.forEach(d => {
+                const ref = doc(collection(db, 'artifacts', appId, 'public', 'data', 'reviews'));
+                batch.set(ref, { ...d, timestamp: Date.now() });
+            });
+            await batch.commit();
+        };
+
     </script>
 </body>
 </html>
