@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Баскаков Никита - Портфолио</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключение Lenis для плавного скролла -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+    <style>
+        /* Настройка шрифта Inter (резервный) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* TT Neoris */
+        @font-face {
+            font-family: 'TT Neoris';
+            src: url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859192/TT_Neoris_Regular_bb9kfp.woff2') format('woff2'),
+                 url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859114/TT_Neoris_Regular_mj4jee.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'TT Neoris';
+            src: url('https://res.cloudinary.com/dt79npeea/raw/upload/v1764859192/TT_Neoris_Regular_bb9kfp.woff2') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+        }
+
+        .tracking-custom-tight {
+            letter-spacing: -0.04em;
+        }
+
+        body {
+            font-family: 'TT Neoris', 'Inter', sans-serif;
+            background-color: #000;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+        
+        body::-webkit-scrollbar, 
+        #scroll-panel::-webkit-scrollbar { display: none; }
+        body, #scroll-panel { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @media (min-width: 1024px) {
+            body { overflow: hidden; }
+            #scroll-panel {
+                height: 100vh;
+                overflow-y: auto; 
+                scroll-behavior: auto; 
+            }
+        }
+        
+        /* === ПРЕЛОАДЕР === */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 2rem;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .preloader-counter {
+            font-size: 8rem; 
+            line-height: 1;
+            font-weight: 500;
+            color: #333;
+            letter-spacing: -0.05em;
+            margin-bottom: 1rem;
+        }
+        .preloader-bar-bg {
+            width: 100%;
+            height: 2px;
+            background-color: #111;
+            position: relative;
+            overflow: hidden;
+        }
+        .preloader-bar-fill {
+            position: absolute;
+            top: 0; left: 0; height: 100%; width: 0%;
+            background-color: #333;
+            transition: width 0.1s linear;
+        }
+        
+        /* Стили левой части */
+        .left-side-bg {
+            background-image: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.2)),
+                url('https://res.cloudinary.com/dt79npeea/image/upload/q_auto,f_auto/v1764843336/photo_2025-12-04_13-05-55_pwtepu.jpg');
+            background-size: cover; background-position: center 20%;
+        }
+
+        .typing-text {
+            border-right: 2px solid rgba(255, 255, 255, 0.7); 
+            white-space: nowrap; overflow: hidden; 
+            height: 1.5em; display: inline-block; max-width: 100%;
+        }
+        
+        /* === КАРТОЧКИ === */
+        .portfolio-item { 
+            position: relative;
+            overflow: hidden;
+            background-color: #111; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            will-change: transform, box-shadow;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .portfolio-item:hover { 
+            transform: scale(1.02); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.3); 
+            z-index: 10;
+        }
+
+        .portfolio-item img {
+            will-change: transform, filter;
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.5s ease;
+            filter: grayscale(80%) brightness(0.9);
+        }
+        .portfolio-item:hover img {
+            filter: grayscale(0%) brightness(1); 
+            transform: scale(1.05);
+        }
+        
+        .portfolio-item-text {
+            background-color: transparent; 
+            color: #fff;
+        }
+        .portfolio-item-text .title { color: #fff; }
+        .portfolio-item-text .tags { color: rgba(255, 255, 255, 0.5); }
+
+        /* === ПЛАВНОЕ ПОЯВЛЕНИЕ === */
+        .reveal-on-scroll { 
+            opacity: 0;
+            transform: translateY(40px); 
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .reveal-on-scroll.is-visible {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+        
+        #welcome-message { min-height: calc(100vh - 4rem); display: flex; flex-direction: column; justify-content: center; }
+
+        /* === LOCKED OVERLAY === */
+        .locked-overlay {
+            position: absolute; inset: 0; background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(2px); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; opacity: 0;
+            transition: opacity 0.4s ease; z-index: 20;
+        }
+        .portfolio-item:hover .locked-overlay { opacity: 1; }
+        @media (max-width: 768px) { .locked-overlay { opacity: 1; background: rgba(255, 255, 255, 0.2); } }
+        .lock-icon { animation: wobble 2s infinite ease-in-out; }
+        @keyframes wobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        /* === POPUP === */
+        #lock-popup { opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        #lock-popup.active { opacity: 1; pointer-events: all; }
+        .popup-content { transform: scale(0.95); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        #lock-popup.active .popup-content { transform: scale(1); }
+
+    </style>
+</head>
+<body class="bg-black text-white antialiased">
+
+    <!-- ПРЕЛОАДЕР -->
+    <div id="preloader">
+        <div class="w-full"> 
+            <div class="preloader-counter" id="preloader-counter">0%</div>
+            <div class="preloader-bar-bg">
+                <div class="preloader-bar-fill" id="preloader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POPUP ДЛЯ ЗАБЛОКИРОВАННЫХ КЕЙСОВ -->
+    <div id="lock-popup" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div class="popup-content bg-white text-black p-8 max-w-sm w-full shadow-2xl relative text-center">
+            <button onclick="closePopup()" class="absolute top-4 right-4 text-gray-400 hover:text-black transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div class="mb-6 flex justify-center text-black">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold mb-3 tracking-custom-tight">Проект в разработке</h3>
+            <p class="text-sm text-gray-600 mb-8 leading-relaxed">Кейс находится на стадии оформления и скоро появится здесь. Вы можете следить за обновлениями в соцсетях.</p>
+            <a href="https://t.me/zorochik" target="_blank" class="block w-full bg-black text-white font-medium py-4 hover:bg-gray-800 transition duration-300">Написать в Telegram</a>
+        </div>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕЙНЕР -->
+    <div class="flex flex-col lg:flex-row min-h-screen lg:h-screen">
+
+        <!-- ЛЕВАЯ ЧАСТЬ (ФОТО) -->
+        <div class="left-side-bg hidden lg:flex lg:w-1/2 lg:h-full relative flex-col justify-between p-8">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/00 to-black/20 pointer-events-none"></div>
+            <nav class="flex justify-between text-xs text-white/60 tracking-wider relative z-10">
+                <a href="#portfolio-section" class="hover:text-white transition duration-300">Портфолио</a>
+                <a href="https://t.me/zorochik" target="_blank" class="hover:text-white transition duration-300">Связаться</a>
+            </nav>
+            <div class="flex justify-between w-full text-[10px] text-white/50 tracking-wider relative z-10">
+                <span></span>  
+                <span class="hidden sm:inline">Я живой, все в порядке</span>
+                <span></span>
+            </div>
+        </div>
+        
+        <!-- ПРАВАЯ ЧАСТЬ (КОНТЕНТ) -->
+        <div id="scroll-panel" class="w-full lg:w-1/2 max-w-full lg:h-screen lg:p-12 p-4 sm:p-10 block lg:overflow-y-auto">
+            <div id="right-scroll-content" class="w-full lg:max-w-[365px] mx-auto space-y-5 pb-20"> 
+
+                <!-- Приветствие -->
+                <div id="welcome-message" class="bg-black shadow-lg p-8 reveal-on-scroll text-center">
+                    <h3 class="text-5xl font-medium text-white mb-4 tracking-custom-tight">Приветствую!</h3>
+                    <div class="flex justify-center">
+                        <p id="typing-output" class="text-base text-white/70 leading-relaxed typing-text mx-auto max-w-xs"></p>
+                    </div>
+                </div>
+
+                <!-- Мобильное фото -->
+                <div class="block lg:hidden w-full h-[500px] left-side-bg relative flex flex-col justify-between p-5 reveal-on-scroll shadow-2xl">
+                    <div class="absolute inset-0 bg-gradient-to-b from-black/00 to-black/20 pointer-events-none"></div>
+                    <nav class="flex justify-between text-xs text-white/60 tracking-wider relative z-10">
+                        <a href="#portfolio-section" class="hover:text-white transition duration-300">Портфолио</a>
+                        <a href="https://t.me/zorochik" target="_blank" class="hover:text-white transition duration-300">Связаться</a>
+                    </nav>
+                    <div class="flex justify-between w-full text-[10px] text-white/50 tracking-wider relative z-10">
+                        <span></span>  
+                        <span class="inline">Я живой, все в порядке</span>
+                        <span></span>
+                    </div>
+                </div>
+                
+                <!-- Информация о профиле -->
+                <div class="bg-white shadow-2xl p-5 reveal-on-scroll">
+                    <h1 class="text-[36px] font-medium text-gray-900 tracking-custom-tight mb-2 leading-none">Баскаков Никита</h1>
+                    <p class="text-base text-gray-600 mb-20 font-light">Портфолио UX/UI дизайнера</p>
+                    <p class="text-sm text-gray-400 leading-relaxed">и просто хорошего человека</p>
+                </div>
+
+                <!-- Опыт -->
+                <div class="bg-white shadow-lg p-5 flex justify-between items-center reveal-on-scroll">
+                    <span class="text-sm text-gray-600">Опыт:</span>
+                    <span class="text-xl font-medium text-gray-900"> +4 года</span>
+                </div>
+
+                <!-- Кнопка Связаться -->
+                <div class="pt-2 pb-5 reveal-on-scroll">
+                    <a href="https://t.me/zorochik" target="_blank" class="block w-full"> 
+                        <button class="group relative w-full cursor-pointer overflow-hidden border border-white text-lg font-medium py-4 text-white bg-black shadow-xl transition duration-300 rounded-none hover:text-black hover:bg-white hover:border-black">
+                            <span class="inline-block transition-all duration-300 group-hover:-translate-x-8 group-hover:opacity-0 z-20 relative">Связаться</span>
+                            <div class="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-none bg-white transition-all duration-300 group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-white z-0"></div>
+                            <div class="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 text-black opacity-0 transition-all duration-300 group-hover:-translate-x-0 group-hover:opacity-100">
+                                <span>Написать в Telegram</span>
+                            </div>
+                        </button>
+                    </a>
+                </div>
+
+                <!-- Портфолио -->
+                <div id="portfolio-section" class="pt-5 pb-5 scroll-mt-10 reveal-on-scroll">
+                    <h2 class="text-3xl sm:text-4xl font-medium text-white tracking-custom-tight">Портфолио</h2>
+                </div>
+
+                <!-- Сетка проектов -->
+                <div class="grid gap-5">
+                    <!-- DYOR 5 -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                         <a href="dyor5.html" class="portfolio-item shadow-xl relative block group">
+                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/q_auto,f_auto/v1764842242/Rectangle_39524_y5ycpn.png" class="w-full h-full object-cover">
+                            </div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                <div class="title text-lg font-medium tracking-custom-tight">DYOR 5</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">UI Design / Web Design</div>
+                            </div>
+                        </a>
+                    </div>
+                    <!-- AMNH -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                         <a href="amnh.html" class="portfolio-item shadow-xl relative block group">
+                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/q_auto,f_auto/v1766406851/%D0%9E%D0%B1%D0%BB%D0%BE%D0%B6%D0%BA%D0%B0_%D0%BA%D0%B5%D0%B9%D1%81%D0%B0_6_sobvrd.png" class="w-full h-full object-cover">
+                            </div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                <div class="title text-lg font-medium tracking-custom-tight">Museum of Natural History</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">Web Design</div>
+                            </div>
+                        </a>
+                    </div>
+                    <!-- Nu i Che -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                         <a href="nuiche.html" class="portfolio-item shadow-xl relative block group">
+                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/q_auto,f_auto/v1764842241/Rectangle_39518_rwxdzz.png" class="w-full h-full object-cover">
+                            </div>
+                            <div class="portfolio-item-text p-5 flex justify-between">
+                                <div class="title text-lg font-medium">Nu i Che</div>
+                                <div class="tags text-xs uppercase">Web Design</div>
+                            </div>
+                        </a>
+                    </div>
+                    <!-- Secret -->
+                    <div class="project-card-wrapper relative group reveal-on-scroll">
+                        <div onclick="openLockedPopup()" class="portfolio-item shadow-xl overflow-hidden cursor-pointer relative">
+                             <div class="locked-overlay" style="opacity: 1; background: rgba(255, 255, 255, 0.1);">
+                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Скоро</span>
+                            </div>
+                            <div class="w-full h-80 flex items-center justify-center bg-gray-100 overflow-hidden">
+                                <div class="w-full h-full bg-gradient-to-bl from-gray-400 to-gray-600 blur-xl scale-110"></div>
+                            </div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center filter blur-[2px]">
+                                <div class="title text-lg font-medium tracking-custom-tight">Секретный проект</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">Coming Soon</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Кнопка Все кейсы -->
+                <div class="pt-5 pb-5 reveal-on-scroll">
+                    <a href="all_cases.html" class="block w-full"> 
+                        <button class="group relative w-full cursor-pointer overflow-hidden border border-white text-lg font-medium py-4 text-white bg-black shadow-xl transition duration-300 rounded-none hover:text-black hover:bg-white hover:border-black">
+                            <span class="inline-block transition-all duration-300 group-hover:-translate-x-8 group-hover:opacity-0 z-20 relative">Все кейсы</span>
+                            <div class="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-none bg-white transition-all duration-300 group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-white z-0"></div>
+                            <div class="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 text-black opacity-0 transition-all duration-300 group-hover:-translate-x-0 group-hover:opacity-100">
+                                <span>Перейти на страницу</span>
+                            </div>
+                        </button>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Прелоадер и Эффект печати текста
+        document.addEventListener("DOMContentLoaded", () => {
+            const preloader = document.getElementById('preloader');
+            const counter = document.getElementById('preloader-counter');
+            const bar = document.getElementById('preloader-bar');
+            let isLoaded = false;
+            
+            const textToType = "Спасибо за то, что посетили мой сайт.";
+            const typingOutput = document.getElementById('typing-output');
+            const typingSpeed = 50;
+            let charIndex = 0;
+
+            function typeText() {
+                if (!typingOutput) return;
+                if (charIndex < textToType.length) {
+                    typingOutput.textContent += textToType.charAt(charIndex);
+                    charIndex++;
+                    typingOutput.style.width = (charIndex * 0.55) + 'em'; 
+                    setTimeout(typeText, typingSpeed);
+                } else {
+                    typingOutput.style.borderRight = 'none';
+                    typingOutput.style.width = 'auto'; 
+                }
+            }
+            
+            window.addEventListener('load', () => {
+                isLoaded = true;
+            });
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                if (progress < 90) {
+                    progress += Math.floor(Math.random() * 5) + 1; 
+                } else if (isLoaded) {
+                    progress += 5;
+                }
+
+                if(progress > 100) progress = 100;
+                
+                if (counter) counter.innerText = progress + '%';
+                if (bar) bar.style.width = progress + '%';
+                
+                if(progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        if (preloader) preloader.style.opacity = '0';
+                        setTimeout(() => { 
+                            if (preloader) {
+                                preloader.style.display = 'none';
+                                preloader.style.visibility = 'hidden'; 
+                            }
+                            typeText(); 
+                        }, 800);
+                    }, 200); 
+                }
+            }, 30);
+        });
+
+        // Плавный скролл и анимации появления
+        window.addEventListener('DOMContentLoaded', () => {
+            // Reveal animation
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.reveal-on-scroll').forEach((el, index) => {
+                el.style.transitionDelay = `${index * 50}ms`;
+                revealObserver.observe(el);
+            });
+
+            // Lenis smooth scroll (only for desktop)
+            if (window.innerWidth >= 1024) {
+                const lenis = new Lenis({
+                    wrapper: document.querySelector('#scroll-panel'), 
+                    content: document.querySelector('#right-scroll-content'),
+                    duration: 1.5,
+                    smooth: true
+                });
+                function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+                requestAnimationFrame(raf);
+            }
+        });
+
+        // Попап
+        function openLockedPopup() { document.getElementById('lock-popup').classList.add('active'); }
+        function closePopup() { document.getElementById('lock-popup').classList.remove('active'); }
+        window.openLockedPopup = openLockedPopup;
+        window.closePopup = closePopup;
+    </script>
+</body>
+</html>
