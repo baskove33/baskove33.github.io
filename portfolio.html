@@ -142,22 +142,6 @@
         
         #welcome-message { min-height: calc(100vh - 4rem); display: flex; flex-direction: column; justify-content: center; }
 
-        /* === LOCKED OVERLAY === */
-        .locked-overlay {
-            position: absolute; inset: 0; background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(2px); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; opacity: 0;
-            transition: opacity 0.4s ease; z-index: 20;
-        }
-        .portfolio-item:hover .locked-overlay { opacity: 1; }
-        @media (max-width: 768px) { .locked-overlay { opacity: 1; background: rgba(255, 255, 255, 0.2); } }
-        .lock-icon { animation: wobble 2s infinite ease-in-out; }
-        @keyframes wobble {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-5deg); }
-            75% { transform: rotate(5deg); }
-        }
-
         /* === POPUP === */
         #lock-popup { opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         #lock-popup.active { opacity: 1; pointer-events: all; }
@@ -269,7 +253,7 @@
 
                 <!-- Сетка проектов -->
                 <div class="grid gap-5">
-                    <!-- DYOR 5 -->
+                    <!-- 1. DYOR 5 -->
                     <div class="project-card-wrapper reveal-on-scroll">
                          <a href="dyor5.html" class="portfolio-item shadow-xl relative block group">
                             <div class="w-full h-80 flex items-center justify-center overflow-hidden">
@@ -277,11 +261,11 @@
                             </div>
                             <div class="portfolio-item-text p-5 flex justify-between items-center">
                                 <div class="title text-lg font-medium tracking-custom-tight">DYOR 5</div>
-                                <div class="tags text-right text-xs tracking-wider uppercase">UI Design / Web Design</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">UI Design / Web Design / Brand Design</div>
                             </div>
                         </a>
                     </div>
-                    <!-- AMNH -->
+                    <!-- 2. AMNH -->
                     <div class="project-card-wrapper reveal-on-scroll">
                          <a href="amnh.html" class="portfolio-item shadow-xl relative block group">
                             <div class="w-full h-80 flex items-center justify-center overflow-hidden">
@@ -293,44 +277,41 @@
                             </div>
                         </a>
                     </div>
-                    <!-- Nu i Che -->
+                    <!-- 3. Turbofish -->
                     <div class="project-card-wrapper reveal-on-scroll">
-                         <a href="nuiche.html" class="portfolio-item shadow-xl relative block group">
+                         <a href="turbofish.html" class="portfolio-item shadow-xl relative block group">
                             <div class="w-full h-80 flex items-center justify-center overflow-hidden">
-                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/q_auto,f_auto/v1764842241/Rectangle_39518_rwxdzz.png" class="w-full h-full object-cover">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39520_j4cgl1.png" class="w-full h-full object-cover">
                             </div>
-                            <div class="portfolio-item-text p-5 flex justify-between">
-                                <div class="title text-lg font-medium">Nu i Che</div>
-                                <div class="tags text-xs uppercase">Web Design</div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                <div class="title text-lg font-medium tracking-custom-tight">Turbofish</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">FinTech / UX/UI / E-commerce</div>
                             </div>
                         </a>
                     </div>
-                    <!-- Secret -->
-                    <div class="project-card-wrapper relative group reveal-on-scroll">
-                        <div onclick="openLockedPopup()" class="portfolio-item shadow-xl overflow-hidden cursor-pointer relative">
-                             <div class="locked-overlay" style="opacity: 1; background: rgba(255, 255, 255, 0.1);">
-                                <svg class="lock-icon text-black w-8 h-8 mb-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                                <span class="text-xs font-medium text-black uppercase tracking-widest bg-white px-3 py-1">Скоро</span>
+                    <!-- 4. Din Drone -->
+                    <div class="project-card-wrapper reveal-on-scroll">
+                         <a href="dindrone.html" class="portfolio-item shadow-xl relative block group">
+                            <div class="w-full h-80 flex items-center justify-center overflow-hidden">
+                                <img src="https://res.cloudinary.com/dt79npeea/image/upload/v1764842241/Rectangle_39517_rwlir2.png" class="w-full h-full object-cover">
                             </div>
-                            <div class="w-full h-80 flex items-center justify-center bg-gray-100 overflow-hidden">
-                                <div class="w-full h-full bg-gradient-to-bl from-gray-400 to-gray-600 blur-xl scale-110"></div>
+                            <div class="portfolio-item-text p-5 flex justify-between items-center">
+                                <div class="title text-lg font-medium tracking-custom-tight">Din Drone</div>
+                                <div class="tags text-right text-xs tracking-wider uppercase">UI Design / 3D</div>
                             </div>
-                            <div class="portfolio-item-text p-5 flex justify-between items-center filter blur-[2px]">
-                                <div class="title text-lg font-medium tracking-custom-tight">Секретный проект</div>
-                                <div class="tags text-right text-xs tracking-wider uppercase">Coming Soon</div>
-                            </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
 
-                <!-- Кнопка Все кейсы -->
-                <div class="pt-5 pb-5 reveal-on-scroll">
-                    <a href="all_cases.html" class="block w-full"> 
+                <!-- Призыв к действию внизу -->
+                <div class="pt-10 reveal-on-scroll">
+                    <p class="text-xs text-white/30 uppercase tracking-[0.2em] mb-4 text-center">Готовы обсудить проект?</p>
+                    <a href="https://t.me/zorochik" target="_blank" class="block w-full">
                         <button class="group relative w-full cursor-pointer overflow-hidden border border-white text-lg font-medium py-4 text-white bg-black shadow-xl transition duration-300 rounded-none hover:text-black hover:bg-white hover:border-black">
-                            <span class="inline-block transition-all duration-300 group-hover:-translate-x-8 group-hover:opacity-0 z-20 relative">Все кейсы</span>
+                            <span class="inline-block transition-all duration-300 group-hover:-translate-x-8 group-hover:opacity-0 z-20 relative">Написать в Telegram</span>
                             <div class="absolute left-[20%] top-[40%] h-2 w-2 scale-[1] rounded-none bg-white transition-all duration-300 group-hover:left-[0%] group-hover:top-[0%] group-hover:h-full group-hover:w-full group-hover:scale-[1.8] group-hover:bg-white z-0"></div>
                             <div class="absolute top-0 z-10 flex h-full w-full translate-x-12 items-center justify-center gap-2 text-black opacity-0 transition-all duration-300 group-hover:-translate-x-0 group-hover:opacity-100">
-                                <span>Перейти на страницу</span>
+                                <span>Начать чат</span>
                             </div>
                         </button>
                     </a>
@@ -401,7 +382,6 @@
 
         // Плавный скролл и анимации появления
         window.addEventListener('DOMContentLoaded', () => {
-            // Reveal animation
             const revealObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -416,7 +396,6 @@
                 revealObserver.observe(el);
             });
 
-            // Lenis smooth scroll (only for desktop)
             if (window.innerWidth >= 1024) {
                 const lenis = new Lenis({
                     wrapper: document.querySelector('#scroll-panel'), 
@@ -429,10 +408,7 @@
             }
         });
 
-        // Попап
-        function openLockedPopup() { document.getElementById('lock-popup').classList.add('active'); }
         function closePopup() { document.getElementById('lock-popup').classList.remove('active'); }
-        window.openLockedPopup = openLockedPopup;
         window.closePopup = closePopup;
     </script>
 </body>
